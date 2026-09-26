@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Bookie House</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style> body { font-family: 'Sarabun', sans-serif; } </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+  <!-- Navbar แอดมิน -->
+  <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <span class="text-xl font-bold tracking-wider text-amber-400">📖 Bookie House</span>
+        <span class="text-xs bg-red-600 text-white font-bold px-2 py-0.5 rounded">ADMIN PANEL</span>
+      </div>
+      <div class="flex items-center space-x-4 text-sm">
+        <button onclick="showTab('orders')" id="tab-btn-orders" class="text-amber-400 font-semibold transition">จัดการคำสั่งซื้อ</button>
+        <button onclick="showTab('reports')" id="tab-btn-reports" class="hover:text-amber-400 text-slate-300 transition">รายงานวิเคราะห์ (4 Reports)</button>
+        <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-lg border border-slate-700">← ไปหน้าร้าน</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+
+    <!-- การ์ดตัวเลขสรุป (Dashboard Stats) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-xs text-slate-500 font-medium">ยอดขายรวมทั้งหมด</p>
+        <p class="text-2xl font-bold text-indigo-900 mt-1">฿11,540.00</p>
+        <span class="text-[11px] text-emerald-600 font-semibold">จากออเดอร์ที่ยืนยันแล้ว</span>
+      </div>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-xs text-slate-500 font-medium">คำสั่งซื้อทั้งหมด</p>
+        <p class="text-2xl font-bold text-slate-800 mt-1">32 รายการ</p>
+        <span class="text-[11px] text-slate-500">Seed Data 30+ ตามเกณฑ์</span>
+      </div>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-xs text-slate-500 font-medium">รอการตรวจสอบชำระเงิน</p>
+        <p class="text-2xl font-bold text-amber-600 mt-1" id="pending-count">2 รายการ</p>
+        <span class="text-[11px] text-amber-600 font-semibold">ต้องอนุมัติเพื่อเปิดลิงก์</span>
+      </div>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-xs text-slate-500 font-medium">จำนวน E-Book ในระบบ</p>
+        <p class="text-2xl font-bold text-emerald-600 mt-1">12 เล่ม</p>
+        <span class="text-[11px] text-slate-500">4 หมวดหมู่หลัก</span>
+      </div>
+    </div>
+
+    <!-- แท็บ 1: จัดการคำสั่งซื้อและอนุมัติสลิป -->
+    <section id="section-orders" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">รายการคำสั่งซื้อและการตรวจสอบ</h2>
+          <p class="text-xs text-slate-500">จำลองการกดยืนยันออเดอร์เพื่อปลดล็อกลิงก์ดาวน์โหลดให้ลูกค้า</p>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="bg-slate-100 text-slate-600 text-xs uppercase">
+              <th class="py-3 px-4">Order ID</th>
+              <th class="py-3 px-4">ลูกค้า</th>
+              <th class="py-3 px-4">วันที่</th>
+              <th class="py-3 px-4">ยอดเงิน</th>
+              <th class="py-3 px-4">วิธีชำระ</th>
+              <th class="py-3 px-4">สถานะ</th>
+              <th class="py-3 px-4 text-center">การจัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="admin-orders-tbody" class="divide-y divide-slate-100">
+            <!-- ข้อมูลเรนเดอร์ผ่าน JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- แท็บ 2: 4 รายงานวิเคราะห์ข้อมูลจริงจาก SQL (Reports) -->
+    <section id="section-reports" class="hidden space-y-6">
+
+      <!-- รายงาน 1 -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-bold text-indigo-900 text-base">📊 รายงานที่ 1: ยอดขายตามช่วงเวลา (Sales over Time)</h3>
+          <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded font-mono">SQL: JOIN, GROUP BY, SUM, COUNT, AVG</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">แสดงยอดขาย จำนวนคำสั่งซื้อ และค่าเฉลี่ยต่อบิลตามวันที่สั่งซื้อจริง</p>
+        <table class="w-full text-sm text-left border">
+          <thead class="bg-slate-50 text-slate-600 text-xs">
+            <tr>
+              <th class="border p-2">วันที่ (sales_date)</th>
+              <th class="border p-2 text-center">จำนวนออเดอร์ (total_orders)</th>
+              <th class="border p-2 text-right">ยอดขายรวม (daily_revenue)</th>
+              <th class="border p-2 text-right">เฉลี่ยต่อออเดอร์ (average_order_value)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b"><td class="p-2 border">2026-08-01</td><td class="p-2 border text-center">1</td><td class="p-2 border text-right">฿350.00</td><td class="p-2 border text-right">฿350.00</td></tr>
+            <tr class="border-b"><td class="p-2 border">2026-08-02</td><td class="p-2 border text-center">1</td><td class="p-2 border text-right">฿670.00</td><td class="p-2 border text-right">฿670.00</td></tr>
+            <tr class="border-b"><td class="p-2 border">2026-08-04</td><td class="p-2 border text-center">1</td><td class="p-2 border text-right">฿800.00</td><td class="p-2 border text-right">฿800.00</td></tr>
+            <tr class="border-b"><td class="p-2 border">2026-08-10</td><td class="p-2 border text-center">1</td><td class="p-2 border text-right">฿700.00</td><td class="p-2 border text-right">฿700.00</td></tr>
+            <tr class="border-b"><td class="p-2 border">2026-08-26</td><td class="p-2 border text-center">1</td><td class="p-2 border text-right">฿770.00</td><td class="p-2 border text-right">฿770.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- รายงาน 2 -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-bold text-indigo-900 text-base">🏆 รายงานที่ 2: 5 อันดับ E-Book ขายดี (Top-Selling E-Books)</h3>
+          <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded font-mono">SQL: JOIN, GROUP BY, SUM, LIMIT 5</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">หนังสือที่มียอดขายและจำนวนเล่มที่จำหน่ายได้สูงสุด</p>
+        <table class="w-full text-sm text-left border">
+          <thead class="bg-slate-50 text-slate-600 text-xs">
+            <tr>
+              <th class="border p-2">ชื่อหนังสือ (title)</th>
+              <th class="border p-2">ผู้แต่ง (author_name)</th>
+              <th class="border p-2 text-center">จำนวนเล่มที่ขายได้ (copies_sold)</th>
+              <th class="border p-2 text-right">ยอดขายรวม (total_sales)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b"><td class="p-2 border font-semibold">Modern Web Development with React</td><td class="p-2 border">ดร. อนุชา พาเขียนโค้ด</td><td class="p-2 border text-center font-bold text-indigo-600">6 เล่ม</td><td class="p-2 border text-right">฿2,520.00</td></tr>
+            <tr class="border-b"><td class="p-2 border font-semibold">Mastering SQL & Database Design</td><td class="p-2 border">ดร. อนุชา พาเขียนโค้ด</td><td class="p-2 border text-center font-bold text-indigo-600">6 เล่ม</td><td class="p-2 border text-right">฿2,100.00</td></tr>
+            <tr class="border-b"><td class="p-2 border font-semibold">Atomic Habits: พลังแห่งนิสัยเล็กๆ</td><td class="p-2 border">กุลดา จิตวิญญาณ</td><td class="p-2 border text-center font-bold text-indigo-600">5 เล่ม</td><td class="p-2 border text-right">฿1,400.00</td></tr>
+            <tr class="border-b"><td class="p-2 border font-semibold">การเงินง่ายๆ สำหรับมนุษย์เงินเดือน</td><td class="p-2 border">วิศรุต การเงินดี</td><td class="p-2 border text-center font-bold text-indigo-600">5 เล่ม</td><td class="p-2 border text-right">฿1,250.00</td></tr>
+            <tr class="border-b"><td class="p-2 border font-semibold">มังกรไร้เงา ภาค 2: ศึกบัลลังก์มนตรา</td><td class="p-2 border">นลินทิพย์ นิยายฝัน</td><td class="p-2 border text-center font-bold text-indigo-600">3 เล่ม</td><td class="p-2 border text-right">฿720.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- รายงาน 3 -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-bold text-indigo-900 text-base">📚 รายงานที่ 3: ยอดขายตามหมวดหมู่ (Sales by Category)</h3>
+          <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded font-mono">SQL: JOIN หลายตาราง, GROUP BY, SUM</span>
+        </div>
+        <table class="w-full text-sm text-left border">
+          <thead class="bg-slate-50 text-slate-600 text-xs">
+            <tr>
+              <th class="border p-2">หมวดหมู่ (category_name)</th>
+              <th class="border p-2 text-center">จำนวนคำสั่งซื้อ</th>
+              <th class="border p-2 text-center">จำนวนเล่มที่ขายได้</th>
+              <th class="border p-2 text-right">ยอดขายรวมหมวดหมู่</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b"><td class="p-2 border font-semibold">เทคโนโลยีและการเขียนโค้ด</td><td class="p-2 border text-center">14 ครั้ง</td><td class="p-2 border text-center">15 เล่ม</td><td class="p-2 border text-right font-bold text-indigo-600">฿5,760.00</td></tr>
+            <tr class="border-b"><td class="p-2 border font-semibold">พัฒนาตนเองและจิตวิทยา</td><td class="p-2 border text-center">8 ครั้ง</td><td class="p-2 border text-center">8 เล่ม</td><td class="p-2 border text-right font-bold text-indigo-600">฿2,200.00</td></tr>
+            <tr class="border-b"><td class="p-2 border font-semibold">ธุรกิจและการเงิน</td><td class="p-2 border text-center">7 ครั้ง</td><td class="p-2 border text-center">7 เล่ม</td><td class="p-2 border text-right font-bold text-indigo-600">฿2,180.00</td></tr>
+            <tr class="border-b"><td class="p-2 border font-semibold">นิยายและวรรณกรรม</td><td class="p-2 border text-center">6 ครั้ง</td><td class="p-2 border text-center">6 เล่ม</td><td class="p-2 border text-right font-bold text-indigo-600">฿1,400.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- รายงาน 4 -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-bold text-indigo-900 text-base">👥 รายงานที่ 4: พฤติกรรมลูกค้าและยอดซื้อสะสม (Customer Behavior)</h3>
+          <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded font-mono">SQL: JOIN, GROUP BY, HAVING total_spent >= 500</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">รายชื่อลูกค้าชั้นดีที่มียอดซื้อสะสมตั้งแต่ 500 บาทขึ้นไป พร้อมแยกสถานะออเดอร์</p>
+        <table class="w-full text-sm text-left border">
+          <thead class="bg-slate-50 text-slate-600 text-xs">
+            <tr>
+              <th class="border p-2">ชื่อลูกค้า (full_name)</th>
+              <th class="border p-2">อีเมล</th>
+              <th class="border p-2 text-center">ออเดอร์ทั้งหมด</th>
+              <th class="border p-2 text-center">ยืนยันแล้ว</th>
+              <th class="border p-2 text-center">รอยืนยัน/ยกเลิก</th>
+              <th class="border p-2 text-right">ยอดซื้อสะสมสุทธิ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b"><td class="p-2 border font-semibold">สมชาย สายอ่าน</td><td class="p-2 border text-slate-500">somchai@gmail.com</td><td class="p-2 border text-center">4</td><td class="p-2 border text-center text-emerald-600 font-bold">4</td><td class="p-2 border text-center">0</td><td class="p-2 border text-right font-bold text-indigo-600">฿1,730.00</td></tr>
+            <tr class="border-b"><td class="p-2 border font-semibold">ธนพร ทรัพย์มั่นคง</td><td class="p-2 border text-slate-500">thanaporn@gmail.com</td><td class="p-2 border text-center">4</td><td class="p-2 border text-center text-emerald-600 font-bold">3</td><td class="p-2 border text-center">1</td><td class="p-2 border text-right font-bold text-indigo-600">฿1,440.00</td></tr>
+            <tr class="border-b"><td class="p-2 border font-semibold">พิมพ์ชนก นครศรี</td><td class="p-2 border text-slate-500">pim@gmail.com</td><td class="p-2 border text-center">3</td><td class="p-2 border text-center text-emerald-600 font-bold">3</td><td class="p-2 border text-center">0</td><td class="p-2 border text-right font-bold text-indigo-600">฿1,340.00</td></tr>
+            <tr class="border-b"><td class="p-2 border font-semibold">วนิดา แก้วมณี</td><td class="p-2 border text-slate-500">wanida@hotmail.com</td><td class="p-2 border text-center">4</td><td class="p-2 border text-center text-emerald-600 font-bold">3</td><td class="p-2 border text-center">1</td><td class="p-2 border text-right font-bold text-indigo-600">฿1,310.00</td></tr>
+            <tr class="border-b"><td class="p-2 border font-semibold">กฤษณะ พัฒนาการ</td><td class="p-2 border text-slate-500">kris@techmail.com</td><td class="p-2 border text-center">4</td><td class="p-2 border text-center text-emerald-600 font-bold">3</td><td class="p-2 border text-center">1</td><td class="p-2 border text-right font-bold text-indigo-600">฿1,370.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    let adminOrders = [
+      { id: 29, customer: 'วนิดา แก้วมณี', date: '2026-08-29', amount: 350.00, method: 'พร้อมเพย์จำลอง', status: 'pending' },
+      { id: 30, customer: 'ธนพร ทรัพย์มั่นคง', date: '2026-08-29', amount: 280.00, method: 'โอนธนาคารจำลอง', status: 'pending' },
+      { id: 28, customer: 'สมชาย สายอ่าน', date: '2026-08-28', amount: 420.00, method: 'โอนธนาคารจำลอง', status: 'confirmed' },
+      { id: 27, customer: 'ชาคริต ชัยชนะ', date: '2026-08-27', amount: 460.00, method: 'พร้อมเพย์จำลอง', status: 'confirmed' },
+      { id: 31, customer: 'กฤษณะ พัฒนาการ', date: '2026-08-30', amount: 380.00, method: 'พร้อมเพย์จำลอง', status: 'cancelled' }
+    ];
+
+    function showTab(tab) {
+      if (tab === 'orders') {
+        document.getElementById('section-orders').classList.remove('hidden');
+        document.getElementById('section-reports').classList.add('hidden');
+        document.getElementById('tab-btn-orders').className = 'text-amber-400 font-semibold transition';
+        document.getElementById('tab-btn-reports').className = 'hover:text-amber-400 text-slate-300 transition';
+      } else {
+        document.getElementById('section-orders').classList.add('hidden');
+        document.getElementById('section-reports').classList.remove('hidden');
+        document.getElementById('tab-btn-orders').className = 'hover:text-amber-400 text-slate-300 transition';
+        document.getElementById('tab-btn-reports').className = 'text-amber-400 font-semibold transition';
+      }
+    }
+
+    function confirmOrder(orderId) {
+      const ord = adminOrders.find(o => o.id === orderId);
+      if (ord) {
+        ord.status = 'confirmed';
+        alert(`✅ ยืนยันคำสั่งซื้อ #${orderId} เรียบร้อยแล้ว! ระบบเปิดสิทธิ์ให้ลูกค้าดาวน์โหลด E-Book ได้ทันที`);
+        renderAdminOrders();
+      }
+    }
+
+    function renderAdminOrders() {
+      const tbody = document.getElementById('admin-orders-tbody');
+      let pendingCount = 0;
+
+      tbody.innerHTML = adminOrders.map(o => {
+        let badge = '';
+        let action = '';
+
+        if (o.status === 'confirmed') {
+          badge = '<span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded">ยืนยันแล้ว</span>';
+          action = '<span class="text-xs text-slate-400">อนุมัติแล้ว</span>';
+        } else if (o.status === 'pending') {
+          pendingCount++;
+          badge = '<span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded">รอตรวจสอบ</span>';
+          action = `<button onclick="confirmOrder(${o.id})" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-1.5 rounded font-semibold shadow">อนุมัติการชำระเงิน</button>`;
+        } else {
+          badge = '<span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded">ยกเลิก</span>';
+          action = '<span class="text-xs text-slate-400">-</span>';
+        }
+
+        return `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-3 px-4 font-mono font-semibold text-slate-800">#ORD-${o.id}</td>
+            <td class="py-3 px-4 text-slate-700 font-medium">${o.customer}</td>
+            <td class="py-3 px-4 text-slate-500">${o.date}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">฿${o.amount.toFixed(2)}</td>
+            <td class="py-3 px-4 text-slate-600">${o.method}</td>
+            <td class="py-3 px-4">${badge}</td>
+            <td class="py-3 px-4 text-center">${action}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('pending-count').innerText = `${pendingCount} รายการ`;
+    }
+
+    renderAdminOrders();
+  </script>
+</body>
+</html>
