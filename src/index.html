@@ -76,6 +76,28 @@
       backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(229, 138, 153, 0.25);
     }
+
+   /* แอนิเมชันป๊อปอัปเด้งฟึ้บขึ้นมาแบบละมุน */
+  @keyframes popUpIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.92) translateY(14px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  /* สั่งให้กล่องป๊อปอัปทั้งหมดทำงานทันทีที่เปิด */
+  #cart-modal > div,
+  #auth-modal > div,
+  #checkout-modal > div,
+  #detail-modal > div,
+  #add-book-modal > div {
+    animation: popUpIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
   </style>
 </head>
 <body class="selection:bg-glam-roseLight selection:text-glam-roseDark">
