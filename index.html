@@ -218,11 +218,12 @@
           <h2 class="text-2xl font-heading font-bold text-glam-roseDark mt-1">ระบบบริหารจัดการร้าน (Admin Control)</h2>
         </div>
         <div class="flex items-center gap-3">
-          <button onclick="openAddBookModal()" class="bg-gradient-to-r from-emerald-600 to-teal-700 hover:brightness-110 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-sm transition flex items-center gap-1.5 font-heading">
+          <button onclick="openBookFormModal('add')" class="bg-gradient-to-r from-emerald-600 to-teal-700 hover:brightness-110 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-sm transition flex items-center gap-1.5 font-heading">
             <span>➕ เพิ่ม E-Book เล่มใหม่</span>
           </button>
           <div class="inline-flex rounded-2xl p-1 bg-white border border-glam-roseLight shadow-sm text-xs font-bold font-heading">
             <button onclick="switchAdminTab('orders')" id="btn-admin-tab-orders" class="px-4 py-2 rounded-xl bg-glam-roseDark text-white transition">จัดการคำสั่งซื้อ</button>
+            <button onclick="switchAdminTab('manage-books')" id="btn-admin-tab-books" class="px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition">📚 จัดการ E-Book (แก้ไข/ลบ)</button>
             <button onclick="switchAdminTab('reports')" id="btn-admin-tab-reports" class="px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition">รายงานวิเคราะห์ (4 Reports)</button>
           </div>
         </div>
@@ -252,7 +253,7 @@
         </div>
       </div>
 
-      <!-- จัดการออเดอร์ -->
+      <!-- แท็บ 1: จัดการคำสั่งซื้อ -->
       <div id="admin-subtab-orders" class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
         <div class="p-5 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
           <h3 class="font-bold font-heading text-glam-roseDark text-sm">การตรวจสอบหลักฐานและอนุมัติออเดอร์</h3>
@@ -276,7 +277,34 @@
         </div>
       </div>
 
-      <!-- รายงานวิเคราะห์ 4 รายการ -->
+      <!-- แท็บ 2: จัดการรายการหนังสือ (แก้ไข / ลบ / ปิดการขาย) -->
+      <div id="admin-subtab-books" class="hidden bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
+          <div>
+            <h3 class="font-bold font-heading text-glam-roseDark text-sm">จัดการรายการหนังสือ E-Book</h3>
+            <p class="text-xs text-stone-400">แก้ไขข้อมูล, เปลี่ยนรูปปก, ลบรายการที่สร้างผิด หรือเปิด/ปิดการขาย</p>
+          </div>
+          <span id="admin-book-count-tag" class="text-xs bg-glam-roseLight text-glam-roseDark px-3 py-1 rounded-full font-bold"></span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-glam-milk text-glam-roseDark text-xs uppercase font-bold font-heading">
+                <th class="py-3.5 px-4">ปก</th>
+                <th class="py-3.5 px-4">ชื่อหนังสือ</th>
+                <th class="py-3.5 px-4">หมวดหมู่</th>
+                <th class="py-3.5 px-4">ผู้แต่ง</th>
+                <th class="py-3.5 px-4">ราคา</th>
+                <th class="py-3.5 px-4">สถานะขาย</th>
+                <th class="py-3.5 px-4 text-center">การจัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="admin-books-tbody" class="divide-y divide-glam-milk"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- แท็บ 3: รายงานวิเคราะห์ 4 รายการ -->
       <div id="admin-subtab-reports" class="hidden space-y-6">
         <div class="bg-white p-6 rounded-3xl border border-glam-roseLight shadow-sm">
           <h4 class="font-bold font-heading text-glam-roseDark text-base mb-1">📊 รายงานที่ 1: ยอดขายตามช่วงเวลา (Sales over Time)</h4>
@@ -369,26 +397,28 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL 2: แอดมินเพิ่ม E-Book เล่มใหม่ ==================== -->
-  <div id="add-book-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+  <!-- ==================== MODAL 2: แอดมิน เพิ่ม / แก้ไข E-Book ==================== -->
+  <div id="book-form-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-glam-roseLight">
-      <div class="bg-gradient-to-r from-emerald-600 to-teal-800 text-white px-6 py-4 flex justify-between items-center">
-        <h3 class="text-base font-bold font-heading flex items-center gap-2">
+      <div id="book-form-header" class="bg-gradient-to-r from-emerald-600 to-teal-800 text-white px-6 py-4 flex justify-between items-center">
+        <h3 id="book-form-title" class="text-base font-bold font-heading flex items-center gap-2">
           <span>➕ เพิ่ม E-Book เล่มใหม่ (Admin)</span>
         </h3>
-        <button onclick="closeAddBookModal()" class="text-emerald-200 hover:text-white text-lg">✕</button>
+        <button onclick="closeBookFormModal()" class="text-emerald-200 hover:text-white text-lg">✕</button>
       </div>
 
-      <form onsubmit="handleAddNewBook(event)" class="p-6 space-y-3.5 text-xs max-h-[80vh] overflow-y-auto">
+      <form onsubmit="handleSaveBook(event)" class="p-6 space-y-3.5 text-xs max-h-[80vh] overflow-y-auto">
+        <input type="hidden" id="edit-book-id" value="">
+
         <div>
           <label class="block font-bold text-stone-700 mb-1">ชื่อหนังสือ (Title) *</label>
-          <input type="text" id="new-book-title" required placeholder="เช่น Next.js 15 Full Stack Mastery" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500">
+          <input type="text" id="form-book-title" required placeholder="เช่น Next.js 15 Full Stack Mastery" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-bold text-stone-700 mb-1">หมวดหมู่ (Category) *</label>
-            <select id="new-book-cat" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs">
+            <select id="form-book-cat" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs">
               <option value="1">เทคโนโลยีและการเขียนโค้ด</option>
               <option value="2">ธุรกิจและการเงิน</option>
               <option value="3">พัฒนาตนเองและจิตวิทยา</option>
@@ -397,33 +427,33 @@
           </div>
           <div>
             <label class="block font-bold text-stone-700 mb-1">ราคา (Price บาท) *</label>
-            <input type="number" id="new-book-price" min="0" step="10" required placeholder="350" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500">
+            <input type="number" id="form-book-price" min="0" step="10" required placeholder="350" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500">
           </div>
         </div>
 
         <div>
           <label class="block font-bold text-stone-700 mb-1">ชื่อผู้แต่ง (Author Name) *</label>
-          <input type="text" id="new-book-author" required placeholder="เช่น ดร. อนุชา พาเขียนโค้ด" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs">
+          <input type="text" id="form-book-author" required placeholder="เช่น ดร. อนุชา พาเขียนโค้ด" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs">
         </div>
 
         <div>
           <label class="block font-bold text-stone-700 mb-1">ลิงก์ URL รูปภาพหน้าปก (Cover Image URL) *</label>
-          <input type="url" id="new-book-cover" required placeholder="https://images.unsplash.com/..." class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs font-mono">
+          <input type="url" id="form-book-cover" required placeholder="https://images.unsplash.com/..." class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs font-mono">
         </div>
 
         <div>
           <label class="block font-bold text-stone-700 mb-1">ลิงก์ดาวน์โหลดไฟล์ E-Book (File Download URL) *</label>
-          <input type="url" id="new-book-dl" required placeholder="https://storage.bookiehouse.com/dl/new-book.pdf" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs font-mono">
+          <input type="url" id="form-book-dl" required placeholder="https://storage.bookiehouse.com/dl/book.pdf" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs font-mono">
         </div>
 
         <div>
           <label class="block font-bold text-stone-700 mb-1">เรื่องย่อ / คำอธิบายหนังสือ (Description)</label>
-          <textarea id="new-book-desc" rows="3" placeholder="ระบุเนื้อหาย่อเพื่อดึงดูดผู้อ่าน..." class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs"></textarea>
+          <textarea id="form-book-desc" rows="3" placeholder="ระบุเนื้อหาย่อเพื่อดึงดูดผู้อ่าน..." class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs"></textarea>
         </div>
 
         <div class="pt-3 flex justify-end gap-2 font-heading">
-          <button type="button" onclick="closeAddBookModal()" class="px-4 py-2 border rounded-xl font-bold text-stone-500">ยกเลิก</button>
-          <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-xl shadow">บันทึก E-Book ใหม่ ✨</button>
+          <button type="button" onclick="closeBookFormModal()" class="px-4 py-2 border rounded-xl font-bold text-stone-500">ยกเลิก</button>
+          <button type="submit" id="form-book-submit-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-xl shadow">บันทึกข้อมูล ✨</button>
         </div>
       </form>
     </div>
@@ -461,7 +491,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL ล็อกอิน / สมาชิก (Clean & Secure - ไม่มีเฉลยรหัส) ==================== -->
+  <!-- ==================== MODAL ล็อกอิน / สมาชิก ==================== -->
   <div id="auth-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.2rem] shadow-2xl p-7 border border-glam-roseLight">
       <div class="flex justify-between items-center mb-5">
@@ -492,7 +522,6 @@
   <script>
     let currentUser = null;
 
-    // ระบบตรวจสอบสิทธิ์ผู้ใช้จากฐานข้อมูล
     const validUsers = [
       { username: 'admin_bookie', password: 'password123', name: 'คุณแอดมิน Bookie House', role: 'admin' },
       { username: 'somchai_s',    password: 'password123', name: 'คุณสมชาย สายอ่าน',        role: 'customer' },
@@ -500,18 +529,18 @@
     ];
 
     let books = [
-      { id: 1, title: 'Mastering SQL & Database Design', catId: 1, catName: 'เทคโนโลยี', price: 350.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.9, badge: '🔥 Best Seller', desc: 'คู่มือออกแบบฐานข้อมูลเชิงสัมพันธ์ตั้งแต่ 1NF ถึง 3NF การเขียน Index และการ Tuning SQL Query สำหรับงานระดับโปรดักชันอย่างมืออาชีพ', cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/sql-master.pdf' },
-      { id: 2, title: 'Modern Web Development with React', catId: 1, catName: 'เทคโนโลยี', price: 420.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 5.0, badge: '⭐ Editor Pick', desc: 'ก้าวทันเทคโนโลยีเว็บยุคใหม่ด้วย React, Tailwind CSS และการเชื่อมต่อ RESTful APIs สร้าง Web App ที่ลื่นไหลและสวยงาม', cover: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/react-web.pdf' },
-      { id: 3, title: 'Python Data Analysis for Beginners', catId: 1, catName: 'เทคโนโลยี', price: 380.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.8, badge: '', desc: 'เริ่มต้นวิเคราะห์ข้อมูลและสร้าง Data Visualization ด้วย Pandas, Numpy และ Matplotlib จากโจทย์ธุรกิจจริง', cover: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/python-data.pdf' },
-      { id: 4, title: 'การเงินง่ายๆ สำหรับมนุษย์เงินเดือน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 250.00, author: 'วิศรุต การเงินดี', rating: 4.9, badge: '🔥 Best Seller', desc: 'แผนที่การเงินฉบับทำตามได้ทันที การจัดสรรเงินเดือน วางแผนภาษี และลงทุนกองทุนรวมเพื่อสร้างอิสรภาพทางการเงิน', cover: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/finance-salary.pdf' },
-      { id: 5, title: 'Startup Blueprint: จาก 0 สู่ 100 ล้าน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 320.00, author: 'วิศรุต การเงินดี', rating: 4.7, badge: '', desc: 'กลยุทธ์สร้างธุรกิจสตาร์ทอัพให้เติบโตแบบก้าวกระโดด การหา Product-Market Fit และเทคนิคการระดมทุนจาก VC', cover: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/startup-bp.pdf' },
-      { id: 6, title: 'Digital Marketing Strategy 2026', catId: 2, catName: 'ธุรกิจและการเงิน', price: 290.00, author: 'วิศรุต การเงินดี', rating: 4.8, badge: '✨ New Release', desc: 'เจาะลึกการทำการตลาดยุค AI อัลกอริทึม TikTok และการสร้าง Personal Branding ให้ติดตลาดอย่างยั่งยืน', cover: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/digital-mkt.pdf' },
-      { id: 7, title: 'Atomic Habits: พลังแห่งนิสัยเล็กๆ', catId: 3, catName: 'พัฒนาตนเอง', price: 280.00, author: 'กุลดา จิตวิญญาณ', rating: 5.0, badge: '💖 Must Read', desc: 'เปลี่ยนชีวิตให้สำเร็จได้ด้วยการปรับพฤติกรรมเพียงวันละ 1% วิธีสร้างอุปนิสัยที่ดีและกำจัดนิสัยที่ไม่ต้องการให้หมดไป', cover: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/atomic-habits.pdf' },
-      { id: 8, title: 'The Art of Deep Work: ทำงานให้สำเร็จ', catId: 3, catName: 'พัฒนาตนเอง', price: 270.00, author: 'กุลดา จิตวิญญาณ', rating: 4.7, badge: '', desc: 'ศิลปะการจดจ่อในโลกที่เต็มไปด้วยสิ่งรบกวน วิธีสร้างสมาธิขั้นสูงเพื่อผลิตผลงานคุณภาพในเวลาน้อยลง', cover: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/deep-work.pdf' },
-      { id: 9, title: 'จิตวิทยาการสื่อสารในที่ทำงาน', catId: 3, catName: 'พัฒนาตนเอง', price: 260.00, author: 'กุลดา จิตวิญญาณ', rating: 4.8, badge: '', desc: 'พูดอย่างไรให้ได้ใจคน เทคนิคการเจรจาต่อรอง การปฏิเสธอย่างสุภาพ และการสร้างความสัมพันธ์ที่มั่นคงในองค์กร', cover: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/work-comm.pdf' },
-      { id: 10, title: 'มังกรไร้เงา ภาค 1: กำเนิดแดนสนธยา', catId: 4, catName: 'นิยายแฟนตาซี', price: 220.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '', desc: 'การผจญภัยในดินแดนเวทมนตร์โบราณที่ถูกลืม เมื่อเด็กหนุ่มผู้มีสายเลือดมังกรต้องลุกขึ้นสู้เพื่อกอบกู้ความยุติธรรม', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/dragon-01.pdf' },
-      { id: 11, title: 'มังกรไร้เงา ภาค 2: ศึกบัลลังก์มนตรา', catId: 4, catName: 'นิยายแฟนตาซี', price: 240.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '🔥 Hot', desc: 'สงครามแย่งชิงบัลลังก์มนตราปะทุขึ้น พันธมิตรกลายเป็นศัตรู ความลับของพลังมังกรกำลังจะถูกเปิดเผยในเล่มนี้', cover: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/dragon-02.pdf' },
-      { id: 12, title: 'คดีฆาตกรรมห้องสมุดลับโบราณ', catId: 4, catName: 'สืบสวน', price: 230.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.8, badge: '', desc: 'ปริศนาการตายของบรรณารักษ์ชราในห้องหนังสือต้องห้ามที่มีกุญแจล็อกจากด้านใน ทุกหลักฐานนำไปสู่ความลับที่ไม่มีใครคาดคิด', cover: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/library-mystery.pdf' }
+      { id: 1, title: 'Mastering SQL & Database Design', catId: 1, catName: 'เทคโนโลยี', price: 350.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.9, badge: '🔥 Best Seller', isActive: true, desc: 'คู่มือออกแบบฐานข้อมูลเชิงสัมพันธ์ตั้งแต่ 1NF ถึง 3NF การเขียน Index และการ Tuning SQL Query สำหรับงานระดับโปรดักชันอย่างมืออาชีพ', cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/sql-master.pdf' },
+      { id: 2, title: 'Modern Web Development with React', catId: 1, catName: 'เทคโนโลยี', price: 420.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 5.0, badge: '⭐ Editor Pick', isActive: true, desc: 'ก้าวทันเทคโนโลยีเว็บยุคใหม่ด้วย React, Tailwind CSS และการเชื่อมต่อ RESTful APIs สร้าง Web App ที่ลื่นไหลและสวยงาม', cover: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/react-web.pdf' },
+      { id: 3, title: 'Python Data Analysis for Beginners', catId: 1, catName: 'เทคโนโลยี', price: 380.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.8, badge: '', isActive: true, desc: 'เริ่มต้นวิเคราะห์ข้อมูลและสร้าง Data Visualization ด้วย Pandas, Numpy และ Matplotlib จากโจทย์ธุรกิจจริง', cover: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/python-data.pdf' },
+      { id: 4, title: 'การเงินง่ายๆ สำหรับมนุษย์เงินเดือน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 250.00, author: 'วิศรุต การเงินดี', rating: 4.9, badge: '🔥 Best Seller', isActive: true, desc: 'แผนที่การเงินฉบับทำตามได้ทันที การจัดสรรเงินเดือน วางแผนภาษี และลงทุนกองทุนรวมเพื่อสร้างอิสรภาพทางการเงิน', cover: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/finance-salary.pdf' },
+      { id: 5, title: 'Startup Blueprint: จาก 0 สู่ 100 ล้าน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 320.00, author: 'วิศรุต การเงินดี', rating: 4.7, badge: '', isActive: true, desc: 'กลยุทธ์สร้างธุรกิจสตาร์ทอัพให้เติบโตแบบก้าวกระโดด การหา Product-Market Fit และเทคนิคการระดมทุนจาก VC', cover: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/startup-bp.pdf' },
+      { id: 6, title: 'Digital Marketing Strategy 2026', catId: 2, catName: 'ธุรกิจและการเงิน', price: 290.00, author: 'วิศรุต การเงินดี', rating: 4.8, badge: '✨ New Release', isActive: true, desc: 'เจาะลึกการทำการตลาดยุค AI อัลกอริทึม TikTok และการสร้าง Personal Branding ให้ติดตลาดอย่างยั่งยืน', cover: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/digital-mkt.pdf' },
+      { id: 7, title: 'Atomic Habits: พลังแห่งนิสัยเล็กๆ', catId: 3, catName: 'พัฒนาตนเอง', price: 280.00, author: 'กุลดา จิตวิญญาณ', rating: 5.0, badge: '💖 Must Read', isActive: true, desc: 'เปลี่ยนชีวิตให้สำเร็จได้ด้วยการปรับพฤติกรรมเพียงวันละ 1% วิธีสร้างอุปนิสัยที่ดีและกำจัดนิสัยที่ไม่ต้องการให้หมดไป', cover: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/atomic-habits.pdf' },
+      { id: 8, title: 'The Art of Deep Work: ทำงานให้สำเร็จ', catId: 3, catName: 'พัฒนาตนเอง', price: 270.00, author: 'กุลดา จิตวิญญาณ', rating: 4.7, badge: '', isActive: true, desc: 'ศิลปะการจดจ่อในโลกที่เต็มไปด้วยสิ่งรบกวน วิธีสร้างสมาธิขั้นสูงเพื่อผลิตผลงานคุณภาพในเวลาน้อยลง', cover: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/deep-work.pdf' },
+      { id: 9, title: 'จิตวิทยาการสื่อสารในที่ทำงาน', catId: 3, catName: 'พัฒนาตนเอง', price: 260.00, author: 'กุลดา จิตวิญญาณ', rating: 4.8, badge: '', isActive: true, desc: 'พูดอย่างไรให้ได้ใจคน เทคนิคการเจรจาต่อรอง การปฏิเสธอย่างสุภาพ และการสร้างความสัมพันธ์ที่มั่นคงในองค์กร', cover: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/work-comm.pdf' },
+      { id: 10, title: 'มังกรไร้เงา ภาค 1: กำเนิดแดนสนธยา', catId: 4, catName: 'นิยายแฟนตาซี', price: 220.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '', isActive: true, desc: 'การผจญภัยในดินแดนเวทมนตร์โบราณที่ถูกลืม เมื่อเด็กหนุ่มผู้มีสายเลือดมังกรต้องลุกขึ้นสู้เพื่อกอบกู้ความยุติธรรม', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/dragon-01.pdf' },
+      { id: 11, title: 'มังกรไร้เงา ภาค 2: ศึกบัลลังก์มนตรา', catId: 4, catName: 'นิยายแฟนตาซี', price: 240.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '🔥 Hot', isActive: true, desc: 'สงครามแย่งชิงบัลลังก์มนตราปะทุขึ้น พันธมิตรกลายเป็นศัตรู ความลับของพลังมังกรกำลังจะถูกเปิดเผยในเล่มนี้', cover: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/dragon-02.pdf' },
+      { id: 12, title: 'คดีฆาตกรรมห้องสมุดลับโบราณ', catId: 4, catName: 'สืบสวน', price: 230.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.8, badge: '', isActive: true, desc: 'ปริศนาการตายของบรรณารักษ์ชราในห้องหนังสือต้องห้ามที่มีกุญแจล็อกจากด้านใน ทุกหลักฐานนำไปสู่ความลับที่ไม่มีใครคาดคิด', cover: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/library-mystery.pdf' }
     ];
 
     let cart = [];
@@ -545,6 +574,7 @@
         }
         document.getElementById('view-admin').classList.remove('hidden');
         renderAdminOrders();
+        renderAdminBooks();
       }
     }
 
@@ -665,46 +695,158 @@
       document.getElementById('book-detail-modal').classList.add('hidden');
     }
 
-    // แอดมินเพิ่มหนังสือ
-    function openAddBookModal() {
-      document.getElementById('add-book-modal').classList.remove('hidden');
-    }
-    function closeAddBookModal() {
-      document.getElementById('add-book-modal').classList.add('hidden');
+    // ==================== ระบบเพิ่ม / แก้ไข / ลบหนังสือ (Admin) ====================
+    function openBookFormModal(mode, bookId = null) {
+      const titleEl = document.getElementById('book-form-title');
+      const submitBtn = document.getElementById('form-book-submit-btn');
+      const idInput = document.getElementById('edit-book-id');
+
+      if (mode === 'edit' && bookId) {
+        const b = books.find(x => x.id === bookId);
+        if (!b) return;
+
+        titleEl.innerText = `✏️ แก้ไขข้อมูล E-Book: ${b.title}`;
+        submitBtn.innerText = '💾 บันทึกการแก้ไข';
+        idInput.value = b.id;
+
+        document.getElementById('form-book-title').value = b.title;
+        document.getElementById('form-book-cat').value = b.catId;
+        document.getElementById('form-book-price').value = b.price;
+        document.getElementById('form-book-author').value = b.author;
+        document.getElementById('form-book-cover').value = b.cover;
+        document.getElementById('form-book-dl').value = b.dlUrl;
+        document.getElementById('form-book-desc').value = b.desc;
+      } else {
+        titleEl.innerText = '➕ เพิ่ม E-Book เล่มใหม่ (Admin)';
+        submitBtn.innerText = '✨ บันทึก E-Book ใหม่';
+        idInput.value = '';
+
+        document.getElementById('form-book-title').value = '';
+        document.getElementById('form-book-cat').value = '1';
+        document.getElementById('form-book-price').value = '';
+        document.getElementById('form-book-author').value = '';
+        document.getElementById('form-book-cover').value = '';
+        document.getElementById('form-book-dl').value = '';
+        document.getElementById('form-book-desc').value = '';
+      }
+
+      document.getElementById('book-form-modal').classList.remove('hidden');
     }
 
-    function handleAddNewBook(e) {
+    function closeBookFormModal() {
+      document.getElementById('book-form-modal').classList.add('hidden');
+    }
+
+    function handleSaveBook(e) {
       e.preventDefault();
-      const title = document.getElementById('new-book-title').value.trim();
-      const catId = parseInt(document.getElementById('new-book-cat').value);
+      const editId = document.getElementById('edit-book-id').value;
+      const title = document.getElementById('form-book-title').value.trim();
+      const catId = parseInt(document.getElementById('form-book-cat').value);
       const catNames = { 1: 'เทคโนโลยี', 2: 'ธุรกิจและการเงิน', 3: 'พัฒนาตนเอง', 4: 'นิยายแฟนตาซี' };
-      const price = parseFloat(document.getElementById('new-book-price').value);
-      const author = document.getElementById('new-book-author').value.trim();
-      const cover = document.getElementById('new-book-cover').value.trim();
-      const dlUrl = document.getElementById('new-book-dl').value.trim();
-      const desc = document.getElementById('new-book-desc').value.trim();
+      const price = parseFloat(document.getElementById('form-book-price').value);
+      const author = document.getElementById('form-book-author').value.trim();
+      const cover = document.getElementById('form-book-cover').value.trim();
+      const dlUrl = document.getElementById('form-book-dl').value.trim();
+      const desc = document.getElementById('form-book-desc').value.trim();
 
-      const newId = books.length + 1;
-      const newBook = {
-        id: newId,
-        title: title,
-        catId: catId,
-        catName: catNames[catId] || 'ทั่วไป',
-        price: price,
-        author: author,
-        rating: 5.0,
-        badge: '✨ New Book',
-        desc: desc || 'หนังสือคุณภาพคัดสรรใหม่จาก Bookie House',
-        cover: cover,
-        dlUrl: dlUrl
-      };
+      if (editId) {
+        // อัปเดตหนังสือเดิม (Edit)
+        const b = books.find(x => x.id === parseInt(editId));
+        if (b) {
+          b.title = title;
+          b.catId = catId;
+          b.catName = catNames[catId] || 'ทั่วไป';
+          b.price = price;
+          b.author = author;
+          b.cover = cover;
+          b.dlUrl = dlUrl;
+          b.desc = desc;
+          alert(`✅ แก้ไขข้อมูลหนังสือ "${title}" เรียบร้อยแล้ว!`);
+        }
+      } else {
+        // เพิ่มหนังสือใหม่ (Add)
+        const newId = books.length ? Math.max(...books.map(x => x.id)) + 1 : 1;
+        const newBook = {
+          id: newId,
+          title: title,
+          catId: catId,
+          catName: catNames[catId] || 'ทั่วไป',
+          price: price,
+          author: author,
+          rating: 5.0,
+          badge: '✨ New Book',
+          isActive: true,
+          desc: desc || 'หนังสือคุณภาพคัดสรรใหม่จาก Bookie House',
+          cover: cover,
+          dlUrl: dlUrl
+        };
+        books.unshift(newBook);
+        alert(`🎉 เพิ่มหนังสือ "${title}" เรียบร้อยแล้ว!`);
+      }
 
-      books.unshift(newBook);
-      alert(`🎉 เพิ่มหนังสือ "${title}" เรียบร้อยแล้ว! หน้าร้านแสดงรายการทันที`);
-      closeAddBookModal();
-      e.target.reset();
+      closeBookFormModal();
       renderBooks();
+      renderAdminBooks();
       document.getElementById('admin-total-books').innerText = `${books.length} เล่ม`;
+    }
+
+    // ฟังก์ชันลบหนังสือ (Delete)
+    function deleteBook(id) {
+      const b = books.find(x => x.id === id);
+      if (!b) return;
+
+      const confirmDel = confirm(`⚠️ คุณแน่ใจหรือไม่ว่าต้องการลบหนังสือ "${b.title}" ออกจากระบบ? \n\n(หากสร้างผิด สามารถลบได้ทันที)`);
+      if (confirmDel) {
+        books = books.filter(x => x.id !== id);
+        alert(`🗑️ ลบหนังสือ "${b.title}" เรียบร้อยแล้ว`);
+        renderBooks();
+        renderAdminBooks();
+        document.getElementById('admin-total-books').innerText = `${books.length} เล่ม`;
+      }
+    }
+
+    // ฟังก์ชันเปิด/ปิดการขาย (Toggle Status)
+    function toggleBookStatus(id) {
+      const b = books.find(x => x.id === id);
+      if (b) {
+        b.isActive = !b.isActive;
+        renderBooks();
+        renderAdminBooks();
+      }
+    }
+
+    // แสดงตารางจัดการหนังสือฝั่งแอดมิน
+    function renderAdminBooks() {
+      const tbody = document.getElementById('admin-books-tbody');
+      document.getElementById('admin-book-count-tag').innerText = `ทั้งหมด ${books.length} เล่ม`;
+
+      tbody.innerHTML = books.map(b => `
+        <tr class="hover:bg-glam-cream/50 transition">
+          <td class="py-3 px-4">
+            <img src="${b.cover}" alt="ปก" class="w-10 h-14 object-cover rounded-lg shadow-sm border border-glam-roseLight">
+          </td>
+          <td class="py-3 px-4 font-bold text-glam-deepText">
+            <div>${b.title}</div>
+            <div class="text-[10px] text-stone-400 font-mono">ID: #${b.id}</div>
+          </td>
+          <td class="py-3 px-4 text-xs text-stone-600">${b.catName}</td>
+          <td class="py-3 px-4 text-xs text-stone-500">${b.author}</td>
+          <td class="py-3 px-4 font-bold font-price text-glam-roseDark">฿${b.price.toFixed(2)}</td>
+          <td class="py-3 px-4">
+            <button onclick="toggleBookStatus(${b.id})" class="text-[11px] font-bold px-2.5 py-1 rounded-full transition ${b.isActive ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-stone-200 text-stone-600 hover:bg-stone-300'}">
+              ${b.isActive ? '🟢 เปิดขาย' : '⚪ ปิดการขาย'}
+            </button>
+          </td>
+          <td class="py-3 px-4 text-center space-x-1.5 whitespace-nowrap">
+            <button onclick="openBookFormModal('edit', ${b.id})" class="bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs px-2.5 py-1.5 rounded-xl font-bold transition">
+              ✏️ แก้ไข
+            </button>
+            <button onclick="deleteBook(${b.id})" class="bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs px-2.5 py-1.5 rounded-xl font-bold transition">
+              🗑️ ลบ
+            </button>
+          </td>
+        </tr>
+      `).join('');
     }
 
     function renderBooks() {
@@ -712,7 +854,9 @@
       const cat = document.getElementById('category-filter').value;
       const grid = document.getElementById('books-grid');
 
+      // แสดงเฉพาะเล่มที่เปิดการขาย (isActive = true)
       const filtered = books.filter(b => {
+        if (!b.isActive) return false;
         const matchText = b.title.toLowerCase().includes(s) || b.author.toLowerCase().includes(s);
         const matchCat = cat === 'all' || b.catId.toString() === cat;
         return matchText && matchCat;
@@ -883,16 +1027,31 @@
     }
 
     function switchAdminTab(tab) {
+      document.getElementById('admin-subtab-orders').classList.add('hidden');
+      document.getElementById('admin-subtab-books').classList.add('hidden');
+      document.getElementById('admin-subtab-reports').classList.add('hidden');
+
+      const btnOrders = document.getElementById('btn-admin-tab-orders');
+      const btnBooks = document.getElementById('btn-admin-tab-books');
+      const btnReports = document.getElementById('btn-admin-tab-reports');
+
+      const defaultClass = 'px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition font-heading';
+      const activeClass = 'px-4 py-2 rounded-xl bg-glam-roseDark text-white transition font-heading';
+
+      btnOrders.className = defaultClass;
+      btnBooks.className = defaultClass;
+      btnReports.className = defaultClass;
+
       if (tab === 'orders') {
         document.getElementById('admin-subtab-orders').classList.remove('hidden');
-        document.getElementById('admin-subtab-reports').classList.add('hidden');
-        document.getElementById('btn-admin-tab-orders').className = 'px-4 py-2 rounded-xl bg-glam-roseDark text-white transition font-heading';
-        document.getElementById('btn-admin-tab-reports').className = 'px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition font-heading';
-      } else {
-        document.getElementById('admin-subtab-orders').classList.add('hidden');
+        btnOrders.className = activeClass;
+      } else if (tab === 'manage-books') {
+        document.getElementById('admin-subtab-books').classList.remove('hidden');
+        btnBooks.className = activeClass;
+        renderAdminBooks();
+      } else if (tab === 'reports') {
         document.getElementById('admin-subtab-reports').classList.remove('hidden');
-        document.getElementById('btn-admin-tab-reports').className = 'px-4 py-2 rounded-xl bg-glam-roseDark text-white transition font-heading';
-        document.getElementById('btn-admin-tab-orders').className = 'px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition font-heading';
+        btnReports.className = activeClass;
       }
     }
 
