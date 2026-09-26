@@ -3,20 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bookie House | คลัง E-Book ดิจิทัลระดับพรีเมียม</title>
-  <!-- Google Fonts & Tailwind CSS -->
+  <title>Bookie House | คลัง E-Book สุดหรู อบอุ่นละมุนใจ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            thai: ['"IBM Plex Sans Thai"', 'sans-serif'],
-            heading: ['Prompt', '"IBM Plex Sans Thai"', 'sans-serif'],
-            price: ['Outfit', 'sans-serif'],
+            thai: ['Sarabun', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+            sans: ['Plus Jakarta Sans', 'Sarabun', 'sans-serif'],
           },
           colors: {
             glam: {
@@ -34,6 +33,7 @@
           animation: {
             'sparkle': 'sparkle 2.5s ease-in-out infinite',
             'shimmer': 'shimmer 3s infinite',
+            'float': 'float 4s ease-in-out infinite',
           },
           keyframes: {
             sparkle: {
@@ -50,19 +50,15 @@
     }
   </script>
   <style>
-    body { font-family: 'IBM Plex Sans Thai', sans-serif; background-color: #FAF4EB; color: #4A3437; }
-    .font-heading { font-family: 'Prompt', 'IBM Plex Sans Thai', sans-serif; }
-    .font-price { font-family: 'Outfit', sans-serif; }
-    
+    body { font-family: 'Sarabun', sans-serif; background-color: #FAF4EB; color: #4A3437; }
     .glam-card {
-      transition: all 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
       box-shadow: 0 4px 20px -2px rgba(159, 58, 83, 0.05);
     }
     .glam-card:hover {
       transform: translateY(-8px) scale(1.015);
       box-shadow: 0 20px 35px -8px rgba(159, 58, 83, 0.15), 0 0 15px rgba(223, 177, 91, 0.25);
     }
-    
     .shimmer-text {
       background: linear-gradient(90deg, #DFB15B 0%, #FFF3D6 50%, #DFB15B 100%);
       background-size: 200% auto;
@@ -70,27 +66,24 @@
       -webkit-background-clip: text;
       animation: shimmer 4s linear infinite;
     }
-
     .glass-bar {
       background: rgba(255, 253, 249, 0.88);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(229, 138, 153, 0.2);
+      border-bottom: 1px solid rgba(229, 138, 153, 0.25);
     }
   </style>
 </head>
 <body class="selection:bg-glam-roseLight selection:text-glam-roseDark">
 
-  <!-- ==================== Header ==================== -->
+  <!-- Header & Navbar -->
   <header class="glass-bar sticky top-0 z-40 shadow-sm transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
-      
-      <!-- Brand Logo -->
       <div class="flex items-center space-x-3 cursor-pointer group" onclick="navigate('shop')">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-glam-roseLight via-white to-glam-goldShine border border-glam-rose/40 flex items-center justify-center text-xl shadow-sm group-hover:rotate-12 transition duration-300">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-glam-roseLight via-white to-glam-goldShine border border-glam-rose/40 flex items-center justify-center text-2xl shadow-sm group-hover:rotate-12 transition duration-300">
           ✨
         </div>
         <div>
-          <span class="text-2xl font-price font-extrabold tracking-tight text-glam-roseDark group-hover:text-glam-champagne transition duration-200">
+          <span class="text-2xl font-serif font-bold tracking-tight text-glam-roseDark group-hover:text-glam-champagne transition duration-200">
             Bookie House
           </span>
           <span id="role-badge" class="ml-2 text-[10px] font-bold tracking-wider bg-glam-roseLight text-glam-roseDark border border-glam-rose/30 px-2.5 py-0.5 rounded-full shadow-sm">
@@ -99,54 +92,38 @@
         </div>
       </div>
 
-      <!-- Navigation Links -->
       <div class="flex items-center space-x-5 text-sm font-semibold">
-        <button onclick="navigate('shop')" class="text-glam-deepText hover:text-glam-rose transition">
-          หน้าร้าน
-        </button>
-        <button id="nav-orders-btn" onclick="navigate('orders')" class="hidden text-glam-deepText hover:text-glam-rose transition">
-          คำสั่งซื้อของฉัน
-        </button>
-        <button id="nav-admin-btn" onclick="navigate('admin')" class="hidden bg-gradient-to-r from-glam-roseDark to-slate-800 text-white font-medium px-3.5 py-1.5 rounded-full text-xs shadow-sm hover:shadow transition">
-          ⚙️ แอดมินหลังบ้าน
-        </button>
+        <button onclick="navigate('shop')" class="text-glam-deepText hover:text-glam-rose transition">หน้าร้าน</button>
+        <button id="nav-orders-btn" onclick="navigate('orders')" class="hidden text-glam-deepText hover:text-glam-rose transition">คำสั่งซื้อของฉัน</button>
+        <button id="nav-admin-btn" onclick="navigate('admin')" class="hidden bg-gradient-to-r from-glam-roseDark to-slate-800 text-white font-medium px-3.5 py-1.5 rounded-full text-xs shadow-sm hover:shadow transition">⚙️ แอดมินหลังบ้าน</button>
 
-        <!-- Cart Button -->
         <button id="cart-button" onclick="toggleCartModal()" class="relative bg-white hover:bg-glam-roseLight/50 border border-glam-rose/40 text-glam-roseDark px-4 py-2 rounded-2xl flex items-center space-x-2 transition shadow-sm hover:scale-105 active:scale-95 duration-200">
           <span class="text-base">🛍️</span>
           <span class="text-xs font-bold">ตะกร้า</span>
-          <span id="cart-badge" class="bg-glam-roseDark text-white font-bold font-price text-xs px-2 py-0.5 rounded-full shadow">0</span>
+          <span id="cart-badge" class="bg-glam-roseDark text-white font-bold text-[11px] px-2 py-0.5 rounded-full shadow">0</span>
         </button>
 
-        <!-- Auth Section -->
         <div id="auth-buttons" class="flex items-center space-x-2">
-          <button onclick="openAuthModal('login')" class="text-xs text-glam-deepText hover:text-glam-rose font-bold px-3 py-2 transition">
-            เข้าสู่ระบบ
-          </button>
-          <button onclick="openAuthModal('register')" class="text-xs bg-gradient-to-r from-glam-rose to-glam-roseDark text-white font-bold px-4 py-2 rounded-2xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition duration-200">
-            สมัครสมาชิก
-          </button>
+          <button onclick="openAuthModal('login')" class="text-xs text-glam-deepText hover:text-glam-rose font-bold px-3 py-2 transition">เข้าสู่ระบบ</button>
+          <button onclick="openAuthModal('register')" class="text-xs bg-gradient-to-r from-glam-rose to-glam-roseDark text-white font-bold px-4 py-2 rounded-2xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition duration-200">สมัครสมาชิก</button>
         </div>
 
         <div id="user-profile" class="hidden items-center space-x-3 bg-white border border-glam-rose/20 px-3.5 py-1.5 rounded-2xl shadow-sm">
-          <div class="w-7 h-7 rounded-full bg-glam-roseLight text-glam-roseDark flex items-center justify-center font-bold text-xs border border-glam-rose/30">
-            🌸
-          </div>
+          <div class="w-7 h-7 rounded-full bg-glam-roseLight text-glam-roseDark flex items-center justify-center font-bold text-xs border border-glam-rose/30">🌸</div>
           <span id="user-display-name" class="text-xs text-glam-roseDark font-bold"></span>
           <button onclick="logout()" class="text-[11px] text-stone-400 hover:text-rose-600 transition font-medium">ออก</button>
         </div>
-
       </div>
     </div>
   </header>
 
-  <!-- ==================== Main Views ==================== -->
+  <!-- เนื้อหาหลัก -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <!-- 1. VIEW: SHOP -->
+    <!-- 1. VIEW: หน้าร้าน (Shop View) -->
     <section id="view-shop" class="space-y-10">
       
-      <!-- HERO BANNER -->
+      <!-- HERO BANNER โทนอบอุ่น มีดาววิบวับ -->
       <div class="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#41272C] via-[#5C323C] to-[#2B171B] text-white p-8 md:p-14 shadow-xl border border-glam-rose/20">
         <div class="absolute top-6 left-10 text-amber-200 text-xl animate-sparkle">✨</div>
         <div class="absolute bottom-10 right-16 text-rose-200 text-2xl animate-sparkle" style="animation-delay: 1.2s;">✨</div>
@@ -156,28 +133,15 @@
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-glam-goldShine text-xs font-semibold tracking-wide">
             <span>💖 The Glamour Digital Bookshelf</span>
           </div>
-
-          <h1 class="text-3xl md:text-5xl font-heading font-extrabold tracking-tight leading-snug">
+          <h1 class="text-3xl md:text-5xl font-serif font-bold tracking-normal leading-snug">
             สัมผัสสุนทรียะแห่งการอ่าน <br>
-            <span class="shimmer-text">ในโลก E-Book ระดับเอ็กซ์คลูซีฟ</span>
+            <span class="shimmer-text font-serif italic">ในโลก E-Book ระดับเอ็กซ์คลูซีฟ</span>
           </h1>
-
-          <p class="text-rose-100/90 text-sm md:text-base leading-relaxed font-light">
-            คัดสรรหนังสือดิจิทัลชั้นยอด ทั้งเทคโนโลยี ธุรกิจ การเงิน และนิยายชวนฝัน พร้อมระบบชำระเงินจำลองและดาวน์โหลดไฟล์อ่านได้ทันที
+          <p class="text-rose-100/80 text-sm md:text-base leading-relaxed font-light">
+            คัดสรรหนังสือดิจิทัลคุณภาพ คลิกดูเรื่องย่อและรีวิวจากผู้อ่าน พร้อมดาวน์โหลดไฟล์อ่านได้ทันทีเมื่อยืนยันชำระเงิน
           </p>
-
-          <div class="pt-2 flex flex-wrap gap-4 text-xs text-rose-200/90 font-medium">
-            <span class="flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
-              ☕ อบอุ่น สบายตา
-            </span>
-            <span class="flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
-              🔒 ดาวน์โหลดปลอดภัยตามสิทธิ์จริง
-            </span>
-          </div>
         </div>
-
         <div class="absolute -right-16 -top-16 w-80 h-80 bg-glam-rose/25 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute right-1/4 -bottom-20 w-72 h-72 bg-glam-champagne/20 rounded-full blur-3xl pointer-events-none"></div>
       </div>
 
       <!-- แถบค้นหาและตัวกรอง -->
@@ -199,33 +163,31 @@
         </div>
       </div>
 
-      <!-- รายการ E-Book -->
+      <!-- รายการหนังสือ -->
       <div>
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-heading font-bold text-glam-roseDark flex items-center gap-2">
+          <h2 class="text-xl font-serif font-bold text-glam-roseDark flex items-center gap-2">
             <span>✨ คลังหนังสือแนะนำ</span>
-            <span class="text-xs font-normal text-stone-500 bg-glam-roseLight/60 px-2.5 py-0.5 rounded-full font-price font-semibold">(<span id="book-count-label">12</span> เล่ม)</span>
+            <span class="text-xs font-sans font-normal text-stone-500 bg-glam-roseLight/60 px-2.5 py-0.5 rounded-full">(<span id="book-count-label">12</span> เล่ม)</span>
           </h2>
-          <span class="text-xs text-stone-400 font-light">เฉพาะหนังสือที่เปิดสถานะพร้อมขาย</span>
+          <span class="text-xs text-stone-400 font-light">คลิกที่ปกหรือชื่อเพื่อดูเนื้อเรื่องย่อและรีวิว 📖</span>
         </div>
 
         <div id="books-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7"></div>
       </div>
-
     </section>
 
-    <!-- 2. VIEW: ORDERS & DOWNLOAD -->
+    <!-- 2. VIEW: คำสั่งซื้อและสิทธิ์ดาวน์โหลด -->
     <section id="view-orders" class="hidden space-y-6">
       <div class="flex justify-between items-end border-b border-glam-roseLight pb-4">
         <div>
           <span class="text-xs font-bold uppercase tracking-wider text-glam-rose">My Library</span>
-          <h2 class="text-2xl font-heading font-bold text-glam-roseDark mt-1">ประวัติคำสั่งซื้อและสิทธิ์ดาวน์โหลด E-Book</h2>
+          <h2 class="text-2xl font-serif font-bold text-glam-roseDark mt-1">ประวัติคำสั่งซื้อและสิทธิ์ดาวน์โหลด E-Book</h2>
         </div>
         <div class="text-xs bg-glam-roseLight/80 text-glam-roseDark px-3 py-1.5 rounded-full font-medium">
           🔒 สิทธิ์ดาวน์โหลดจะเปิดให้อัตโนมัติเมื่อยืนยันชำระเงิน
         </div>
       </div>
-
       <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
         <table class="w-full text-left border-collapse text-sm">
           <thead>
@@ -243,17 +205,21 @@
       </div>
     </section>
 
-    <!-- 3. VIEW: ADMIN CONTROL PANEL -->
+    <!-- 3. VIEW: ศูนย์ควบคุมแอดมินหลังบ้าน -->
     <section id="view-admin" class="hidden space-y-8">
       <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-glam-roseLight pb-5">
         <div>
           <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Boutique Administration</span>
-          <h2 class="text-2xl font-heading font-bold text-glam-roseDark mt-1">ระบบบริหารจัดการร้าน (Admin Control)</h2>
+          <h2 class="text-2xl font-serif font-bold text-glam-roseDark mt-1">ระบบบริหารจัดการร้าน (Admin Control)</h2>
         </div>
-        <div class="inline-flex rounded-2xl p-1 bg-white border border-glam-roseLight shadow-sm text-xs font-bold">
-          <button onclick="switchAdminTab('orders')" id="btn-admin-tab-orders" class="px-4 py-2 rounded-xl bg-glam-roseDark text-white transition">จัดการคำสั่งซื้อ</button>
-          <button onclick="switchAdminTab('books')" id="btn-admin-tab-books" class="px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition">จัดการ E-Book</button>
-          <button onclick="switchAdminTab('reports')" id="btn-admin-tab-reports" class="px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition">รายงานวิเคราะห์ (4 Reports)</button>
+        <div class="flex items-center gap-3">
+          <button onclick="openAddBookModal()" class="bg-gradient-to-r from-emerald-600 to-teal-700 hover:brightness-110 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-sm transition flex items-center gap-1.5">
+            <span>➕ เพิ่ม E-Book เล่มใหม่</span>
+          </button>
+          <div class="inline-flex rounded-2xl p-1 bg-white border border-glam-roseLight shadow-sm text-xs font-bold">
+            <button onclick="switchAdminTab('orders')" id="btn-admin-tab-orders" class="px-4 py-2 rounded-xl bg-glam-roseDark text-white transition">จัดการคำสั่งซื้อ</button>
+            <button onclick="switchAdminTab('reports')" id="btn-admin-tab-reports" class="px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition">รายงานวิเคราะห์ (4 Reports)</button>
+          </div>
         </div>
       </div>
 
@@ -261,30 +227,31 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
           <span class="text-xs text-stone-500 font-medium">ยอดขายรวมสุทธิ</span>
-          <p class="text-2xl font-bold font-price text-glam-roseDark mt-1">฿11,540.00</p>
+          <p class="text-2xl font-bold font-serif text-glam-roseDark mt-1">฿11,540.00</p>
           <span class="text-[11px] text-emerald-600 font-semibold">ออเดอร์ที่ยืนยันแล้ว</span>
         </div>
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
           <span class="text-xs text-stone-500 font-medium">คำสั่งซื้อในระบบทั้งหมด</span>
-          <p class="text-2xl font-bold font-price text-slate-800 mt-1">32 รายการ</p>
+          <p class="text-2xl font-bold font-serif text-slate-800 mt-1">32 รายการ</p>
           <span class="text-[11px] text-stone-400">ครบตามเกณฑ์ 30+</span>
         </div>
         <div class="bg-glam-roseLight/40 p-5 rounded-3xl border border-glam-rose/30 shadow-sm">
           <span class="text-xs text-glam-roseDark font-medium">รออนุมัติชำระเงิน</span>
-          <p class="text-2xl font-bold font-price text-glam-roseDark mt-1" id="admin-pending-badge">2 รายการ</p>
-          <span class="text-[11px] text-rose-600 font-semibold">ตรวจสลิปก่อนอนุมัติ</span>
+          <p class="text-2xl font-bold font-serif text-glam-roseDark mt-1" id="admin-pending-badge">2 รายการ</p>
+          <span class="text-[11px] text-rose-600 font-semibold">กดอนุมัติเพื่อปลดล็อกลิงก์</span>
         </div>
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
           <span class="text-xs text-stone-500 font-medium">หนังสือในระบบ</span>
-          <p class="text-2xl font-bold font-price text-glam-champagne mt-1" id="admin-books-count">12 เล่ม</p>
+          <p class="text-2xl font-bold font-serif text-glam-champagne mt-1" id="admin-total-books">12 เล่ม</p>
           <span class="text-[11px] text-stone-400">4 หมวดหมู่ครบถ้วน</span>
         </div>
       </div>
 
+      <!-- จัดการออเดอร์ -->
       <div id="admin-subtab-orders" class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
         <div class="p-5 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
-          <h3 class="font-bold font-heading text-glam-roseDark text-sm">การตรวจสอบหลักฐานจำลองและอนุมัติออเดอร์</h3>
-          <span class="text-xs text-stone-400">คลิก "ดูสลิป" เพื่อตรวจหลักฐานก่อนกดยืนยัน</span>
+          <h3 class="font-bold text-glam-roseDark text-sm">การตรวจสอบหลักฐานและอนุมัติออเดอร์</h3>
+          <span class="text-xs text-stone-400">กดอนุมัติเพื่อทดสอบการเปลี่ยนสถานะ</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
@@ -295,7 +262,6 @@
                 <th class="py-3.5 px-4">วันที่</th>
                 <th class="py-3.5 px-4">ยอดเงิน</th>
                 <th class="py-3.5 px-4">วิธีชำระ</th>
-                <th class="py-3.5 px-4">หลักฐานสลิป</th>
                 <th class="py-3.5 px-4">สถานะ</th>
                 <th class="py-3.5 px-4 text-center">จัดการ</th>
               </tr>
@@ -305,250 +271,250 @@
         </div>
       </div>
 
-      <div id="admin-subtab-books" class="hidden space-y-6">
-        <div class="flex justify-between items-center bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
-          <div>
-            <h3 class="font-bold font-heading text-glam-roseDark text-base">จัดการแคตตาล็อก E-Book</h3>
-            <p class="text-xs text-stone-400">เพิ่มรายการหนังสือใหม่ หรือเปิด/ปิดการเผยแพร่หน้าร้าน</p>
-          </div>
-          <button onclick="openAddBookModal()" class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-sm hover:brightness-105 transition flex items-center gap-1.5 font-heading">
-            <span>+ เพิ่ม E-Book เล่มใหม่</span>
-          </button>
-        </div>
-
-        <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
-          <table class="w-full text-left border-collapse text-sm">
-            <thead>
-              <tr class="bg-glam-milk text-glam-roseDark text-xs uppercase font-bold">
-                <th class="py-3.5 px-4">ปก</th>
-                <th class="py-3.5 px-4">ชื่อหนังสือ</th>
-                <th class="py-3.5 px-4">หมวดหมู่</th>
-                <th class="py-3.5 px-4">ผู้แต่ง</th>
-                <th class="py-3.5 px-4">ราคา</th>
-                <th class="py-3.5 px-4 text-center">สถานะการขาย</th>
-                <th class="py-3.5 px-4 text-center">การจัดการ</th>
-              </tr>
-            </thead>
-            <tbody id="admin-books-tbody" class="divide-y divide-glam-milk"></tbody>
-          </table>
-        </div>
-      </div>
-
+      <!-- รายงานวิเคราะห์ 4 รายการ -->
       <div id="admin-subtab-reports" class="hidden space-y-6">
-        <div class="flex justify-between items-center bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
-          <div>
-            <h3 class="font-bold font-heading text-glam-roseDark text-base">รายงานเชิงวิเคราะห์ข้อมูลในระบบจริง</h3>
-            <p class="text-xs text-stone-400">สร้างจากคำสั่ง SQL: JOIN, GROUP BY, SUM, HAVING, AVG</p>
-          </div>
-          <button onclick="exportReportsCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-2xl shadow-sm transition flex items-center gap-1.5 font-heading">
-            <span>📥 Export เป็นไฟล์ CSV</span>
-          </button>
-        </div>
-
         <div class="bg-white p-6 rounded-3xl border border-glam-roseLight shadow-sm">
-          <h4 class="font-bold font-heading text-glam-roseDark text-base mb-1">📊 รายงานที่ 1: ยอดขายตามช่วงเวลา (Sales over Time)</h4>
+          <h4 class="font-bold font-serif text-glam-roseDark text-base mb-1">📊 รายงานที่ 1: ยอดขายตามช่วงเวลา (Sales over Time)</h4>
           <span class="text-[11px] font-mono text-glam-rose bg-glam-roseLight/60 px-2 py-0.5 rounded">SQL: JOIN, GROUP BY, SUM, COUNT, AVG</span>
-          <p class="text-xs text-stone-500 my-2">ยอดขายเฉลี่ยรายวัน: <b class="font-price">฿540.00</b> | ออเดอร์เฉลี่ย: <b class="font-price">1.8 บิล / วัน</b></p>
+          <p class="text-xs text-stone-500 my-2">ยอดขายเฉลี่ยรายวัน: <b>฿540.00</b> | ออเดอร์เฉลี่ย: <b>1.8 บิล / วัน</b></p>
         </div>
         <div class="bg-white p-6 rounded-3xl border border-glam-roseLight shadow-sm">
-          <h4 class="font-bold font-heading text-glam-roseDark text-base mb-1">🏆 รายงานที่ 2: 5 อันดับ E-Book ขายดีที่สุด (Top Sellers)</h4>
+          <h4 class="font-bold font-serif text-glam-roseDark text-base mb-1">🏆 รายงานที่ 2: 5 อันดับ E-Book ขายดีที่สุด (Top Sellers)</h4>
           <span class="text-[11px] font-mono text-glam-rose bg-glam-roseLight/60 px-2 py-0.5 rounded">SQL: JOIN, GROUP BY, SUM, LIMIT 5</span>
           <p class="text-xs text-stone-500 my-2">อันดับ 1: Modern Web Development (6 เล่ม) | อันดับ 2: Mastering SQL (6 เล่ม)</p>
         </div>
         <div class="bg-white p-6 rounded-3xl border border-glam-roseLight shadow-sm">
-          <h4 class="font-bold font-heading text-glam-roseDark text-base mb-1">📚 รายงานที่ 3: สรุปยอดขายตามหมวดหมู่ (Sales by Category)</h4>
+          <h4 class="font-bold font-serif text-glam-roseDark text-base mb-1">📚 รายงานที่ 3: สรุปยอดขายตามหมวดหมู่ (Sales by Category)</h4>
           <span class="text-[11px] font-mono text-glam-rose bg-glam-roseLight/60 px-2 py-0.5 rounded">SQL: JOIN หลายตาราง, GROUP BY, SUM</span>
-          <p class="text-xs text-stone-500 my-2">หมวดขายดีสูงสุด: <b>เทคโนโลยีและการเขียนโค้ด (ยอดขาย <span class="font-price">฿5,760.00</span>)</b></p>
+          <p class="text-xs text-stone-500 my-2">หมวดขายดีสูงสุด: <b>เทคโนโลยีและการเขียนโค้ด (ยอดขาย ฿5,760.00)</b></p>
         </div>
         <div class="bg-white p-6 rounded-3xl border border-glam-roseLight shadow-sm">
-          <h4 class="font-bold font-heading text-glam-roseDark text-base mb-1">👥 รายงานที่ 4: พฤติกรรมลูกค้ายอดซื้อสูง (Customer Behavior)</h4>
+          <h4 class="font-bold font-serif text-glam-roseDark text-base mb-1">👥 รายงานที่ 4: พฤติกรรมลูกค้ายอดซื้อสูง (Customer Behavior)</h4>
           <span class="text-[11px] font-mono text-glam-rose bg-glam-roseLight/60 px-2 py-0.5 rounded">SQL: JOIN, GROUP BY, HAVING total_spent >= 500</span>
-          <p class="text-xs text-stone-500 my-2">ลูกค้าอันดับ 1: <b>คุณสมชาย สายอ่าน (4 คำสั่งซื้อ / ยอดรวม <span class="font-price">฿1,730.00</span>)</b></p>
+          <p class="text-xs text-stone-500 my-2">ลูกค้าอันดับ 1: <b>คุณสมชาย สายอ่าน (4 คำสั่งซื้อ / ยอดรวม ฿1,730.00)</b></p>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- ==================== Modal ตะกร้า ==================== -->
-  <div id="cart-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-glam-roseLight">
+  <!-- ==================== MODAL 1: หน้ารายละเอียดหนังสือ + รีวิว ==================== -->
+  <div id="book-detail-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-glam-roseLight">
       <div class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white px-6 py-4 flex justify-between items-center">
-        <h3 class="text-base font-bold font-heading flex items-center gap-2">
-          <span>🛍️ ตะกร้าหนังสือของคุณ</span>
+        <h3 class="text-base font-bold font-serif flex items-center gap-2">
+          <span>📖 ข้อมูลหนังสือและรีวิวจากผู้อ่าน</span>
         </h3>
-        <button onclick="toggleCartModal()" class="text-rose-200 hover:text-white text-lg">✕</button>
+        <button onclick="closeBookDetailModal()" class="text-rose-200 hover:text-white text-lg">✕</button>
       </div>
-      
-      <div id="cart-items-container" class="p-6 overflow-y-auto space-y-4 flex-1"></div>
 
-      <div class="p-6 bg-glam-cream border-t border-glam-roseLight space-y-4">
-        <div class="flex justify-between items-center">
-          <span class="text-stone-600 text-sm">ยอดชำระสุทธิ:</span>
-          <span id="cart-total-price" class="text-2xl font-bold font-price text-glam-roseDark">฿0.00</span>
-        </div>
-        
-        <div class="space-y-2">
-          <label class="text-xs font-bold text-glam-roseDark uppercase">วิธีชำระเงินจำลอง (Mock Payment):</label>
-          <select id="checkout-method" class="w-full bg-white border border-glam-roseLight rounded-xl p-2.5 text-xs font-medium text-stone-700">
-            <option value="พร้อมเพย์จำลอง">⚡ พร้อมเพย์จำลอง (PromptPay Mock QR)</option>
-            <option value="โอนผ่านธนาคารจำลอง">🏦 โอนผ่านบัญชีธนาคารจำลอง</option>
-          </select>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="text-xs font-bold text-glam-roseDark uppercase flex justify-between">
-            <span>แนบหลักฐานการโอนเงินจำลอง:</span>
-            <span class="text-[10px] text-stone-400 font-normal">จำลองไฟล์ภาพสลิป</span>
-          </label>
-          <input type="file" id="checkout-slip-input" accept="image/*" class="w-full bg-white border border-glam-roseLight rounded-xl p-2 text-xs text-stone-500 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-glam-roseLight file:text-glam-roseDark cursor-pointer">
-          <p class="text-[11px] text-glam-roseDark bg-glam-roseLight/70 p-2 rounded-xl border border-glam-rose/20">
-            * สภาพแวดล้อมจำลองเพื่อการเรียนการสอน ไม่มีการตัดเงินหรือบันทึกบัตรจริง
-          </p>
+      <div class="p-6 overflow-y-auto space-y-6 flex-1 bg-glam-cream/30">
+        <!-- ข้อมูลส่วนบน: ปก + สรุป -->
+        <div class="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+          <img id="detail-cover" src="" alt="ปกหนังสือ" class="w-36 h-48 sm:w-44 sm:h-60 object-cover rounded-2xl shadow-md border border-glam-roseLight">
+          <div class="flex-1 space-y-2 text-center sm:text-left">
+            <span id="detail-badge" class="inline-block bg-glam-roseLight text-glam-roseDark text-[10px] font-bold px-3 py-1 rounded-full uppercase"></span>
+            <h2 id="detail-title" class="text-xl font-bold font-serif text-glam-deepText"></h2>
+            <p class="text-xs text-stone-500">ผู้แต่ง: <span id="detail-author" class="font-semibold text-glam-roseDark"></span></p>
+            <p class="text-xs text-stone-500">หมวดหมู่: <span id="detail-category" class="font-medium text-stone-700"></span></p>
+            <div class="flex items-center justify-center sm:justify-start gap-1 text-amber-500 text-sm py-1">
+              <span id="detail-stars">★★★★★</span>
+              <span id="detail-rating-num" class="text-xs text-stone-600 font-bold ml-1"></span>
+              <span class="text-xs text-stone-400 font-light">(จาก 18 รีวิว)</span>
+            </div>
+            <div class="pt-2">
+              <span class="text-xs text-stone-400">ราคาพิเศษฉบับ E-Book:</span>
+              <p id="detail-price" class="text-2xl font-serif font-bold text-glam-roseDark"></p>
+            </div>
+          </div>
         </div>
 
-        <button onclick="checkout()" class="w-full bg-gradient-to-r from-glam-rose to-glam-roseDark hover:brightness-105 text-white font-bold py-3.5 rounded-2xl transition shadow-md text-sm font-heading">
-          ยืนยันการสั่งซื้อและแนบหลักฐาน ✨
-        </button>
+        <!-- เรื่องย่อ / คำอธิบาย -->
+        <div class="bg-white p-5 rounded-2xl border border-glam-roseLight/70 space-y-2 shadow-sm">
+          <h4 class="font-bold text-xs uppercase tracking-wider text-glam-roseDark">📝 เรื่องย่อ / เนื้อหาโดยสังเขป</h4>
+          <p id="detail-description" class="text-xs text-stone-600 leading-relaxed font-light"></p>
+        </div>
+
+        <!-- ความคิดเห็นและรีวิวจากนักอ่าน -->
+        <div class="bg-white p-5 rounded-2xl border border-glam-roseLight/70 space-y-3 shadow-sm">
+          <div class="flex justify-between items-center">
+            <h4 class="font-bold text-xs uppercase tracking-wider text-glam-roseDark">💬 รีวิวจากผู้อ่านที่ซื้อจริง</h4>
+            <span class="text-[11px] text-emerald-600 font-bold">✓ ยืนยันการสั่งซื้อแล้ว</span>
+          </div>
+          
+          <div class="space-y-3 divide-y divide-glam-milk text-xs">
+            <div class="pt-2">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-stone-700">คุณพิมพ์ชนก น.</span>
+                <span class="text-amber-500">★★★★★</span>
+              </div>
+              <p class="text-stone-600 font-light">"เนื้อหาเขียนเข้าใจง่ายมากค่ะ ตัวอย่างโค้ดและคำอธิบายละเอียด ดาวน์โหลดเป็น PDF เปิดอ่านบน iPad ได้สบายตามาก คุ้มค่าราคามากค่ะ"</p>
+            </div>
+            <div class="pt-2">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-stone-700">คุณธนพร ท.</span>
+                <span class="text-amber-500">★★★★★</span>
+              </div>
+              <p class="text-stone-600 font-light">"ชอบความกระชับ ตรงประเด็น ไม่มีน้ำ เอาไปประยุกต์ใช้งานจริงได้ทันที แนะนำเลยค่ะเล่มนี้"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ปุ่ม Action ด้านล่าง -->
+      <div class="p-4 bg-glam-cream border-t border-glam-roseLight flex justify-end gap-3">
+        <button onclick="closeBookDetailModal()" class="px-5 py-2.5 rounded-xl border border-stone-300 text-stone-600 text-xs font-bold hover:bg-stone-50">ปิด</button>
+        <button id="detail-add-cart-btn" class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white text-xs font-bold px-6 py-2.5 rounded-xl shadow hover:brightness-110">🛍️ เพิ่มเล่มนี้ลงตะกร้า</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== Modal พรีวิวสลิป ==================== -->
-  <div id="slip-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[2rem] shadow-2xl p-6 border border-glam-roseLight text-center space-y-4">
-      <div class="flex justify-between items-center">
-        <h3 class="text-base font-bold font-heading text-glam-roseDark">หลักฐานการโอนเงินจำลอง</h3>
-        <button onclick="closeSlipModal()" class="text-stone-400 hover:text-stone-600 text-lg">✕</button>
-      </div>
-      <div class="p-2 bg-glam-cream rounded-2xl border border-glam-roseLight/80">
-        <img id="slip-modal-img" src="" alt="หลักฐานสลิป" class="w-full h-80 object-cover rounded-xl shadow-inner">
-      </div>
-      <p id="slip-modal-desc" class="text-xs text-stone-500"></p>
-      <button onclick="closeSlipModal()" class="w-full bg-glam-cream text-glam-deepText font-bold text-xs py-2.5 rounded-xl border border-glam-roseLight hover:bg-white transition">
-        ปิดหน้าต่าง
-      </button>
-    </div>
-  </div>
-
-  <!-- ==================== Modal เพิ่ม E-Book ==================== -->
+  <!-- ==================== MODAL 2: แอดมินเพิ่ม E-Book เล่มใหม่ ==================== -->
   <div id="add-book-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-[2.2rem] shadow-2xl p-7 border border-glam-roseLight space-y-4">
-      <div class="flex justify-between items-center">
-        <h3 class="text-lg font-heading font-bold text-glam-roseDark">เพิ่ม E-Book เล่มใหม่</h3>
-        <button onclick="closeAddBookModal()" class="text-stone-400 hover:text-stone-600 text-lg">✕</button>
+    <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-glam-roseLight">
+      <div class="bg-gradient-to-r from-emerald-600 to-teal-800 text-white px-6 py-4 flex justify-between items-center">
+        <h3 class="text-base font-bold font-serif flex items-center gap-2">
+          <span>➕ เพิ่ม E-Book เล่มใหม่ (Admin)</span>
+        </h3>
+        <button onclick="closeAddBookModal()" class="text-emerald-200 hover:text-white text-lg">✕</button>
       </div>
-      
-      <div class="space-y-3 text-xs">
+
+      <form onsubmit="handleAddNewBook(event)" class="p-6 space-y-3.5 text-xs max-h-[80vh] overflow-y-auto">
         <div>
-          <label class="block font-bold text-stone-600 mb-1">ชื่อหนังสือ E-Book:</label>
-          <input type="text" id="new-book-title" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs text-glam-deepText focus:outline-none focus:ring-2 focus:ring-glam-rose" placeholder="เช่น AI & Prompt Engineering">
+          <label class="block font-bold text-stone-700 mb-1">ชื่อหนังสือ (Title) *</label>
+          <input type="text" id="new-book-title" required placeholder="เช่น Next.js 15 Full Stack Mastery" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500">
         </div>
-        <div>
-          <label class="block font-bold text-stone-600 mb-1">ชื่อผู้แต่ง / นักเขียน:</label>
-          <input type="text" id="new-book-author" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs text-glam-deepText focus:outline-none focus:ring-2 focus:ring-glam-rose" placeholder="เช่น ดร. อนุชา พาเขียนโค้ด">
-        </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-bold text-stone-600 mb-1">หมวดหมู่:</label>
-            <select id="new-book-cat" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs text-glam-deepText">
-              <option value="1">เทคโนโลยี</option>
+            <label class="block font-bold text-stone-700 mb-1">หมวดหมู่ (Category) *</label>
+            <select id="new-book-cat" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs">
+              <option value="1">เทคโนโลยีและการเขียนโค้ด</option>
               <option value="2">ธุรกิจและการเงิน</option>
-              <option value="3">พัฒนาตนเอง</option>
+              <option value="3">พัฒนาตนเองและจิตวิทยา</option>
               <option value="4">นิยายและวรรณกรรม</option>
             </select>
           </div>
           <div>
-            <label class="block font-bold text-stone-600 mb-1">ราคา (บาท):</label>
-            <input type="number" id="new-book-price" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs font-price text-glam-deepText" placeholder="350.00" min="0">
+            <label class="block font-bold text-stone-700 mb-1">ราคา (Price บาท) *</label>
+            <input type="number" id="new-book-price" min="0" step="10" required placeholder="350" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500">
           </div>
         </div>
-        <div>
-          <label class="block font-bold text-stone-600 mb-1">ลิงก์ดาวน์โหลดไฟล์ (จำลอง):</label>
-          <input type="text" id="new-book-dl" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs text-glam-deepText" value="https://storage.bookiehouse.com/dl/new-book.pdf">
-        </div>
-      </div>
 
-      <button onclick="saveNewBook()" class="w-full bg-gradient-to-r from-glam-rose to-glam-roseDark text-white py-3 rounded-2xl font-bold text-xs shadow-md font-heading transition hover:brightness-105">
-        บันทึกรายการ E-Book เข้าสู่ฐานข้อมูล ✨
-      </button>
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">ชื่อผู้แต่ง (Author Name) *</label>
+          <input type="text" id="new-book-author" required placeholder="เช่น ดร. อนุชา พาเขียนโค้ด" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs">
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">ลิงก์ URL รูปภาพหน้าปก (Cover Image URL) *</label>
+          <input type="url" id="new-book-cover" required placeholder="https://images.unsplash.com/..." class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs font-mono">
+          <p class="text-[10px] text-stone-400 mt-1">สามารถใส่ลิงก์รูป Unsplash หรือรูปภาพจำลองได้</p>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">ลิงก์ดาวน์โหลดไฟล์ E-Book (File Download URL) *</label>
+          <input type="url" id="new-book-dl" required placeholder="https://storage.bookiehouse.com/dl/new-book.pdf" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs font-mono">
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">เรื่องย่อ / คำอธิบายหนังสือ (Description)</label>
+          <textarea id="new-book-desc" rows="3" placeholder="ระบุเนื้อหาย่อเพื่อดึงดูดผู้อ่าน..." class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-xs"></textarea>
+        </div>
+
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="closeAddBookModal()" class="px-4 py-2 border rounded-xl font-bold text-stone-500">ยกเลิก</button>
+          <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-xl shadow">บันทึก E-Book ใหม่ ✨</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- ==================== Modal ล็อกอิน / สมัครสมาชิก (Dynamic Mode) ==================== -->
-  <div id="auth-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-[2.2rem] shadow-2xl p-7 border border-glam-roseLight">
-      <div class="flex justify-between items-center mb-5">
-        <div>
-          <h3 id="auth-title" class="text-xl font-heading font-bold text-glam-roseDark">เข้าสู่ระบบ</h3>
-          <p id="auth-subtitle" class="text-xs text-stone-400 mt-0.5">ยินดีต้อนรับสู่ Bookie House</p>
-        </div>
-        <button onclick="closeAuthModal()" class="text-stone-400 hover:text-stone-600 text-lg">✕</button>
+  <!-- MODAL ตะกร้าสินค้า -->
+  <div id="cart-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-glam-roseLight">
+      <div class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white px-6 py-4 flex justify-between items-center">
+        <h3 class="text-base font-bold font-serif flex items-center gap-2">
+          <span>🛍️ ตะกร้าหนังสือของคุณ</span>
+        </h3>
+        <button onclick="toggleCartModal()" class="text-rose-200 hover:text-white text-lg">✕</button>
       </div>
-
-      <div class="space-y-3.5">
-        <!-- ช่องชื่อ-นามสกุล (จะแสดงเฉพาะตอนสมัครสมาชิก) -->
-        <div id="auth-fullname-group" class="hidden">
-          <label class="block text-xs font-bold text-stone-600 mb-1">ชื่อ-นามสกุล:</label>
-          <input type="text" id="auth-fullname" class="w-full bg-glam-cream border border-glam-roseLight rounded-2xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-glam-rose font-medium text-glam-deepText" placeholder="เช่น สุพิชญา ชาญน้ำคำ">
+      <div id="cart-items-container" class="p-6 overflow-y-auto space-y-4 flex-1"></div>
+      <div class="p-6 bg-glam-cream border-t border-glam-roseLight">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-stone-600 text-sm">ยอดชำระสุทธิ:</span>
+          <span id="cart-total-price" class="text-2xl font-bold font-serif text-glam-roseDark">฿0.00</span>
         </div>
+        <div class="space-y-2 mb-4">
+          <label class="text-xs font-bold text-glam-roseDark uppercase">วิธีชำระเงินจำลอง (Mock Payment):</label>
+          <select class="w-full bg-white border border-glam-roseLight rounded-xl p-2.5 text-xs font-medium text-stone-700">
+            <option>⚡ พร้อมเพย์จำลอง (PromptPay Mock QR)</option>
+            <option>🏦 โอนผ่านธนาคารจำลอง</option>
+          </select>
+          <p class="text-[11px] text-glam-roseDark bg-glam-roseLight/70 p-2 rounded-xl border border-glam-rose/20">
+            * สภาพแวดล้อมจำลองเพื่อการเรียนการสอน ไม่มีการตัดเงินหรือบันทึกบัตรจริง
+          </p>
+        </div>
+        <button onclick="checkout()" class="w-full bg-gradient-to-r from-glam-rose to-glam-roseDark hover:brightness-105 text-white font-bold py-3.5 rounded-2xl transition shadow-md text-sm">
+          ยืนยันการสั่งซื้อและชำระเงินจำลอง ✨
+        </button>
+      </div>
+    </div>
+  </div>
 
+  <!-- MODAL สมาชิก -->
+  <div id="auth-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl p-6 border border-glam-roseLight">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="auth-title" class="text-lg font-serif font-bold text-glam-roseDark">เข้าสู่ระบบ Bookie House</h3>
+        <button onclick="closeAuthModal()" class="text-stone-400 hover:text-stone-600">✕</button>
+      </div>
+      <div class="bg-glam-roseLight/40 border border-glam-rose/30 p-3.5 rounded-2xl mb-4 text-xs">
+        <p class="font-bold text-glam-roseDark mb-2">⚡ ทางลัดทดสอบระบบ (Quick Testing):</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="loginAs('customer')" class="bg-white hover:bg-glam-roseLight text-glam-roseDark border border-glam-rose/40 py-2 rounded-xl font-bold shadow-sm transition">🌸 ลูกค้า (somchai_s)</button>
+          <button onclick="loginAs('admin')" class="bg-glam-roseDark hover:bg-slate-900 text-amber-200 py-2 rounded-xl font-bold shadow-sm transition">👑 แอดมิน (admin_bookie)</button>
+        </div>
+      </div>
+      <div class="space-y-3">
         <div>
           <label class="block text-xs font-bold text-stone-600 mb-1">ชื่อผู้ใช้งาน (Username):</label>
-          <input type="text" id="auth-username" class="w-full bg-glam-cream border border-glam-roseLight rounded-2xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-glam-rose font-medium text-glam-deepText" placeholder="ระบุ username">
+          <input type="text" id="auth-username" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-glam-rose" placeholder="ระบุ username">
         </div>
-
         <div>
           <label class="block text-xs font-bold text-stone-600 mb-1">รหัสผ่าน (Password):</label>
-          <input type="password" id="auth-password" class="w-full bg-glam-cream border border-glam-roseLight rounded-2xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-glam-rose font-medium text-glam-deepText" placeholder="••••••••">
+          <input type="password" id="auth-password" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-glam-rose" placeholder="••••••••">
         </div>
-
-        <button id="auth-submit-btn" onclick="handleAuthSubmit()" class="w-full bg-gradient-to-r from-glam-rose to-glam-roseDark hover:brightness-105 text-white py-3 rounded-2xl font-bold text-sm shadow-md transition font-heading mt-2">
-          เข้าสู่ระบบ ✨
-        </button>
-
-        <div class="text-center pt-2">
-          <button id="auth-toggle-btn" onclick="toggleAuthMode()" class="text-xs text-glam-rose hover:text-glam-roseDark font-bold underline">
-            ยังไม่มีบัญชี? สมัครสมาชิกใหม่
-          </button>
-        </div>
+        <button onclick="loginWithInput()" class="w-full bg-glam-roseDark hover:bg-[#7D293E] text-white py-3 rounded-2xl font-bold text-sm shadow transition">เข้าสู่ระบบ</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== JS Logic ==================== -->
+  <!-- JavaScript -->
   <script>
     let currentUser = null;
-    let authMode = 'login'; // 'login' หรือ 'register'
-
-    // รายชื่อผู้ใช้ในฐานข้อมูล
-    let validUsers = [
-      { username: 'admin_bookie', password: 'password123', name: 'คุณแอดมิน Bookie House', role: 'admin' },
-      { username: 'somchai_s',    password: 'password123', name: 'คุณสมชาย สายอ่าน',        role: 'customer' },
-      { username: 'wanida_k',     password: 'password123', name: 'คุณวนิดา แก้วมณี',        role: 'customer' }
-    ];
 
     let books = [
-      { id: 1, title: 'Mastering SQL & Database Design', catId: 1, catName: 'เทคโนโลยี', price: 350.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.9, badge: '🔥 Best Seller', cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/sql-master.pdf', isActive: true },
-      { id: 2, title: 'Modern Web Development with React', catId: 1, catName: 'เทคโนโลยี', price: 420.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 5.0, badge: '⭐ Editor Pick', cover: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/react-web.pdf', isActive: true },
-      { id: 3, title: 'Python Data Analysis for Beginners', catId: 1, catName: 'เทคโนโลยี', price: 380.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.8, badge: '', cover: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/python-data.pdf', isActive: true },
-      { id: 4, title: 'การเงินง่ายๆ สำหรับมนุษย์เงินเดือน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 250.00, author: 'วิศรุต การเงินดี', rating: 4.9, badge: '🔥 Best Seller', cover: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/finance-salary.pdf', isActive: true },
-      { id: 5, title: 'Startup Blueprint: จาก 0 สู่ 100 ล้าน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 320.00, author: 'วิศรุต การเงินดี', rating: 4.7, badge: '', cover: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/startup-bp.pdf', isActive: true },
-      { id: 6, title: 'Digital Marketing Strategy 2026', catId: 2, catName: 'ธุรกิจและการเงิน', price: 290.00, author: 'วิศรุต การเงินดี', rating: 4.8, badge: '✨ New Release', cover: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/digital-mkt.pdf', isActive: true },
-      { id: 7, title: 'Atomic Habits: พลังแห่งนิสัยเล็กๆ', catId: 3, catName: 'พัฒนาตนเอง', price: 280.00, author: 'กุลดา จิตวิญญาณ', rating: 5.0, badge: '💖 Must Read', cover: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/atomic-habits.pdf', isActive: true },
-      { id: 8, title: 'The Art of Deep Work: ทำงานให้สำเร็จ', catId: 3, catName: 'พัฒนาตนเอง', price: 270.00, author: 'กุลดา จิตวิญญาณ', rating: 4.7, badge: '', cover: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/deep-work.pdf', isActive: true },
-      { id: 9, title: 'จิตวิทยาการสื่อสารในที่ทำงาน', catId: 3, catName: 'พัฒนาตนเอง', price: 260.00, author: 'กุลดา จิตวิญญาณ', rating: 4.8, badge: '', cover: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/work-comm.pdf', isActive: true },
-      { id: 10, title: 'มังกรไร้เงา ภาค 1: กำเนิดแดนสนธยา', catId: 4, catName: 'นิยายแฟนตาซี', price: 220.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/dragon-01.pdf', isActive: true },
-      { id: 11, title: 'มังกรไร้เงา ภาค 2: ศึกบัลลังก์มนตรา', catId: 4, catName: 'นิยายแฟนตาซี', price: 240.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '🔥 Hot', cover: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/dragon-02.pdf', isActive: true },
-      { id: 12, title: 'คดีฆาตกรรมห้องสมุดลับโบราณ', catId: 4, catName: 'สืบสวน', price: 230.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.8, badge: '', cover: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/library-mystery.pdf', isActive: true }
+      { id: 1, title: 'Mastering SQL & Database Design', catId: 1, catName: 'เทคโนโลยี', price: 350.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.9, badge: '🔥 Best Seller', desc: 'คู่มือออกแบบฐานข้อมูลเชิงสัมพันธ์ตั้งแต่ 1NF ถึง 3NF การเขียน Index และการ Tuning SQL Query สำหรับงานระดับโปรดักชันอย่างมืออาชีพ', cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/sql-master.pdf' },
+      { id: 2, title: 'Modern Web Development with React', catId: 1, catName: 'เทคโนโลยี', price: 420.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 5.0, badge: '⭐ Editor Pick', desc: 'ก้าวทันเทคโนโลยีเว็บยุคใหม่ด้วย React, Tailwind CSS และการเชื่อมต่อ RESTful APIs สร้าง Web App ที่ลื่นไหลและสวยงาม', cover: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/react-web.pdf' },
+      { id: 3, title: 'Python Data Analysis for Beginners', catId: 1, catName: 'เทคโนโลยี', price: 380.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.8, badge: '', desc: 'เริ่มต้นวิเคราะห์ข้อมูลและสร้าง Data Visualization ด้วย Pandas, Numpy และ Matplotlib จากโจทย์ธุรกิจจริง', cover: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/python-data.pdf' },
+      { id: 4, title: 'การเงินง่ายๆ สำหรับมนุษย์เงินเดือน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 250.00, author: 'วิศรุต การเงินดี', rating: 4.9, badge: '🔥 Best Seller', desc: 'แผนที่การเงินฉบับทำตามได้ทันที การจัดสรรเงินเดือน วางแผนภาษี และลงทุนกองทุนรวมเพื่อสร้างอิสรภาพทางการเงิน', cover: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/finance-salary.pdf' },
+      { id: 5, title: 'Startup Blueprint: จาก 0 สู่ 100 ล้าน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 320.00, author: 'วิศรุต การเงินดี', rating: 4.7, badge: '', desc: 'กลยุทธ์สร้างธุรกิจสตาร์ทอัพให้เติบโตแบบก้าวกระโดด การหา Product-Market Fit และเทคนิคการระดมทุนจาก VC', cover: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/startup-bp.pdf' },
+      { id: 6, title: 'Digital Marketing Strategy 2026', catId: 2, catName: 'ธุรกิจและการเงิน', price: 290.00, author: 'วิศรุต การเงินดี', rating: 4.8, badge: '✨ New Release', desc: 'เจาะลึกการทำการตลาดยุค AI อัลกอริทึม TikTok และการสร้าง Personal Branding ให้ติดตลาดอย่างยั่งยืน', cover: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/digital-mkt.pdf' },
+      { id: 7, title: 'Atomic Habits: พลังแห่งนิสัยเล็กๆ', catId: 3, catName: 'พัฒนาตนเอง', price: 280.00, author: 'กุลดา จิตวิญญาณ', rating: 5.0, badge: '💖 Must Read', desc: 'เปลี่ยนชีวิตให้สำเร็จได้ด้วยการปรับพฤติกรรมเพียงวันละ 1% วิธีสร้างอุปนิสัยที่ดีและกำจัดนิสัยที่ไม่ต้องการให้หมดไป', cover: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/atomic-habits.pdf' },
+      { id: 8, title: 'The Art of Deep Work: ทำงานให้สำเร็จ', catId: 3, catName: 'พัฒนาตนเอง', price: 270.00, author: 'กุลดา จิตวิญญาณ', rating: 4.7, badge: '', desc: 'ศิลปะการจดจ่อในโลกที่เต็มไปด้วยสิ่งรบกวน วิธีสร้างสมาธิขั้นสูงเพื่อผลิตผลงานคุณภาพในเวลาน้อยลง', cover: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/deep-work.pdf' },
+      { id: 9, title: 'จิตวิทยาการสื่อสารในที่ทำงาน', catId: 3, catName: 'พัฒนาตนเอง', price: 260.00, author: 'กุลดา จิตวิญญาณ', rating: 4.8, badge: '', desc: 'พูดอย่างไรให้ได้ใจคน เทคนิคการเจรจาต่อรอง การปฏิเสธอย่างสุภาพ และการสร้างความสัมพันธ์ที่มั่นคงในองค์กร', cover: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/work-comm.pdf' },
+      { id: 10, title: 'มังกรไร้เงา ภาค 1: กำเนิดแดนสนธยา', catId: 4, catName: 'นิยายแฟนตาซี', price: 220.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '', desc: 'การผจญภัยในดินแดนเวทมนตร์โบราณที่ถูกลืม เมื่อเด็กหนุ่มผู้มีสายเลือดมังกรต้องลุกขึ้นสู้เพื่อกอบกู้ความยุติธรรม', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/dragon-01.pdf' },
+      { id: 11, title: 'มังกรไร้เงา ภาค 2: ศึกบัลลังก์มนตรา', catId: 4, catName: 'นิยายแฟนตาซี', price: 240.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '🔥 Hot', desc: 'สงครามแย่งชิงบัลลังก์มนตราปะทุขึ้น พันธมิตรกลายเป็นศัตรู ความลับของพลังมังกรกำลังจะถูกเปิดเผยในเล่มนี้', cover: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/dragon-02.pdf' },
+      { id: 12, title: 'คดีฆาตกรรมห้องสมุดลับโบราณ', catId: 4, catName: 'สืบสวน', price: 230.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.8, badge: '', desc: 'ปริศนาการตายของบรรณารักษ์ชราในห้องหนังสือต้องห้ามที่มีกุญแจล็อกจากด้านใน ทุกหลักฐานนำไปสู่ความลับที่ไม่มีใครคาดคิด', cover: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/library-mystery.pdf' }
     ];
 
     let cart = [];
     let orders = [
-      { id: 101, username: 'somchai_s', customer: 'สมชาย สายอ่าน', date: '2026-08-10', items: ['Mastering SQL & Database Design'], total: 350.00, method: 'พร้อมเพย์จำลอง', status: 'confirmed', slipUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/sql-master.pdf' },
-      { id: 102, username: 'somchai_s', customer: 'สมชาย สายอ่าน', date: '2026-08-29', items: ['Atomic Habits: พลังแห่งนิสัยเล็กๆ'], total: 280.00, method: 'โอนผ่านธนาคารจำลอง', status: 'pending', slipUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=400&q=80', dlUrl: null },
-      { id: 103, username: 'wanida_k', customer: 'วนิดา แก้วมณี', date: '2026-08-29', items: ['Modern Web Development with React'], total: 420.00, method: 'พร้อมเพย์จำลอง', status: 'pending', slipUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=400&q=80', dlUrl: null },
-      { id: 104, username: 'somchai_s', customer: 'สมชาย สายอ่าน', date: '2026-08-30', items: ['Python Data Analysis for Beginners'], total: 380.00, method: 'พร้อมเพย์จำลอง', status: 'cancelled', slipUrl: null, dlUrl: null }
+      { id: 101, username: 'somchai_s', customer: 'สมชาย สายอ่าน', date: '2026-08-10', items: ['Mastering SQL & Database Design'], total: 350.00, method: 'พร้อมเพย์จำลอง', status: 'confirmed', dlUrl: 'https://storage.bookiehouse.com/dl/sql-master.pdf' },
+      { id: 102, username: 'somchai_s', customer: 'สมชาย สายอ่าน', date: '2026-08-29', items: ['Atomic Habits: พลังแห่งนิสัยเล็กๆ'], total: 280.00, method: 'โอนธนาคารจำลอง', status: 'pending', dlUrl: null },
+      { id: 103, username: 'wanida_k', customer: 'วนิดา แก้วมณี', date: '2026-08-29', items: ['Modern Web Development with React'], total: 420.00, method: 'พร้อมเพย์จำลอง', status: 'pending', dlUrl: null },
+      { id: 104, username: 'somchai_s', customer: 'สมชาย สายอ่าน', date: '2026-08-30', items: ['Python Data Analysis for Beginners'], total: 380.00, method: 'พร้อมเพย์จำลอง', status: 'cancelled', dlUrl: null }
     ];
 
     function navigate(view) {
@@ -574,103 +540,39 @@
         }
         document.getElementById('view-admin').classList.remove('hidden');
         renderAdminOrders();
-        renderAdminBooks();
       }
     }
 
-    // จัดการหน้าต่างล็อกอิน/สมัครสมาชิก
     function openAuthModal(mode) {
-      authMode = mode;
-      updateAuthModalUI();
-      document.getElementById('auth-fullname').value = '';
-      document.getElementById('auth-username').value = '';
-      document.getElementById('auth-password').value = '';
+      document.getElementById('auth-title').innerText = mode === 'login' ? 'เข้าสู่ระบบ Bookie House' : 'สมัครสมาชิกใหม่';
       document.getElementById('auth-modal').classList.remove('hidden');
     }
-
-    function toggleAuthMode() {
-      authMode = (authMode === 'login') ? 'register' : 'login';
-      updateAuthModalUI();
-    }
-
-    function updateAuthModalUI() {
-      const title = document.getElementById('auth-title');
-      const subtitle = document.getElementById('auth-subtitle');
-      const fullnameGroup = document.getElementById('auth-fullname-group');
-      const submitBtn = document.getElementById('auth-submit-btn');
-      const toggleBtn = document.getElementById('auth-toggle-btn');
-
-      if (authMode === 'register') {
-        title.innerText = 'สมัครสมาชิกใหม่';
-        subtitle.innerText = 'สร้างบัญชีเพื่อเริ่มเลือกซื้อ E-Book';
-        fullnameGroup.classList.remove('hidden');
-        submitBtn.innerText = 'ยืนยันสมัครสมาชิก ✨';
-        toggleBtn.innerText = 'มีบัญชีอยู่แล้ว? เข้าสู่ระบบที่นี่';
-      } else {
-        title.innerText = 'เข้าสู่ระบบ';
-        subtitle.innerText = 'ยินดีต้อนรับสู่ Bookie House';
-        fullnameGroup.classList.add('hidden');
-        submitBtn.innerText = 'เข้าสู่ระบบ ✨';
-        toggleBtn.innerText = 'ยังไม่มีบัญชี? สมัครสมาชิกใหม่';
-      }
-    }
-
     function closeAuthModal() {
       document.getElementById('auth-modal').classList.add('hidden');
     }
 
-    // ประมวลผลทั้งล็อกอินและสมัครสมาชิก
-    function handleAuthSubmit() {
+    function loginAs(role) {
+      if (role === 'admin') {
+        currentUser = { username: 'admin_bookie', name: 'คุณแอดมิน (Admin)', role: 'admin' };
+      } else {
+        currentUser = { username: 'somchai_s', name: 'คุณสมชาย (VIP)', role: 'customer' };
+      }
+      applyUserSession();
+      closeAuthModal();
+      if (role === 'admin') navigate('admin');
+      else navigate('shop');
+    }
+
+    function loginWithInput() {
       const u = document.getElementById('auth-username').value.trim();
-      const p = document.getElementById('auth-password').value.trim();
-
-      if (authMode === 'register') {
-        const fullname = document.getElementById('auth-fullname').value.trim();
-        if (!fullname || !u || !p) {
-          alert('กรุณากรอกข้อมูลให้ครบถ้วนทุกช่อง');
-          return;
-        }
-
-        // ตรวจสอบว่า username ซ้ำหรือไม่ (ตรงตาม UNIQUE constraint)
-        const exist = validUsers.find(user => user.username.toLowerCase() === u.toLowerCase());
-        if (exist) {
-          alert('❌ ชื่อผู้ใช้นี้ถูกใช้งานแล้ว กรุณาใช้ชื่ออื่น');
-          return;
-        }
-
-        // เพิ่มผู้ใช้ใหม่ลงในระบบ
-        const newUser = { username: u, password: p, name: fullname, role: 'customer' };
-        validUsers.push(newUser);
-        currentUser = { username: newUser.username, name: newUser.name, role: newUser.role };
-        
+      if (!u) { alert('กรุณากรอก Username'); return; }
+      if (u.toLowerCase().includes('admin')) {
+        loginAs('admin');
+      } else {
+        currentUser = { username: u, name: u, role: 'customer' };
         applyUserSession();
         closeAuthModal();
-        alert(`🎉 สมัครสมาชิกสำเร็จ! ยินดีต้อนรับคุณ ${newUser.name}`);
         navigate('shop');
-
-      } else {
-        // โหมดเข้าสู่ระบบ
-        if (!u || !p) {
-          alert('กรุณากรอกทั้งชื่อผู้ใช้และรหัสผ่าน');
-          return;
-        }
-
-        const found = validUsers.find(user => user.username === u && user.password === p);
-
-        if (found) {
-          currentUser = { username: found.username, name: found.name, role: found.role };
-          applyUserSession();
-          closeAuthModal();
-          if (found.role === 'admin') {
-            alert(`👑 ยินดีต้อนรับผู้ดูแลระบบ: ${found.name}`);
-            navigate('admin');
-          } else {
-            alert(`🌸 ยินดีต้อนรับคุณ: ${found.name}`);
-            navigate('shop');
-          }
-        } else {
-          alert('❌ ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง หรือกดสมัครสมาชิกใหม่');
-        }
       }
     }
 
@@ -719,16 +621,91 @@
       }
     }
 
+    // ฟังก์ชันเปิดดูรายละเอียด + รีวิว
+    function viewBookDetail(bookId) {
+      const b = books.find(x => x.id === bookId);
+      if (!b) return;
+
+      document.getElementById('detail-cover').src = b.cover;
+      document.getElementById('detail-title').innerText = b.title;
+      document.getElementById('detail-author').innerText = b.author;
+      document.getElementById('detail-category').innerText = b.catName;
+      document.getElementById('detail-price').innerText = `฿${b.price.toFixed(2)}`;
+      document.getElementById('detail-rating-num').innerText = b.rating;
+      document.getElementById('detail-description').innerText = b.desc || 'ไม่มีเนื้อหาโดยสังเขป';
+      
+      const badgeEl = document.getElementById('detail-badge');
+      if (b.badge) {
+        badgeEl.innerText = b.badge;
+        badgeEl.classList.remove('hidden');
+      } else {
+        badgeEl.classList.add('hidden');
+      }
+
+      const addBtn = document.getElementById('detail-add-cart-btn');
+      addBtn.onclick = () => {
+        addToCart(b.id);
+        closeBookDetailModal();
+      };
+
+      document.getElementById('book-detail-modal').classList.remove('hidden');
+    }
+
+    function closeBookDetailModal() {
+      document.getElementById('book-detail-modal').classList.add('hidden');
+    }
+
+    // ฟังก์ชันแอดมินเพิ่มหนังสือ
+    function openAddBookModal() {
+      document.getElementById('add-book-modal').classList.remove('hidden');
+    }
+    function closeAddBookModal() {
+      document.getElementById('add-book-modal').classList.add('hidden');
+    }
+
+    function handleAddNewBook(e) {
+      e.preventDefault();
+      const title = document.getElementById('new-book-title').value.trim();
+      const catId = parseInt(document.getElementById('new-book-cat').value);
+      const catNames = { 1: 'เทคโนโลยี', 2: 'ธุรกิจและการเงิน', 3: 'พัฒนาตนเอง', 4: 'นิยายแฟนตาซี' };
+      const price = parseFloat(document.getElementById('new-book-price').value);
+      const author = document.getElementById('new-book-author').value.trim();
+      const cover = document.getElementById('new-book-cover').value.trim();
+      const dlUrl = document.getElementById('new-book-dl').value.trim();
+      const desc = document.getElementById('new-book-desc').value.trim();
+
+      const newId = books.length + 1;
+      const newBook = {
+        id: newId,
+        title: title,
+        catId: catId,
+        catName: catNames[catId] || 'ทั่วไป',
+        price: price,
+        author: author,
+        rating: 5.0,
+        badge: '✨ New Book',
+        desc: desc || 'หนังสือคุณภาพคัดสรรใหม่จาก Bookie House',
+        cover: cover,
+        dlUrl: dlUrl
+      };
+
+      books.unshift(newBook);
+      alert(`🎉 เพิ่มหนังสือ "${title}" เรียบร้อยแล้ว! หน้าเว็บหน้าร้านจะแสดงรายการทันที`);
+      closeAddBookModal();
+      e.target.reset();
+      renderBooks();
+      document.getElementById('admin-total-books').innerText = `${books.length} เล่ม`;
+    }
+
     function renderBooks() {
       const s = document.getElementById('search-input').value.toLowerCase();
       const cat = document.getElementById('category-filter').value;
       const grid = document.getElementById('books-grid');
 
       const filtered = books.filter(b => {
-        const matchActive = b.isActive;
         const matchText = b.title.toLowerCase().includes(s) || b.author.toLowerCase().includes(s);
         const matchCat = cat === 'all' || b.catId.toString() === cat;
-        return matchActive && matchText && matchCat;
+        return matchText && matchCat;
       });
 
       document.getElementById('book-count-label').innerText = filtered.length;
@@ -739,12 +716,15 @@
       }
 
       grid.innerHTML = filtered.map(b => `
-        <div class="glam-card group bg-white rounded-[2rem] border border-glam-roseLight/90 overflow-hidden flex flex-col justify-between p-3.5 bg-gradient-to-b from-white via-white to-glam-cream/40 cursor-pointer">
-          <div class="relative overflow-hidden rounded-2xl aspect-[4/5] bg-stone-100 mb-3.5">
+        <div class="glam-card group bg-white rounded-[2rem] border border-glam-roseLight/90 overflow-hidden flex flex-col justify-between p-3.5 bg-gradient-to-b from-white via-white to-glam-cream/40">
+          
+          <div onclick="viewBookDetail(${b.id})" class="relative overflow-hidden rounded-2xl aspect-[4/5] bg-stone-100 mb-3.5 cursor-pointer">
             <img src="${b.cover}" alt="${b.title}" class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110 group-hover:rotate-1">
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition"></div>
-            ${b.badge ? `<span class="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-glam-roseDark font-bold text-[10px] uppercase px-2.5 py-1 rounded-full shadow border border-glam-rose/30 font-price">${b.badge}</span>` : ''}
-            <span class="absolute bottom-3 left-3 text-xs text-amber-200 font-semibold font-price flex items-center gap-1 drop-shadow">
+            
+            ${b.badge ? `<span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-glam-roseDark font-bold text-[10px] uppercase px-2.5 py-1 rounded-full shadow border border-glam-rose/30">${b.badge}</span>` : ''}
+            
+            <span class="absolute bottom-3 left-3 text-xs text-amber-200 font-semibold flex items-center gap-1 drop-shadow">
               ★ ${b.rating}
             </span>
             <span class="absolute bottom-3 right-3 text-[10px] bg-black/40 text-stone-200 px-2 py-0.5 rounded-full backdrop-blur-md border border-white/20">
@@ -753,7 +733,7 @@
           </div>
 
           <div class="px-2 flex-1 flex flex-col justify-between space-y-3">
-            <div>
+            <div onclick="viewBookDetail(${b.id})" class="cursor-pointer">
               <h3 class="font-bold text-glam-deepText leading-snug line-clamp-2 text-sm group-hover:text-glam-roseDark transition">
                 ${b.title}
               </h3>
@@ -765,13 +745,14 @@
             <div class="pt-3 border-t border-glam-roseLight/80 flex items-center justify-between">
               <div>
                 <span class="text-[10px] text-stone-400 block font-light">ราคาพิเศษ</span>
-                <span class="text-glam-roseDark font-price font-bold text-xl tracking-tight">฿${b.price.toFixed(2)}</span>
+                <span class="text-glam-roseDark font-serif font-bold text-lg">฿${b.price.toFixed(2)}</span>
               </div>
               <button onclick="addToCart(${b.id})" class="bg-gradient-to-r from-glam-rose to-glam-roseDark hover:brightness-110 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition duration-200 shadow-sm flex items-center gap-1 active:scale-95">
                 <span>+ ใส่ตะกร้า</span>
               </button>
             </div>
           </div>
+
         </div>
       `).join('');
     }
@@ -783,7 +764,7 @@
         return;
       }
       if (currentUser.role === 'admin') {
-        alert('บัญชีผู้ดูแลระบบไม่สามารถสั่งซื้อได้ กรุณาใช้บัญชีลูกค้า');
+        alert('บัญชีผู้ดูแลระบบไม่สามารถสั่งซื้อได้ กรุณาใช้บัญชีลูกค้าทั่วไป');
         return;
       }
       const b = books.find(x => x.id === bookId);
@@ -818,7 +799,7 @@
           <div class="flex items-center justify-between border-b border-glam-roseLight/70 pb-3">
             <div>
               <p class="font-bold text-glam-deepText text-sm leading-tight">${item.title}</p>
-              <p class="text-xs font-bold font-price text-glam-rose mt-0.5">฿${item.price.toFixed(2)}</p>
+              <p class="text-xs font-bold text-glam-rose mt-0.5">฿${item.price.toFixed(2)}</p>
             </div>
             <button onclick="removeFromCart(${item.id})" class="text-xs text-rose-400 hover:text-rose-600 font-medium px-2 py-1">ลบ</button>
           </div>
@@ -834,13 +815,6 @@
     function checkout() {
       if (cart.length === 0) return;
       const total = cart.reduce((sum, b) => sum + b.price, 0);
-      const method = document.getElementById('checkout-method').value;
-      const slipInput = document.getElementById('checkout-slip-input');
-      
-      const slipUrl = slipInput.files && slipInput.files[0] 
-        ? URL.createObjectURL(slipInput.files[0])
-        : 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=400&q=80';
-
       const newOrder = {
         id: orders.length + 101,
         username: currentUser.username,
@@ -848,18 +822,16 @@
         date: new Date().toISOString().split('T')[0],
         items: cart.map(c => c.title),
         total: total,
-        method: method,
-        slipUrl: slipUrl,
+        method: 'พร้อมเพย์จำลอง',
         status: 'pending',
         dlUrl: 'https://storage.bookiehouse.com/dl/ebook-sample.pdf'
       };
 
       orders.unshift(newOrder);
       cart = [];
-      slipInput.value = '';
       updateCartUI();
       toggleCartModal();
-      alert('🎉 สั่งซื้อและแนบหลักฐานจำลองสำเร็จ! สถานะคือ [รออนุมัติชำระเงิน] (แอดมินสามารถเปิดดูสลิปและกดยืนยันออเดอร์ได้)');
+      alert('🎉 สั่งซื้อสำเร็จ! ออเดอร์ของคุณอยู่ในสถานะ [รออนุมัติชำระเงิน] (ให้แอดมินกดอนุมัติเพื่อปลดล็อกลิงก์ดาวน์โหลด)');
       navigate('orders');
     }
 
@@ -890,9 +862,9 @@
         return `
           <tr class="hover:bg-glam-cream/50 transition">
             <td class="py-4 px-5 font-mono font-bold text-glam-roseDark">#ORD-${o.id}</td>
-            <td class="py-4 px-5 text-stone-500 font-price">${o.date}</td>
+            <td class="py-4 px-5 text-stone-500">${o.date}</td>
             <td class="py-4 px-5 font-medium text-glam-deepText">${o.items.join(', ')}</td>
-            <td class="py-4 px-5 font-bold font-price text-glam-roseDark">฿${o.total.toFixed(2)}</td>
+            <td class="py-4 px-5 font-bold font-serif text-glam-roseDark">฿${o.total.toFixed(2)}</td>
             <td class="py-4 px-5">${badge}</td>
             <td class="py-4 px-5 text-center">${action}</td>
           </tr>
@@ -901,25 +873,16 @@
     }
 
     function switchAdminTab(tab) {
-      document.getElementById('admin-subtab-orders').classList.add('hidden');
-      document.getElementById('admin-subtab-books').classList.add('hidden');
-      document.getElementById('admin-subtab-reports').classList.add('hidden');
-      
-      document.getElementById('btn-admin-tab-orders').className = 'px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition';
-      document.getElementById('btn-admin-tab-books').className = 'px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition';
-      document.getElementById('btn-admin-tab-reports').className = 'px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition';
-
       if (tab === 'orders') {
         document.getElementById('admin-subtab-orders').classList.remove('hidden');
+        document.getElementById('admin-subtab-reports').classList.add('hidden');
         document.getElementById('btn-admin-tab-orders').className = 'px-4 py-2 rounded-xl bg-glam-roseDark text-white transition';
-        renderAdminOrders();
-      } else if (tab === 'books') {
-        document.getElementById('admin-subtab-books').classList.remove('hidden');
-        document.getElementById('btn-admin-tab-books').className = 'px-4 py-2 rounded-xl bg-glam-roseDark text-white transition';
-        renderAdminBooks();
-      } else if (tab === 'reports') {
+        document.getElementById('btn-admin-tab-reports').className = 'px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition';
+      } else {
+        document.getElementById('admin-subtab-orders').classList.add('hidden');
         document.getElementById('admin-subtab-reports').classList.remove('hidden');
         document.getElementById('btn-admin-tab-reports').className = 'px-4 py-2 rounded-xl bg-glam-roseDark text-white transition';
+        document.getElementById('btn-admin-tab-orders').className = 'px-4 py-2 rounded-xl text-glam-deepText hover:text-glam-rose transition';
       }
     }
 
@@ -937,24 +900,19 @@
         } else if (o.status === 'pending') {
           pendingCount++;
           badge = '<span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-bold">รอตรวจสอบ</span>';
-          action = `<button onclick="adminApprove(${o.id})" class="bg-glam-roseDark hover:brightness-110 text-white text-xs px-3.5 py-1.5 rounded-xl font-bold transition shadow-sm font-heading">อนุมัติสลิป</button>`;
+          action = `<button onclick="adminApprove(${o.id})" class="bg-glam-roseDark hover:brightness-110 text-white text-xs px-3.5 py-1.5 rounded-xl font-bold transition shadow-sm">อนุมัติสลิป</button>`;
         } else {
           badge = '<span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-bold">ยกเลิก</span>';
           action = '<span class="text-xs text-stone-400">-</span>';
         }
 
-        const slipBtn = o.slipUrl 
-          ? `<button onclick="viewSlip('${o.slipUrl}', '${o.customer}', ${o.id})" class="text-xs font-bold text-glam-rose underline hover:text-glam-roseDark">ดูสลิปโอนเงิน</button>`
-          : '<span class="text-xs text-stone-300">ไม่มีสลิป</span>';
-
         return `
           <tr class="hover:bg-glam-cream/50 transition">
             <td class="py-3.5 px-4 font-mono font-bold text-glam-roseDark">#ORD-${o.id}</td>
             <td class="py-3.5 px-4 text-glam-deepText font-medium">${o.customer}</td>
-            <td class="py-3.5 px-4 text-stone-400 text-xs font-price">${o.date}</td>
-            <td class="py-3.5 px-4 font-bold font-price text-glam-roseDark">฿${o.total.toFixed(2)}</td>
+            <td class="py-3.5 px-4 text-stone-400 text-xs">${o.date}</td>
+            <td class="py-3.5 px-4 font-bold font-serif text-glam-roseDark">฿${o.total.toFixed(2)}</td>
             <td class="py-3.5 px-4 text-stone-500 text-xs">${o.method}</td>
-            <td class="py-3.5 px-4">${slipBtn}</td>
             <td class="py-3.5 px-4">${badge}</td>
             <td class="py-3.5 px-4 text-center">${action}</td>
           </tr>
@@ -964,16 +922,6 @@
       document.getElementById('admin-pending-badge').innerText = `${pendingCount} รายการ`;
     }
 
-    function viewSlip(url, customer, orderId) {
-      document.getElementById('slip-modal-img').src = url;
-      document.getElementById('slip-modal-desc').innerText = `หลักฐานคำสั่งซื้อ #${orderId} ของ ${customer}`;
-      document.getElementById('slip-modal').classList.remove('hidden');
-    }
-
-    function closeSlipModal() {
-      document.getElementById('slip-modal').classList.add('hidden');
-    }
-
     function adminApprove(id) {
       const o = orders.find(x => x.id === id);
       if (o) {
@@ -981,106 +929,6 @@
         alert(`✅ อนุมัติคำสั่งซื้อ #${id} แล้ว! สิทธิ์ดาวน์โหลดเปิดให้ลูกค้าเรียบร้อย`);
         renderAdminOrders();
       }
-    }
-
-    function renderAdminBooks() {
-      const tbody = document.getElementById('admin-books-tbody');
-      tbody.innerHTML = books.map(b => `
-        <tr class="hover:bg-glam-cream/50 transition">
-          <td class="py-3 px-4">
-            <img src="${b.cover}" class="w-10 h-14 object-cover rounded-lg shadow-sm">
-          </td>
-          <td class="py-3 px-4 font-bold text-glam-deepText text-xs leading-snug">${b.title}</td>
-          <td class="py-3 px-4 text-stone-500 text-xs">${b.catName}</td>
-          <td class="py-3 px-4 text-stone-500 text-xs">${b.author}</td>
-          <td class="py-3 px-4 font-bold font-price text-glam-roseDark text-sm">฿${b.price.toFixed(2)}</td>
-          <td class="py-3 px-4 text-center">
-            <span class="text-xs px-2.5 py-1 rounded-full font-bold ${b.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'}">
-              ${b.isActive ? 'พร้อมขาย' : 'ปิดการขาย'}
-            </span>
-          </td>
-          <td class="py-3 px-4 text-center">
-            <button onclick="toggleBookStatus(${b.id})" class="text-xs px-3 py-1.5 rounded-xl border border-glam-roseLight font-bold transition ${b.isActive ? 'hover:bg-rose-50 text-rose-600' : 'hover:bg-emerald-50 text-emerald-600'}">
-              ${b.isActive ? 'ปิดการขาย' : 'เปิดขาย'}
-            </button>
-          </td>
-        </tr>
-      `).join('');
-
-      document.getElementById('admin-books-count').innerText = `${books.length} เล่ม`;
-    }
-
-    function toggleBookStatus(id) {
-      const b = books.find(x => x.id === id);
-      if (b) {
-        b.isActive = !b.isActive;
-        renderAdminBooks();
-        renderBooks();
-      }
-    }
-
-    function openAddBookModal() {
-      document.getElementById('add-book-modal').classList.remove('hidden');
-    }
-
-    function closeAddBookModal() {
-      document.getElementById('add-book-modal').classList.add('hidden');
-    }
-
-    function saveNewBook() {
-      const title = document.getElementById('new-book-title').value.trim();
-      const author = document.getElementById('new-book-author').value.trim();
-      const catId = parseInt(document.getElementById('new-book-cat').value);
-      const price = parseFloat(document.getElementById('new-book-price').value);
-      const dl = document.getElementById('new-book-dl').value.trim();
-
-      if (!title || !author || isNaN(price) || price < 0) {
-        alert('กรุณากรอกข้อมูลหนังสือและราคาที่ถูกต้อง');
-        return;
-      }
-
-      const catNames = { 1: 'เทคโนโลยี', 2: 'ธุรกิจและการเงิน', 3: 'พัฒนาตนเอง', 4: 'นิยายและวรรณกรรม' };
-
-      const newB = {
-        id: books.length + 1,
-        title: title,
-        author: author,
-        catId: catId,
-        catName: catNames[catId],
-        price: price,
-        rating: 5.0,
-        badge: '✨ New Release',
-        cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80',
-        dlUrl: dl,
-        isActive: true
-      };
-
-      books.unshift(newB);
-      closeAddBookModal();
-      alert('🎉 เพิ่ม E-Book เล่มใหม่เข้าสู่ฐานข้อมูลเรียบร้อยแล้ว!');
-      renderAdminBooks();
-      renderBooks();
-    }
-
-    function exportReportsCSV() {
-      let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-      csvContent += "รายงานภาพรวมการขาย Bookie House\n\n";
-      csvContent += "1. ยอดขายตามช่วงเวลา\nวันที่,จำนวนออเดอร์,ยอดขายรวม,เฉลี่ยต่อออเดอร์\n";
-      csvContent += "2026-08-01,1,350.00,350.00\n2026-08-02,1,670.00,670.00\n2026-08-04,1,800.00,800.00\n\n";
-      
-      csvContent += "2. 5 อันดับ E-Book ขายดี\nชื่อหนังสือ,ผู้แต่ง,จำนวนเล่มที่ขายได้,ยอดเงินรวม\n";
-      csvContent += "Modern Web Development,ดร. อนุชา,6,2520.00\nMastering SQL,ดร. อนุชา,6,2100.00\nAtomic Habits,กุลดา,5,1400.00\n\n";
-
-      csvContent += "3. ยอดขายตามหมวดหมู่\nหมวดหมู่,จำนวนออเดอร์,จำนวนเล่ม,ยอดขายรวม\n";
-      csvContent += "เทคโนโลยีและการเขียนโค้ด,14,15,5760.00\nพัฒนาตนเองและจิตวิทยา,8,8,2200.00\n";
-
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "bookie_house_sales_report.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
     }
 
     applyUserSession();
