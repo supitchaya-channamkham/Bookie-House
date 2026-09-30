@@ -982,67 +982,46 @@
     async function confirmOrderWithSlip() {
       if (cart.length === 0) { alert('ไม่มีสินค้าในตะกร้า'); return; }
       if (!currentUser) { openAuthModal('login'); return; }
+
+      if (!supabase) {
+        alert('Supabase Client ยังไม่ได้เริ่มต้น กรุณาตรวจสอบตัวแปร supabase');
+        return;
+      }
+
       const total = cart.reduce((sum, b) => sum + (b.price * b.qty), 0);
 
-      const slipUrlToSave = (currentUploadedSlip && currentUploadedSlip.startsWith('http')) 
-        ? currentUploadedSlip 
-        : 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80';
+      try {
+        // 1. บันทึกคำสั่งซื้อลงตาราง orders ของ Supabase ตรง ๆ
+        const { data: orderData, error: orderErr } = await supabase
+          .from('orders')
+          .insert([{
+            total_amount: total,
+            order_status: 'pending'
+          }])
+          .select()
+          .single();
 
-      if (supabase) {
-        try {
-          // 1. บันทึกคำสั่งซื้อลง Supabase ตรงๆ
-          const { data: orderData, error: orderErr } = await supabase
-            .from('orders')
-            .insert([{
-              user_id: 1, // ใช้ default id เพื่อความเข้ากันได้
-              total_amount: total,
-              order_status: 'pending'
-            }])
-            .select()
-            .single();
-
-          if (orderErr) {
-            console.error('Supabase Order Error:', orderErr);
-            alert('Supabase บันทึกไม่สำเร็จ: ' + orderErr.message);
-            return;
-          }
-
-          const createdOrderId = orderData.order_id;
-
-          // 2. บันทึกรายการสินค้า
-          const itemsPayload = cart.map(item => ({
-            order_id: createdOrderId,
-            ebook_id: item.id || 1,
-            quantity: item.qty,
-            price_per_unit: item.price
-          }));
-          await supabase.from('order_items').insert(itemsPayload);
-
-          // 3. บันทึกการชำระเงิน
-          await supabase.from('payments').insert([{
-            order_id: createdOrderId,
-            payment_method: selectedPaymentMethod,
-            slip_image_url: slipUrlToSave,
-            is_verified: false
-          }]);
-
-          cart = [];
-          updateCartUI();
-          toggleCartModal();
-          alert(`สั่งซื้อสำเร็จ! บันทึกลง Supabase เรียบร้อย รหัส #${createdOrderId}`);
-
-          // โหลดข้อมูลเข้าสู่หน้าเว็บทันที
-          await loadAllSupabaseData();
-          navigate('orders');
-          return;
-
-        } catch (err) {
-          console.error('Order Error:', err);
-          alert('เกิดข้อผิดพลาด: ' + err.message);
+        if (orderErr) {
+          alert('❌ บันทึกลง Supabase ไม่สำเร็จ: ' + orderErr.message);
+          console.error('Supabase Error:', orderErr);
           return;
         }
-      } else {
-        alert('ยังไม่ได้เชื่อมต่อกับ Supabase');
+
+        const newId = orderData.order_id;
+
+        // 2. เคลียร์ตะกร้าและปิด Modal
+        cart = [];
+        updateCartUI();
+        toggleCartModal();
+        alert('✅ สั่งซื้อสำเร็จ! บันทึกลงก้อนเมฆ Supabase แล้ว รหัสออเดอร์ #' + newId);
+
+        // 3. สั่งดึงข้อมูลล่าสุดจาก Supabase
+        await loadAllSupabaseData();
+        navigate('orders');
+
+      } catch (err) {
+        alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+        console.error(err);
       }
     }
 
