@@ -51,9 +51,6 @@
   <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
-  
-  <!-- AlaSQL: Client-side SQL Engine -->
-  <script src="https://cdn.jsdelivr.net/npm/alasql@4.4.4/dist/alasql.min.js"></script>
 </head>
 <body class="selection:bg-glam-roseLight selection:text-glam-roseDark">
 
@@ -392,7 +389,7 @@
         </div>
       </div>
 
-      <!-- แท็บ 5: SQL Query Console (กล่องที่ต้องการ) -->
+      <!-- แท็บ 5: SQL Query Console -->
       <div id="admin-subtab-sql" class="hidden space-y-6">
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
           <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-glam-milk pb-4">
@@ -760,7 +757,7 @@
 
     let categories = JSON.parse(localStorage.getItem('bookie_cats')) || defaultCategories;
     let users = JSON.parse(localStorage.getItem('bookie_users')) || defaultUsers;
-    let books = JSON.parse(localStorage.getItem('bookie_books')) || defaultBooks;
+    let books = defaultBooks; // ใช้ค่าเริ่มต้นก่อน ขณะรอซิงก์กับ Cloud Firestore
     let sentEmails = JSON.parse(localStorage.getItem('bookie_emails')) || [];
     let currentUser = JSON.parse(localStorage.getItem('bookie_current_user')) || null;
     let cloudOrders = [];
@@ -771,11 +768,11 @@
     function saveAllState() {
       localStorage.setItem('bookie_cats', JSON.stringify(categories));
       localStorage.setItem('bookie_users', JSON.stringify(users));
-      localStorage.setItem('bookie_books', JSON.stringify(books));
       localStorage.setItem('bookie_emails', JSON.stringify(sentEmails));
       localStorage.setItem('bookie_current_user', JSON.stringify(currentUser));
     }
 
+    // 1. ซิงก์คำสั่งซื้อจาก Firestore แบบ Realtime
     db.collection('orders').orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
       cloudOrders = [];
       snapshot.forEach(doc => cloudOrders.push({ firestoreId: doc.id, ...doc.data() }));
@@ -783,6 +780,23 @@
       renderCustomerOrders();
       updateInboxBadge();
     }, err => console.warn(err));
+
+    // 2. ซิงก์คลังหนังสือจาก Firestore แบบ Realtime (ข้ามเครื่องได้จริง 100%)
+    db.collection('books').onSnapshot(async (snapshot) => {
+      if (snapshot.empty) {
+        // หากบน Firestore ยังไม่มีข้อมูล ให้เอา 12 เล่มตั้งต้นขึ้น Cloud ทันที
+        for (const b of defaultBooks) {
+          await db.collection('books').doc(String(b.id)).set(b);
+        }
+      } else {
+        const loadedBooks = [];
+        snapshot.forEach(doc => loadedBooks.push(doc.data()));
+        loadedBooks.sort((a, b) => a.id - b.id);
+        books = loadedBooks;
+        renderBooks();
+        renderAdminBooks();
+      }
+    }, err => console.warn("Books Firestore sync error:", err));
 
     function navigate(view) {
       document.getElementById('view-shop').classList.add('hidden');
@@ -1166,7 +1180,9 @@
       document.getElementById('book-form-modal').classList.remove('hidden');
     }
     function closeBookFormModal() { document.getElementById('book-form-modal').classList.add('hidden'); }
-    function handleSaveBook(e) {
+    
+    // บันทึก/แก้ไขหนังสือขึ้น Cloud Firestore
+    async function handleSaveBook(e) {
       e.preventDefault();
       const editId = document.getElementById('edit-book-id').value;
       const catId = parseInt(document.getElementById('form-book-cat').value);
@@ -1181,17 +1197,50 @@
         desc: document.getElementById('form-book-desc').value.trim(),
         isActive: true, rating: 5.0
       };
-      if (editId) {
-        const b = books.find(x => x.id === parseInt(editId));
-        if (b) Object.assign(b, bookData);
-      } else {
-        const newId = books.length ? Math.max(...books.map(x => x.id)) + 1 : 1;
-        books.unshift({ id: newId, ...bookData });
+
+      try {
+        if (editId) {
+          const targetId = parseInt(editId);
+          bookData.id = targetId;
+          await db.collection('books').doc(String(targetId)).update(bookData);
+          alert('บันทึกการแก้ไขขึ้นระบบ Cloud เรียบร้อย');
+        } else {
+          const newId = books.length ? Math.max(...books.map(x => x.id)) + 1 : 1;
+          bookData.id = newId;
+          await db.collection('books').doc(String(newId)).set(bookData);
+          alert('เพิ่มหนังสือใหม่ขึ้นระบบ Cloud เรียบร้อย');
+        }
+        closeBookFormModal();
+      } catch (err) {
+        alert('เกิดข้อผิดพลาดในการบันทึก: ' + err.message);
       }
-      saveAllState(); closeBookFormModal(); renderBooks(); renderAdminBooks();
     }
-    function deleteBook(id) { if (confirm('ลบหนังสือเล่มนี้?')) { books = books.filter(x => x.id !== id); saveAllState(); renderBooks(); renderAdminBooks(); } }
-    function toggleBookStatus(id) { const b = books.find(x => x.id === id); if (b) { b.isActive = !b.isActive; saveAllState(); renderBooks(); renderAdminBooks(); } }
+
+    // ลบหนังสือออกจาก Cloud Firestore
+    async function deleteBook(id) {
+      const b = books.find(x => x.id === id);
+      if (!b) return;
+      if (confirm(`ลบหนังสือ "${b.title}" ออกจากระบบ Cloud?`)) {
+        try {
+          await db.collection('books').doc(String(id)).delete();
+          alert('ลบหนังสือออกจากระบบเรียบร้อย');
+        } catch (err) {
+          alert('เกิดข้อผิดพลาดในการลบ: ' + err.message);
+        }
+      }
+    }
+
+    // เปลี่ยนสถานะหนังสือบน Cloud Firestore
+    async function toggleBookStatus(id) {
+      const b = books.find(x => x.id === id);
+      if (b) {
+        try {
+          await db.collection('books').doc(String(id)).update({ isActive: !b.isActive });
+        } catch (err) {
+          alert('เกิดข้อผิดพลาด: ' + err.message);
+        }
+      }
+    }
 
     function switchAdminTab(tab) {
       document.getElementById('admin-subtab-orders').classList.add('hidden');
@@ -1248,7 +1297,6 @@
       try {
         const startTime = performance.now();
         
-        // 1. ระบุตารางเป้าหมาย
         let targetData = [];
         const lowerQ = query.toLowerCase();
         
@@ -1264,7 +1312,6 @@
           throw new Error('ไม่พบชื่อตารางที่ระบุ (รองรับ: ebooks, orders, users, categories)');
         }
 
-        // 2. จัดการ WHERE
         if (lowerQ.includes('where')) {
           const wherePart = query.split(/where/i)[1].split(/order by|group by/i)[0].trim();
           
@@ -1286,7 +1333,6 @@
           }
         }
 
-        // 3. จัดการ GROUP BY (รองรับ COUNT, AVG, SUM)
         if (lowerQ.includes('group by')) {
           const groupField = query.split(/group by/i)[1].split(/order by/i)[0].trim();
           const groups = {};
@@ -1309,7 +1355,6 @@
           });
         }
 
-        // 4. จัดการ ORDER BY
         if (lowerQ.includes('order by')) {
           const orderPart = query.split(/order by/i)[1].trim();
           const isDesc = /desc/i.test(orderPart);
@@ -1325,7 +1370,6 @@
           });
         }
 
-        // 5. จัดการคอลัมน์ SELECT
         const selectPart = query.split(/from/i)[0].replace(/select/i, '').trim();
         let finalResults = targetData;
 
@@ -1350,11 +1394,9 @@
           return;
         }
 
-        // สร้าง Thead
         const columns = Object.keys(finalResults[0]);
         thead.innerHTML = `<tr>${columns.map(col => `<th class="py-3 px-4 font-mono font-bold">${col}</th>`).join('')}</tr>`;
 
-        // สร้าง Tbody
         tbody.innerHTML = finalResults.map(row => `
           <tr class="hover:bg-glam-cream/50 transition">
             ${columns.map(col => {
