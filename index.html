@@ -50,6 +50,8 @@
 
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+  <!-- AlaSQL: Client-side SQL Engine -->
+  <script src="https://cdn.jsdelivr.net/npm/alasql@4.4.4/dist/alasql.min.js"></script>
 </head>
 <body class="selection:bg-glam-roseLight selection:text-glam-roseDark">
 
@@ -185,6 +187,7 @@
             <button onclick="switchAdminTab('books')" id="btn-admin-tab-books" class="px-3 py-1.5 rounded-lg text-glam-deepText hover:text-glam-rose transition">รายการหนังสือ</button>
             <button onclick="switchAdminTab('users')" id="btn-admin-tab-users" class="px-3 py-1.5 rounded-lg text-glam-deepText hover:text-glam-rose transition">จัดการผู้ใช้</button>
             <button onclick="switchAdminTab('reports')" id="btn-admin-tab-reports" class="px-3 py-1.5 rounded-lg text-glam-deepText hover:text-glam-rose transition">รายงานวิเคราะห์</button>
+            <button onclick="switchAdminTab('sql')" id="btn-admin-tab-sql" class="px-3 py-1.5 rounded-lg text-glam-deepText hover:text-glam-rose transition">ค้นหาด้วย SQL</button>
           </div>
         </div>
       </div>
@@ -292,6 +295,77 @@
             <span>📥 Export ข้อมูลคำสั่งซื้อ (CSV / Excel)</span>
           </button>
         </div>
+
+        <!-- แท็บ 5: SQL Query Console (ค้นหาข้อมูลตารางด้วย SQL) -->
+      <div id="admin-subtab-sql" class="hidden space-y-6">
+        <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
+          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-glam-milk pb-4">
+            <div>
+              <h3 class="text-lg font-bold font-heading text-glam-roseDark flex items-center gap-2">
+                <span>💻 SQL Query Console (ค้นหาและสอบถามข้อมูลตาราง)</span>
+              </h3>
+              <p class="text-xs text-stone-400 mt-0.5">พิมพ์คำสั่ง SQL เพื่อค้นหาข้อมูลจากตารางในระบบได้ทันที (รองรับ SELECT, WHERE, ORDER BY, GROUP BY)</p>
+            </div>
+            <div class="flex gap-2 text-[11px] font-mono bg-stone-50 border border-stone-200 px-3 py-1.5 rounded-xl text-stone-600">
+              <span>ตารางที่ค้นหาได้:</span>
+              <b class="text-glam-roseDark">ebooks</b> | <b class="text-glam-roseDark">orders</b> | <b class="text-glam-roseDark">users</b> | <b class="text-glam-roseDark">categories</b>
+            </div>
+          </div>
+
+          <!-- ตัวอย่างคำสั่ง SQL ลัดสำหรับคลิกทดสอบได้ทันที -->
+          <div class="pt-3">
+            <span class="text-xs font-bold text-stone-600 block mb-2 font-heading">⚡ คำสั่ง SQL ลัดยอดนิยม (คลิกเพื่อทดสอบ):</span>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <button onclick="setSqlExample('SELECT id, title, author, price, catName FROM ebooks WHERE price >= 300 ORDER BY price DESC')" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
+                1. หนังสือราคา >= 300 บาท
+              </button>
+              <button onclick="setSqlExample('SELECT id, customer, total, method, status FROM orders WHERE status = \'confirmed\'' )" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
+                2. ออเดอร์ที่ยืนยันแล้ว
+              </button>
+              <button onclick="setSqlExample('SELECT catName, COUNT(*) AS total_books, ROUND(AVG(price), 2) AS avg_price FROM ebooks GROUP BY catName')" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
+                3. สรุปจำนวนและราคาเฉลี่ยตามหมวดหมู่
+              </button>
+              <button onclick="setSqlExample('SELECT username, name, email, role FROM users')" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
+                4. รายชื่อสมาชิกทั้งหมด
+              </button>
+            </div>
+          </div>
+
+          <!-- ช่องกรอกคำสั่ง SQL -->
+          <div class="pt-4 space-y-3">
+            <div class="relative">
+              <textarea id="sql-input-box" rows="4" class="w-full bg-slate-900 text-emerald-400 font-mono text-xs p-4 rounded-2xl border border-stone-700 focus:outline-none focus:ring-2 focus:ring-glam-rose shadow-inner" placeholder="พิมพ์คำสั่ง SQL ที่ต้องการค้นหา เช่น SELECT * FROM ebooks WHERE price < 300"></textarea>
+            </div>
+            <div class="flex justify-between items-center">
+              <span id="sql-status-msg" class="text-xs text-stone-500 font-medium"></span>
+              <div class="space-x-2">
+                <button onclick="clearSqlQuery()" class="px-4 py-2 border rounded-xl text-stone-500 font-bold text-xs hover:bg-stone-50">ล้างคำสั่ง</button>
+                <button onclick="executeAdminSql()" class="bg-gradient-to-r from-emerald-600 to-teal-700 hover:brightness-110 text-white font-bold text-xs px-6 py-2 rounded-xl shadow transition font-heading">
+                  ▶ ดำเนินการ (Run SQL)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- กล่องแสดงผลลัพธ์ตารางข้อมูลจากการรัน SQL -->
+        <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
+            <h4 class="font-bold font-heading text-glam-roseDark text-sm">📋 ผลลัพธ์จากการค้นหา (Query Results)</h4>
+            <span id="sql-result-count" class="text-xs font-price font-bold text-stone-500 bg-white border border-stone-200 px-3 py-1 rounded-full">0 แถว</span>
+          </div>
+          <div class="overflow-x-auto max-h-[420px]">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead id="sql-result-thead" class="bg-glam-milk text-glam-roseDark uppercase font-bold sticky top-0 border-b border-glam-roseLight/70">
+                <tr><th class="py-3 px-4">ผลลัพธ์จะปรากฏที่นี่</th></tr>
+              </thead>
+              <tbody id="sql-result-tbody" class="divide-y divide-glam-milk text-stone-700">
+                <tr><td class="p-6 text-center text-stone-400">ยังไม่มีการรันคำสั่ง SQL</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
         <!-- รายงานที่ 1: ยอดขายตามช่วงเวลา -->
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
@@ -1228,21 +1302,108 @@
     function deleteBook(id) { if (confirm('ลบหนังสือเล่มนี้?')) { books = books.filter(x => x.id !== id); saveAllState(); renderBooks(); renderAdminBooks(); } }
     function toggleBookStatus(id) { const b = books.find(x => x.id === id); if (b) { b.isActive = !b.isActive; saveAllState(); renderBooks(); renderAdminBooks(); } }
 
+    // ปรับปรุงฟังก์ชันสลับแท็บให้รองรับแท็บ 'sql'
     function switchAdminTab(tab) {
       document.getElementById('admin-subtab-orders').classList.add('hidden');
       document.getElementById('admin-subtab-books').classList.add('hidden');
       document.getElementById('admin-subtab-users').classList.add('hidden');
       document.getElementById('admin-subtab-reports').classList.add('hidden');
-      ['orders','books','users','reports'].forEach(t => {
-        document.getElementById(`btn-admin-tab-${t}`).className = 'px-3 py-1.5 rounded-lg text-glam-deepText hover:text-glam-rose transition';
+      document.getElementById('admin-subtab-sql').classList.add('hidden');
+
+      ['orders','books','users','reports','sql'].forEach(t => {
+        const btn = document.getElementById(`btn-admin-tab-${t}`);
+        if (btn) btn.className = 'px-3 py-1.5 rounded-lg text-glam-deepText hover:text-glam-rose transition';
       });
+
       document.getElementById(`admin-subtab-${tab}`).classList.remove('hidden');
-      document.getElementById(`btn-admin-tab-${tab}`).className = 'px-3 py-1.5 rounded-lg bg-glam-roseDark text-white transition';
+      const activeBtn = document.getElementById(`btn-admin-tab-${tab}`);
+      if (activeBtn) activeBtn.className = 'px-3 py-1.5 rounded-lg bg-glam-roseDark text-white transition';
+
       if (tab === 'orders') renderAdminOrders();
       if (tab === 'books') renderAdminBooks();
       if (tab === 'users') renderAdminUsers();
+      if (tab === 'sql') {
+        if (!document.getElementById('sql-input-box').value.trim()) {
+          setSqlExample('SELECT id, title, author, price, catName FROM ebooks ORDER BY price DESC');
+        }
+      }
     }
 
+    // ฟังก์ชันช่วยใส่ตัวอย่าง SQL ลงในกล่องข้อความ
+    function setSqlExample(query) {
+      document.getElementById('sql-input-box').value = query;
+      executeAdminSql();
+    }
+
+    function clearSqlQuery() {
+      document.getElementById('sql-input-box').value = '';
+      document.getElementById('sql-result-thead').innerHTML = '<tr><th class="py-3 px-4">ผลลัพธ์จะปรากฏที่นี่</th></tr>';
+      document.getElementById('sql-result-tbody').innerHTML = '<tr><td class="p-6 text-center text-stone-400">ยังไม่มีการรันคำสั่ง SQL</td></tr>';
+      document.getElementById('sql-result-count').innerText = '0 แถว';
+      document.getElementById('sql-status-msg').innerText = '';
+    }
+
+    // ฟังก์ชันรันคำสั่ง SQL ด้วย AlaSQL บนข้อมูลจริง
+    function executeAdminSql() {
+      const query = document.getElementById('sql-input-box').value.trim();
+      const statusMsg = document.getElementById('sql-status-msg');
+      const thead = document.getElementById('sql-result-thead');
+      const tbody = document.getElementById('sql-result-tbody');
+      const countBadge = document.getElementById('sql-result-count');
+
+      if (!query) {
+        alert('กรุณากรอกคำสั่ง SQL ที่ต้องการค้นหา');
+        return;
+      }
+
+      if (typeof alasql === 'undefined') {
+        alert('ไลบรารี AlaSQL กำลังโหลด กรุณารอสักครู่แล้วลองใหม่ครับ');
+        return;
+      }
+
+      try {
+        alasql.tables = {
+          ebooks: { data: books },
+          orders: { data: cloudOrders.length ? cloudOrders : orders },
+          users: { data: users },
+          categories: { data: categories }
+        };
+
+        const startTime = performance.now();
+        const results = alasql(query);
+        const execTime = (performance.now() - startTime).toFixed(2);
+
+        if (!Array.isArray(results) || results.length === 0) {
+          thead.innerHTML = '<tr><th class="py-3 px-4">ผลลัพธ์</th></tr>';
+          tbody.innerHTML = '<tr><td class="p-6 text-center text-stone-400">ไม่พบข้อมูลที่ตรงกับเงื่อนไขคำสั่ง SQL</td></tr>';
+          countBadge.innerText = '0 แถว';
+          statusMsg.innerHTML = `<span class="text-emerald-600">✓ ประมวลผลสำเร็จ (${execTime} ms) - ไม่พบแถวข้อมูล</span>`;
+          return;
+        }
+
+        const columns = Object.keys(results[0]);
+        thead.innerHTML = `<tr>${columns.map(col => `<th class="py-3 px-4 font-mono">${col}</th>`).join('')}</tr>`;
+
+        tbody.innerHTML = results.map(row => `
+          <tr class="hover:bg-glam-cream/50 transition">
+            ${columns.map(col => {
+              let val = row[col];
+              if (typeof val === 'object' && val !== null) val = JSON.stringify(val);
+              return `<td class="py-2.5 px-4 font-mono text-stone-700">${val !== undefined && val !== null ? val : '<span class="text-stone-300">NULL</span>'}</td>`;
+            }).join('')}
+          </tr>
+        `).join('');
+
+        countBadge.innerText = `${results.length} แถว`;
+        statusMsg.innerHTML = `<span class="text-emerald-600 font-bold">✓ ดึงข้อมูลสำเร็จ ${results.length} รายการ (${execTime} ms)</span>`;
+
+      } catch (err) {
+        statusMsg.innerHTML = `<span class="text-rose-600 font-bold">❌ ข้อผิดพลาด SQL: ${err.message}</span>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-rose-500 font-mono text-xs">${err.message}</td></tr>`;
+        countBadge.innerText = 'Error';
+      }
+    }
+    
     function toggleCartModal() { document.getElementById('cart-modal').classList.toggle('hidden'); }
     function selectPayMethod(m) {
       selectedPaymentMethod = m === 'qr' ? 'พร้อมเพย์ QR' : 'โอนผ่านธนาคาร';
