@@ -48,14 +48,8 @@
     .modal-animate { animation: popUpIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   </style>
 
-  <!-- Firebase Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
-  
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
 </head>
 <body class="selection:bg-glam-roseLight selection:text-glam-roseDark">
 
@@ -715,11 +709,10 @@
     </div>
   </div>
 
- <!-- JAVASCRIPT & SUPABASE LOGIC -->
+  <!-- JAVASCRIPT & SUPABASE LOGIC -->
   <script>
-    // --- ค่าคงที่และการเชื่อมต่อ SUPABASE ---
     const SUPABASE_URL = 'https://mwssmnujkjizyielpeufl.supabase.co';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // หากมี Anon Key ให้นำมาใส่ตรงนี้
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 
     let supabase = null;
     try {
@@ -732,7 +725,6 @@
 
     const samplePdf = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
-    // ข้อมูล Master Data ตั้งต้น (รับประกันว่าหน้าเว็บจะมีข้อมูลแสดงเสมอ)
     const initialCategories = [
       { id: 1, name: 'เทคโนโลยีและการเขียนโค้ด' },
       { id: 2, name: 'ธุรกิจและการเงิน' },
@@ -742,8 +734,8 @@
 
     const initialUsers = [
       { id: 1, username: 'admin_bookie', password: 'password123', name: 'คุณแอดมิน Bookie House', email: 'admin@bookiehouse.com', role: 'admin' },
-      { id: 2, username: 'somchai_s',    password: 'password123', name: 'คุณสมชาย สายอ่าน',        email: 'somchai@gmail.com', role: 'customer' },
-      { id: 3, username: 'wanida_k',     password: 'password123', name: 'คุณวนิดา แก้วมณี',        email: 'wanida@gmail.com',  role: 'customer' }
+      { id: 2, username: 'somchai_s', password: 'password123', name: 'คุณสมชาย สายอ่าน', email: 'somchai@gmail.com', role: 'customer' },
+      { id: 3, username: 'wanida_k', password: 'password123', name: 'คุณวนิดา แก้วมณี', email: 'wanida@gmail.com', role: 'customer' }
     ];
 
     const initialBooks = [
@@ -771,7 +763,6 @@
     let selectedPaymentMethod = 'พร้อมเพย์ QR';
     let currentUploadedSlip = 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80';
 
-    // ฟังก์ชันซิงก์ข้อมูลกับ Supabase
     async function loadAllSupabaseData() {
       if (!supabase) return;
       try {
@@ -825,7 +816,6 @@
       }
     }
 
-    // ติดตาม Realtime หาก Supabase พร้อมใช้งาน
     if (supabase) {
       try {
         supabase.channel('public:db-changes')
@@ -838,7 +828,6 @@
       }
     }
 
-    // --- ส่วนควบคุมหน้าเว็บ (UI Navigation & Interaction) ---
     function navigate(view) {
       const vShop = document.getElementById('view-shop');
       const vOrders = document.getElementById('view-orders');
@@ -922,7 +911,6 @@
     }
     function closeBookDetailModal() { document.getElementById('book-detail-modal').classList.add('hidden'); }
 
-    // --- ตะกร้าสินค้า ---
     function toggleCartModal() { document.getElementById('cart-modal').classList.toggle('hidden'); }
     function addToCart(bookId) {
       if (!currentUser) { alert('กรุณาเข้าสู่ระบบก่อนสั่งซื้อ'); openAuthModal('login'); return; }
@@ -1070,7 +1058,6 @@
       }).join('');
     }
 
-    // --- ส่วนจัดการระบบหลังบ้าน (Admin) ---
     function renderAdminOrders() {
       const tbody = document.getElementById('all-admin-orders-tbody');
       if (!tbody) return;
@@ -1243,6 +1230,73 @@
         if (supabase) {
           await supabase.from('ebooks').update({ is_active: b.isActive }).eq('ebook_id', id);
         }
+      }
+    }
+
+    function openEditProfileModal() {
+      if (!currentUser) return;
+      document.getElementById('edit-profile-name').value = currentUser.name;
+      document.getElementById('edit-profile-email').value = currentUser.email || '';
+      document.getElementById('edit-profile-modal').classList.remove('hidden');
+    }
+    function closeEditProfileModal() { document.getElementById('edit-profile-modal').classList.add('hidden'); }
+    function handleSaveProfile(e) {
+      e.preventDefault();
+      const newName = document.getElementById('edit-profile-name').value.trim();
+      const newEmail = document.getElementById('edit-profile-email').value.trim();
+      currentUser.name = newName;
+      currentUser.email = newEmail;
+      const u = users.find(x => x.username === currentUser.username);
+      if (u) { u.name = newName; u.email = newEmail; }
+      localStorage.setItem('bookie_current_user', JSON.stringify(currentUser));
+      applyUserSession();
+      closeEditProfileModal();
+      alert('บันทึกข้อมูลเรียบร้อยแล้ว');
+    }
+
+    function openCategoryManageModal() {
+      renderCategoryList();
+      document.getElementById('category-modal').classList.remove('hidden');
+    }
+    function closeCategoryManageModal() { document.getElementById('category-modal').classList.add('hidden'); }
+    function renderCategoryList() {
+      const container = document.getElementById('category-list-container');
+      container.innerHTML = categories.map(c => `
+        <div class="flex justify-between items-center bg-stone-50 p-2.5 rounded-xl border border-stone-200 text-xs">
+          <span class="font-bold text-stone-700">${c.name}</span>
+          <div class="space-x-2">
+            <button onclick="editCategoryName(${c.id})" class="text-amber-600 hover:underline">แก้ไข</button>
+            <button onclick="deleteCategory(${c.id})" class="text-rose-600 hover:underline">ลบ</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    function addNewCategory() {
+      const input = document.getElementById('new-cat-name-input');
+      const name = input.value.trim();
+      if (!name) return;
+      const newId = categories.length ? Math.max(...categories.map(c => c.id)) + 1 : 1;
+      categories.push({ id: newId, name: name });
+      input.value = '';
+      renderCategoryDropdowns();
+      renderCategoryList();
+    }
+    function editCategoryName(id) {
+      const c = categories.find(x => x.id === id);
+      if (!c) return;
+      const newName = prompt('แก้ไขชื่อหมวดหมู่:', c.name);
+      if (newName && newName.trim()) {
+        c.name = newName.trim();
+        renderCategoryDropdowns();
+        renderCategoryList();
+        renderBooks();
+      }
+    }
+    function deleteCategory(id) {
+      if (confirm('ยืนยันลบหมวดหมู่นี้?')) {
+        categories = categories.filter(x => x.id !== id);
+        renderCategoryDropdowns();
+        renderCategoryList();
       }
     }
 
@@ -1437,7 +1491,6 @@
       link.click();
     }
 
-    // --- การล็อกอินและผู้ใช้ ---
     let authMode = 'login';
     function openAuthModal(m) {
       authMode = m;
@@ -1498,6 +1551,7 @@
           roleBadge.innerText = 'Member 🌸';
           roleBadge.className = 'ml-2 text-[10px] font-bold tracking-wider bg-glam-roseLight text-glam-roseDark px-2.5 py-0.5 rounded-full shadow-sm';
           navOrdersBtn.classList.remove('hidden'); navInboxBtn.classList.remove('hidden'); navAdminBtn.classList.add('hidden'); cartBtn.classList.remove('hidden');
+          updateInboxBadge();
         }
       } else {
         authButtons.classList.remove('hidden'); userProfile.classList.add('hidden');
@@ -1521,6 +1575,12 @@
       document.getElementById('inbox-modal').classList.remove('hidden');
     }
     function closeInboxModal() { document.getElementById('inbox-modal').classList.add('hidden'); }
+    function updateInboxBadge() {
+      if (!currentUser) return;
+      const count = sentEmails.filter(e => e.toEmail === currentUser.email || e.toName === currentUser.name).length;
+      const b = document.getElementById('inbox-badge');
+      if (b) b.innerText = count;
+    }
 
     // --- เริ่มต้นโหลดข้อมูลทันที ---
     renderCategoryDropdowns();
