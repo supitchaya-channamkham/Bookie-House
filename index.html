@@ -70,6 +70,10 @@
       animation: popUpIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
   </style>
+
+  <!-- Firebase App & Firestore (CDN Scripts) -->
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="selection:bg-glam-roseLight selection:text-glam-roseDark">
 
@@ -95,6 +99,7 @@
           <span id="role-badge" class="ml-2 text-[10px] font-bold tracking-wider bg-glam-roseLight text-glam-roseDark border border-glam-rose/30 px-2.5 py-0.5 rounded-full shadow-sm">
             Guest ✨
           </span>
+          <span class="hidden sm:inline-block ml-1 text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">Cloud Live 🟢</span>
         </div>
       </div>
 
@@ -142,7 +147,7 @@
             <span class="shimmer-text">ในโลก E-Book ระดับเอ็กซ์คลูซีฟ</span>
           </h1>
           <p class="text-rose-100/90 text-sm md:text-base leading-relaxed font-light">
-            คัดสรรหนังสือดิจิทัลชั้นยอด พร้อมระบบเลือกวิธีชำระเงิน แนบสลิป และส่งลิงก์ดาวน์โหลด E-Book เข้าอีเมลของคุณอัตโนมัติ
+            คัดสรรหนังสือดิจิทัลชั้นยอด พร้อมระบบเลือกวิธีชำระเงิน แนบสลิป และส่งลิงก์ดาวน์โหลด E-Book เข้าอีเมลของคุณอัตโนมัติ (เชื่อมต่อ Cloud Database ข้ามเครื่องได้จริง)
           </p>
         </div>
         <div class="absolute -right-16 -top-16 w-80 h-80 bg-glam-rose/25 rounded-full blur-3xl pointer-events-none"></div>
@@ -236,9 +241,9 @@
           <span class="text-[11px] text-emerald-600 font-semibold">ออเดอร์ที่ยืนยันแล้ว</span>
         </div>
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
-          <span class="text-xs text-stone-500 font-medium">คำสั่งซื้อในระบบทั้งหมด</span>
+          <span class="text-xs text-stone-500 font-medium">คำสั่งซื้อบน Cloud</span>
           <p class="text-2xl font-bold font-price text-slate-800 mt-1" id="admin-total-orders-count">0 รายการ</p>
-          <span class="text-[11px] text-stone-400">อัปเดตแบบ Realtime</span>
+          <span class="text-[11px] text-stone-400">อัปเดตสดแบบ Realtime</span>
         </div>
         <div class="bg-glam-roseLight/40 p-5 rounded-3xl border border-glam-rose/30 shadow-sm">
           <span class="text-xs text-glam-roseDark font-medium">รอตรวจสอบสลิป</span>
@@ -256,12 +261,8 @@
       <div id="admin-subtab-orders" class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
         <div class="p-5 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
           <div>
-            <h3 class="font-bold font-heading text-glam-roseDark text-sm">การตรวจสอบสลิปและอนุมัติคำสั่งซื้อ</h3>
-            <p class="text-xs text-stone-400">คลิก "🧾 ตรวจสอบสลิป" เพื่อดูรูปหลักฐานและเวลาที่ลูกค้าสั่งซื้อก่อนอนุมัติ</p>
-          </div>
-          <div class="flex gap-2">
-            <button onclick="renderAdminOrders()" class="text-xs bg-white border border-stone-200 px-3 py-1.5 rounded-xl font-bold text-stone-600 hover:bg-stone-50 shadow-sm">🔄 โหลดรายการใหม่</button>
-            <button onclick="resetOrdersToDefault()" class="text-xs bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-xl font-bold text-rose-600 hover:bg-rose-100 shadow-sm">🧹 ล้างแคชรีเซ็ตข้อมูล</button>
+            <h3 class="font-bold font-heading text-glam-roseDark text-sm">การตรวจสอบสลิปและอนุมัติคำสั่งซื้อ (Cloud Firestore Realtime)</h3>
+            <p class="text-xs text-stone-400">ระบบจะอัปเดตทันทีเมื่อลูกค้ากดสั่งซื้อจากเครื่องใดก็ได้</p>
           </div>
         </div>
         <div class="overflow-x-auto">
@@ -438,7 +439,7 @@
 
       <div class="p-4 md:p-5 bg-glam-cream border-t border-glam-roseLight flex flex-col sm:flex-row justify-between items-center gap-3">
         <span class="text-xs text-stone-500 font-light text-center sm:text-left">
-          🕒 ระบบจะบันทึกวันและเวลาที่สั่งซื้อแบบ Realtime ส่งตรงไปยังแอดมิน
+          🕒 ระบบบันทึกตรงขึ้น Cloud Firestore เชื่อมข้อมูลถึงแอดมินแบบ Realtime
         </span>
         <button onclick="confirmOrderWithSlip()" class="w-full sm:w-auto bg-gradient-to-r from-glam-rose to-glam-roseDark hover:brightness-105 text-white font-bold py-3.5 px-8 rounded-2xl transition shadow-md text-sm font-heading">
           ยืนยันการโอนเงินและส่งสลิปให้แอดมิน ✨
@@ -540,7 +541,6 @@
       </div>
 
       <div class="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1 bg-[#FFFDF9]">
-        
         <div class="flex flex-col sm:flex-row gap-5 items-center sm:items-start bg-white p-4 rounded-3xl border border-glam-roseLight/60 shadow-sm">
           <img id="detail-cover" src="" alt="ปกหนังสือ" class="w-32 h-44 sm:w-40 sm:h-56 object-cover rounded-2xl shadow-md border border-glam-roseLight shrink-0">
           <div class="flex-1 space-y-2 text-center sm:text-left">
@@ -662,8 +662,23 @@
     </div>
   </div>
 
-  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <!-- ==================== JAVASCRIPT & FIREBASE LOGIC ==================== -->
   <script>
+    // 1. กำหนดค่า Firebase จากโปรเจกต์ของคุณ
+    const firebaseConfig = {
+      apiKey: "AIzaSyDs8diJc28O0ZaaOjiypbYC8b2aQung02E",
+      authDomain: "bookie-house-69d39.firebaseapp.com",
+      projectId: "bookie-house-69d39",
+      storageBucket: "bookie-house-69d39.firebasestorage.app",
+      messagingSenderId: "740325880651",
+      appId: "1:740325880651:web:8a8469bbbad8b77e8d6ece",
+      measurementId: "G-THB87MZPTV"
+    };
+
+    // เริ่มต้น Firebase และเชื่อมต่อ Firestore Database
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     const defaultUsers = [
       { username: 'admin_bookie', password: 'password123', name: 'คุณแอดมิน Bookie House', email: 'admin@bookiehouse.com', role: 'admin' },
       { username: 'somchai_s',    password: 'password123', name: 'คุณสมชาย สายอ่าน',        email: 'somchai@gmail.com', role: 'customer' },
@@ -685,29 +700,11 @@
       { id: 12, title: 'คดีฆาตกรรมห้องสมุดลับโบราณ', catId: 4, catName: 'สืบสวน', price: 230.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.8, badge: '', isActive: true, desc: 'ปริศนาการตายของบรรณารักษ์ชราในห้องหนังสือต้องห้าม', cover: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=400&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/library-mystery.pdf' }
     ];
 
-    const defaultOrders = [
-      { id: 101, username: 'somchai_s', customer: 'คุณสมชาย สายอ่าน', email: 'somchai@gmail.com', datetime: '2026-08-10 14:20:15', method: 'พร้อมเพย์ QR', items: ['Mastering SQL & Database Design'], total: 350.00, status: 'confirmed', slipUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/sql-master.pdf' },
-      { id: 102, username: 'somchai_s', customer: 'คุณสมชาย สายอ่าน', email: 'somchai@gmail.com', datetime: '2026-08-29 18:45:30', method: 'โอนผ่านธนาคาร', items: ['Atomic Habits: พลังแห่งนิสัยเล็กๆ'], total: 280.00, status: 'pending', slipUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80', dlUrl: 'https://storage.bookiehouse.com/dl/atomic-habits.pdf' }
-    ];
-
-    // โหลดข้อมูลแบบป้องกัน Error
-    function getStoredOrders() {
-      try {
-        const stored = localStorage.getItem('bookie_orders');
-        return stored ? JSON.parse(stored) : defaultOrders;
-      } catch (e) {
-        return defaultOrders;
-      }
-    }
-
-    function setStoredOrders(newOrders) {
-      localStorage.setItem('bookie_orders', JSON.stringify(newOrders));
-    }
-
     let users = JSON.parse(localStorage.getItem('bookie_users')) || defaultUsers;
     let books = JSON.parse(localStorage.getItem('bookie_books')) || defaultBooks;
     let sentEmails = JSON.parse(localStorage.getItem('bookie_emails')) || [];
     let currentUser = JSON.parse(localStorage.getItem('bookie_current_user')) || null;
+    let cloudOrders = []; // รายการออเดอร์ Realtime จาก Cloud
     let cart = [];
     let selectedPaymentMethod = 'พร้อมเพย์ QR';
     let currentUploadedSlip = 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80';
@@ -719,13 +716,20 @@
       localStorage.setItem('bookie_current_user', JSON.stringify(currentUser));
     }
 
-    function resetOrdersToDefault() {
-      if (confirm('คุณต้องการรีเซ็ตคำสั่งซื้อเป็นค่าเริ่มต้นและล้างแคชหรือไม่?')) {
-        setStoredOrders(defaultOrders);
-        alert('🧹 รีเซ็ตข้อมูลคำสั่งซื้อเรียบร้อยแล้ว');
-        renderAdminOrders();
-      }
-    }
+    // 2. ฟังข้อมูลคำสั่งซื้อแบบ Realtime จาก Firestore ข้ามเครื่อง
+    db.collection('orders').orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
+      cloudOrders = [];
+      snapshot.forEach((doc) => {
+        cloudOrders.push({ firestoreId: doc.id, ...doc.data() });
+      });
+
+      // ถ้าเปิดหน้าจอคำสั่งซื้อหรือแอดมินอยู่ ให้รีเฟรชข้อมูลอัตโนมัติทันที
+      renderAdminOrders();
+      renderCustomerOrders();
+      updateInboxBadge();
+    }, (error) => {
+      console.warn("Firestore access error:", error);
+    });
 
     function navigate(view) {
       document.getElementById('view-shop').classList.add('hidden');
@@ -906,8 +910,8 @@
       }
     }
 
-    // ฟังก์ชันสั่งซื้อ (บันทึกลง LocalStorage ทันที)
-    function confirmOrderWithSlip() {
+    // 3. ฟังก์ชันสั่งซื้อ (บันทึกลง Cloud Firestore ข้ามเครื่องทันที)
+    async function confirmOrderWithSlip() {
       if (cart.length === 0) {
         alert('ยังไม่มีหนังสือในตะกร้า');
         return;
@@ -918,13 +922,12 @@
         return;
       }
 
-      const allOrders = getStoredOrders();
       const now = new Date();
       const pad = (n) => String(n).padStart(2, '0');
       const fullDateTime = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 
       const total = cart.reduce((sum, b) => sum + b.price, 0);
-      const newOrderId = allOrders.length ? Math.max(...allOrders.map(o => o.id)) + 1 : 101;
+      const newOrderId = Math.floor(100 + Math.random() * 900); // สุ่ม Order ID 3 หลัก
 
       const newOrder = {
         id: newOrderId,
@@ -932,6 +935,8 @@
         customer: currentUser.name,
         email: currentUser.email || 'customer@example.com',
         datetime: fullDateTime,
+        date: fullDateTime.split(' ')[0],
+        timestamp: Date.now(),
         method: selectedPaymentMethod,
         items: cart.map(c => c.title),
         total: total,
@@ -940,21 +945,24 @@
         dlUrl: cart[0].dlUrl || 'https://storage.bookiehouse.com/dl/ebook-sample.pdf'
       };
 
-      allOrders.unshift(newOrder);
-      setStoredOrders(allOrders);
+      try {
+        // ส่งขึ้น Cloud Firestore
+        await db.collection('orders').add(newOrder);
 
-      cart = [];
-      updateCartUI();
-      toggleCartModal();
+        cart = [];
+        updateCartUI();
+        toggleCartModal();
 
-      alert(`🎉 บันทึกคำสั่งซื้อ #ORD-${newOrderId} เรียบร้อยแล้ว!\n\n🕒 เวลาที่สั่งซื้อ: ${fullDateTime}\n💳 วิธีชำระ: ${selectedPaymentMethod}\n📌 สถานะ: รอแอดมินตรวจสอบสลิป\n\nเมื่อสลับไปบัญชีแอดมิน จะเห็นออเดอร์นี้ทันทีครับ`);
-      navigate('orders');
+        alert(`🎉 บันทึกคำสั่งซื้อ #ORD-${newOrderId} ขึ้นระบบ Cloud สำเร็จแล้ว!\n\n🕒 เวลาที่สั่งซื้อ: ${fullDateTime}\n💳 วิธีชำระ: ${selectedPaymentMethod}\n📌 สถานะ: รอแอดมินตรวจสอบสลิป\n\n(เครื่องแอดมินจะได้รับคำสั่งซื้อนี้แบบ Realtime ทันทีครับ)`);
+        navigate('orders');
+      } catch (err) {
+        alert('เกิดข้อผิดพลาดในการเชื่อมต่อ Cloud: ' + err.message);
+      }
     }
 
     // แอดมินตรวจสอบสลิป
     function adminInspectSlip(orderId) {
-      const allOrders = getStoredOrders();
-      const o = allOrders.find(x => x.id === orderId);
+      const o = cloudOrders.find(x => x.id === orderId);
       if (!o) return;
 
       document.getElementById('admin-view-slip-img').src = o.slipUrl;
@@ -970,7 +978,7 @@
         approveBtn.disabled = false;
         approveBtn.className = 'flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-bold text-xs shadow';
         approveBtn.onclick = () => {
-          adminApproveOrder(o.id);
+          adminApproveOrder(o.firestoreId, o);
           closeAdminSlipModal();
         };
       }
@@ -981,35 +989,38 @@
       document.getElementById('admin-slip-modal').classList.add('hidden');
     }
 
-    function adminApproveOrder(orderId) {
-      const allOrders = getStoredOrders();
-      const o = allOrders.find(x => x.id === orderId);
-      if (o) {
-        o.status = 'confirmed';
-        setStoredOrders(allOrders);
+    // 4. แอดมินอนุมัติผ่าน Cloud
+    async function adminApproveOrder(firestoreId, orderData) {
+      try {
+        if (firestoreId) {
+          await db.collection('orders').doc(firestoreId).update({ status: 'confirmed' });
+        }
 
+        // ส่ง Email จำลอง
         const newEmail = {
-          orderId: o.id,
-          toEmail: o.email,
-          toName: o.customer,
-          subject: `[Bookie House] ลิงก์ดาวน์โหลด E-Book สำหรับคำสั่งซื้อ #${o.id}`,
+          orderId: orderData.id,
+          toEmail: orderData.email,
+          toName: orderData.customer,
+          subject: `[Bookie House] ลิงก์ดาวน์โหลด E-Book สำหรับคำสั่งซื้อ #${orderData.id}`,
           date: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
-          items: o.items,
-          dlUrl: o.dlUrl
+          items: orderData.items,
+          dlUrl: orderData.dlUrl
         };
         sentEmails.unshift(newEmail);
         saveAllState();
 
-        alert(`✅ อนุมัติคำสั่งซื้อ #${o.id} เรียบร้อยแล้ว!\n📧 ลิงก์ดาวน์โหลดส่งเข้ากล่องอีเมลของลูกค้าเรียบร้อยครับ`);
-        renderAdminOrders();
+        alert(`✅ อนุมัติคำสั่งซื้อ #${orderData.id} เรียบร้อยแล้ว!\n📧 ซิงก์สถานะไปยัง Cloud และส่งไฟล์ E-Book เข้าอีเมลลูกค้าแล้ว`);
+      } catch (err) {
+        alert('เกิดข้อผิดพลาดในการอัปเดตสถานะ: ' + err.message);
       }
     }
 
     // Render รายการลูกค้า
     function renderCustomerOrders() {
-      const allOrders = getStoredOrders();
       const tbody = document.getElementById('customer-orders-tbody');
-      const userOrders = allOrders.filter(o => o.username === currentUser.username);
+      if (!currentUser || !tbody) return;
+
+      const userOrders = cloudOrders.filter(o => o.username === currentUser.username);
 
       if (userOrders.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-stone-400 text-sm">ยังไม่มีคำสั่งซื้อของคุณ</td></tr>';
@@ -1022,7 +1033,7 @@
 
         if (o.status === 'confirmed') {
           badge = '<span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">อนุมัติแล้ว</span>';
-          action = `<a href="${o.dlUrl}" target="_blank" class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white text-xs px-3.5 py-2 rounded-xl font-bold shadow-sm inline-block hover:brightness-110 font-heading">⬇️️ ดาวน์โหลด E-Book</a>`;
+          action = `<a href="${o.dlUrl}" target="_blank" class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white text-xs px-3.5 py-2 rounded-xl font-bold shadow-sm inline-block hover:brightness-110 font-heading">⬇ ดาวน์โหลด E-Book</a>`;
         } else if (o.status === 'pending') {
           badge = '<span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-bold">รอตรวจสอบสลิป</span>';
           action = '<span class="text-xs text-stone-400 italic">ล็อก (รอแอดมินตรวจสลิป)</span>';
@@ -1037,7 +1048,7 @@
             <td class="py-4 px-5 text-stone-600 font-price text-xs font-semibold whitespace-nowrap">${o.datetime || o.date}</td>
             <td class="py-4 px-5 font-medium text-glam-deepText">${o.items.join(', ')}</td>
             <td class="py-4 px-5 text-stone-500 text-xs">${o.method || 'พร้อมเพย์ QR'}</td>
-            <td class="py-4 px-5 font-bold font-price text-glam-roseDark">฿${o.total.toFixed(2)}</td>
+            <td class="py-4 px-5 font-bold font-price text-glam-roseDark">฿${parseFloat(o.total).toFixed(2)}</td>
             <td class="py-4 px-5">${badge}</td>
             <td class="py-4 px-5 text-center">${action}</td>
           </tr>
@@ -1045,19 +1056,20 @@
       }).join('');
     }
 
-    // Render รายการแอดมิน (ดึงตรงจาก Storage 100%)
+    // Render รายการแอดมิน (Realtime Cloud Firestore)
     function renderAdminOrders() {
-      const allOrders = getStoredOrders();
       const tbody = document.getElementById('all-admin-orders-tbody');
+      if (!tbody) return;
+
       let pendingCount = 0;
       let totalRev = 0;
 
-      tbody.innerHTML = allOrders.map(o => {
+      tbody.innerHTML = cloudOrders.map(o => {
         let badge = '';
         let action = '';
 
         if (o.status === 'confirmed') {
-          totalRev += o.total;
+          totalRev += parseFloat(o.total || 0);
           badge = '<span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold">อนุมัติแล้ว</span>';
           action = `<button onclick="adminInspectSlip(${o.id})" class="bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs px-3 py-1.5 rounded-xl font-bold transition">🧾 ดูสลิป</button>`;
         } else if (o.status === 'pending') {
@@ -1078,7 +1090,7 @@
             </td>
             <td class="py-3.5 px-4 text-stone-600 text-xs font-price whitespace-nowrap font-medium">${o.datetime || o.date}</td>
             <td class="py-3.5 px-4 text-stone-500 text-xs">${o.method || 'พร้อมเพย์ QR'}</td>
-            <td class="py-3.5 px-4 font-bold font-price text-glam-roseDark">฿${o.total.toFixed(2)}</td>
+            <td class="py-3.5 px-4 font-bold font-price text-glam-roseDark">฿${parseFloat(o.total).toFixed(2)}</td>
             <td class="py-3.5 px-4">
               <img src="${o.slipUrl}" onclick="adminInspectSlip(${o.id})" alt="สลิป" class="w-9 h-9 object-cover rounded-lg cursor-pointer border hover:scale-110 transition shadow-sm">
             </td>
@@ -1088,9 +1100,13 @@
         `;
       }).join('');
 
-      document.getElementById('admin-pending-badge').innerText = `${pendingCount} รายการ`;
-      document.getElementById('admin-total-orders-count').innerText = `${allOrders.length} รายการ`;
-      document.getElementById('admin-total-revenue').innerText = `฿${totalRev.toFixed(2)}`;
+      const pendingBadge = document.getElementById('admin-pending-badge');
+      const ordersCount = document.getElementById('admin-total-orders-count');
+      const revenueEl = document.getElementById('admin-total-revenue');
+
+      if (pendingBadge) pendingBadge.innerText = `${pendingCount} รายการ`;
+      if (ordersCount) ordersCount.innerText = `${cloudOrders.length} รายการ`;
+      if (revenueEl) revenueEl.innerText = `฿${totalRev.toFixed(2)}`;
     }
 
     // Modal ตะกร้า
