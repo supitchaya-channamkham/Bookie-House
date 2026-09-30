@@ -909,16 +909,15 @@
         return;
       }
 
-      // โหลด orders ล่าสุดจาก LocalStorage เสมอ
-      orders = JSON.parse(localStorage.getItem('bookie_orders')) || orders;
+      // ดึงรายการออเดอร์ล่าสุดจาก LocalStorage เสมอ
+      let currentOrders = JSON.parse(localStorage.getItem('bookie_orders')) || defaultOrders;
 
       const now = new Date();
       const pad = (n) => String(n).padStart(2, '0');
-      // Format วัน-เวลา: YYYY-MM-DD HH:MM:SS
       const fullDateTime = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 
       const total = cart.reduce((sum, b) => sum + b.price, 0);
-      const newOrderId = orders.length ? Math.max(...orders.map(o => o.id)) + 1 : 101;
+      const newOrderId = currentOrders.length ? Math.max(...currentOrders.map(o => o.id)) + 1 : 101;
 
       const newOrder = {
         id: newOrderId,
@@ -926,24 +925,26 @@
         customer: currentUser.name,
         email: currentUser.email || 'customer@example.com',
         datetime: fullDateTime,
+        date: fullDateTime.split(' ')[0],
         method: selectedPaymentMethod,
         items: cart.map(c => c.title),
         total: total,
         status: 'pending',
-        slipUrl: currentUploadedSlip,
+        slipUrl: currentUploadedSlip || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80',
         dlUrl: cart[0].dlUrl || 'https://storage.bookiehouse.com/dl/ebook-sample.pdf'
       };
 
-      // บันทึกลงหน้าแรกสุด
-      orders.unshift(newOrder);
-      saveAllState();
+      // เพิ่มเข้าบนสุดและเซฟลง LocalStorage ทันที
+      currentOrders.unshift(newOrder);
+      orders = currentOrders;
+      localStorage.setItem('bookie_orders', JSON.stringify(currentOrders));
 
       // ล้างตะกร้า
       cart = [];
       updateCartUI();
       toggleCartModal();
 
-      alert(`🎉 บันทึกคำสั่งซื้อ #ORD-${newOrderId} เรียบร้อยแล้ว!\n\n🕒 เวลาที่สั่งซื้อ: ${fullDateTime}\n💳 วิธีชำระ: ${selectedPaymentMethod}\n📌 สถานะ: [รอแอดมินตรวจสอบสลิป]\n\nเมื่อสลับไปบัญชีแอดมิน จะเห็นออเดอร์นี้ทันทีครับ`);
+      alert(`🎉 บันทึกคำสั่งซื้อ #ORD-${newOrderId} เรียบร้อยแล้ว!\n\n🕒 เวลาที่สั่งซื้อ: ${fullDateTime}\n💳 วิธีชำระ: ${selectedPaymentMethod}\n📌 สถานะ: รอตรวจสอบสลิป\n\nเมื่อเข้าสู่ระบบด้วยบัญชีแอดมิน จะพบคำสั่งซื้อนี้พร้อมปุ่มตรวจสอบสลิปทันทีครับ!`);
       navigate('orders');
     }
 
@@ -1041,9 +1042,16 @@
     }
 
     // Render รายการของแอดมิน (Realtime จาก LocalStorage)
-    function renderAdminOrders() {
-      orders = JSON.parse(localStorage.getItem('bookie_orders')) || orders;
+   function renderAdminOrders() {
+      // บังคับดึงข้อมูลสดจาก LocalStorage ทุกครั้งที่เรียกใช้
+      const storedOrders = JSON.parse(localStorage.getItem('bookie_orders'));
+      if (storedOrders && storedOrders.length > 0) {
+        orders = storedOrders;
+      }
+
       const tbody = document.getElementById('all-admin-orders-tbody');
+      if (!tbody) return;
+
       let pendingCount = 0;
       let totalRev = 0;
 
@@ -1058,7 +1066,7 @@
         } else if (o.status === 'pending') {
           pendingCount++;
           badge = '<span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-bold">รอตรวจสอบสลิป</span>';
-          action = `<button onclick="adminInspectSlip(${o.id})" class="bg-glam-roseDark hover:brightness-110 text-white text-xs px-3 py-1.5 rounded-xl font-bold transition shadow-sm font-heading">🧾 ตรวจสอบสลิป</button>`;
+          action = `<button onclick="adminInspectSlip(${o.id})" class="bg-glam-roseDark hover:brightness-110 text-white text-xs px-3.5 py-1.5 rounded-xl font-bold transition shadow-sm font-heading">🧾 ตรวจสอบสลิป</button>`;
         } else {
           badge = '<span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-bold">ยกเลิก</span>';
           action = '-';
@@ -1083,9 +1091,13 @@
         `;
       }).join('');
 
-      document.getElementById('admin-pending-badge').innerText = `${pendingCount} รายการ`;
-      document.getElementById('admin-total-orders-count').innerText = `${orders.length} รายการ`;
-      document.getElementById('admin-total-revenue').innerText = `฿${totalRev.toFixed(2)}`;
+      const pendingBadge = document.getElementById('admin-pending-badge');
+      const ordersCount = document.getElementById('admin-total-orders-count');
+      const revenueEl = document.getElementById('admin-total-revenue');
+
+      if (pendingBadge) pendingBadge.innerText = `${pendingCount} รายการ`;
+      if (ordersCount) ordersCount.innerText = `${orders.length} รายการ`;
+      if (revenueEl) revenueEl.innerText = `฿${totalRev.toFixed(2)}`;
     }
 
     // Modal ตะกร้า
