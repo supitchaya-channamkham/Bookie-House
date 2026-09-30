@@ -48,8 +48,10 @@
     .modal-animate { animation: popUpIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   </style>
 
+  <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+  
   <!-- AlaSQL: Client-side SQL Engine -->
   <script src="https://cdn.jsdelivr.net/npm/alasql@4.4.4/dist/alasql.min.js"></script>
 </head>
@@ -118,7 +120,7 @@
             <span class="shimmer-text">ในโลก E-Book ระดับพรีเมียม</span>
           </h1>
           <p class="text-rose-100/90 text-sm md:text-base leading-relaxed font-light">
-            คัดสรรหนังสือและวรรณกรรมดิจิทัลชั้นนำ สั่งซื้อง่าย ชำระเงินสะดวก พร้อมรับลิงก์สำหรับเปิดอ่านได้ทันที
+            คัดสรรหนังสือดิจิทัลชั้นนำ สั่งซื้อง่าย ชำระเงินสะดวก พร้อมรับลิงก์สำหรับเปิดอ่านได้ทันที
           </p>
         </div>
       </div>
@@ -284,93 +286,21 @@
         </div>
       </div>
 
-      <!-- แท็บ 4: รายงานวิเคราะห์ 4 รายการตามเกณฑ์ & ปุ่ม Export CSV -->
-      <div id="admin-subtab-reports" class="space-y-6">
+      <!-- แท็บ 4: รายงานวิเคราะห์ & ปุ่ม Export CSV -->
+      <div id="admin-subtab-reports" class="hidden space-y-6">
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
           <div>
-            <h3 class="text-lg font-bold font-heading text-glam-roseDark">รายงานวิเคราะห์ยอดขายและพฤติกรรมลูกค้า (4 Reports)</h3>
-            <p class="text-xs text-stone-400">ประมวลผลข้อมูลจากคำสั่งซื้อจริงในระบบ</p>
+            <h3 class="text-lg font-bold font-heading text-glam-roseDark">สรุปข้อมูลการขายและรายงาน (4 Reports)</h3>
           </div>
-          <button onclick="exportReportsToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2 font-heading self-start sm:self-auto">
-            <span>📥 Export ข้อมูลคำสั่งซื้อ (CSV / Excel)</span>
+          <button onclick="exportReportsToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2 font-heading">
+            <span>📥 ส่งออกข้อมูล (CSV)</span>
           </button>
         </div>
 
-        <!-- แท็บ 5: SQL Query Console (ค้นหาข้อมูลตารางด้วย SQL) -->
-      <div id="admin-subtab-sql" class="hidden space-y-6">
-        <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
-          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-glam-milk pb-4">
-            <div>
-              <h3 class="text-lg font-bold font-heading text-glam-roseDark flex items-center gap-2">
-                <span>💻 SQL Query Console (ค้นหาและสอบถามข้อมูลตาราง)</span>
-              </h3>
-              <p class="text-xs text-stone-400 mt-0.5">พิมพ์คำสั่ง SQL เพื่อค้นหาข้อมูลจากตารางในระบบได้ทันที (รองรับ SELECT, WHERE, ORDER BY, GROUP BY)</p>
-            </div>
-            <div class="flex gap-2 text-[11px] font-mono bg-stone-50 border border-stone-200 px-3 py-1.5 rounded-xl text-stone-600">
-              <span>ตารางที่ค้นหาได้:</span>
-              <b class="text-glam-roseDark">ebooks</b> | <b class="text-glam-roseDark">orders</b> | <b class="text-glam-roseDark">users</b> | <b class="text-glam-roseDark">categories</b>
-            </div>
-          </div>
-
-          <!-- ตัวอย่างคำสั่ง SQL ลัดสำหรับคลิกทดสอบได้ทันที -->
-          <div class="pt-3">
-            <span class="text-xs font-bold text-stone-600 block mb-2 font-heading">⚡ คำสั่ง SQL ลัดยอดนิยม (คลิกเพื่อทดสอบ):</span>
-            <div class="flex flex-wrap gap-2 text-xs">
-              <button onclick="setSqlExample('SELECT id, title, author, price, catName FROM ebooks WHERE price >= 300 ORDER BY price DESC')" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
-                1. หนังสือราคา >= 300 บาท
-              </button>
-              <button onclick="setSqlExample('SELECT id, customer, total, method, status FROM orders WHERE status = \'confirmed\'' )" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
-                2. ออเดอร์ที่ยืนยันแล้ว
-              </button>
-              <button onclick="setSqlExample('SELECT catName, COUNT(*) AS total_books, ROUND(AVG(price), 2) AS avg_price FROM ebooks GROUP BY catName')" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
-                3. สรุปจำนวนและราคาเฉลี่ยตามหมวดหมู่
-              </button>
-              <button onclick="setSqlExample('SELECT username, name, email, role FROM users')" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
-                4. รายชื่อสมาชิกทั้งหมด
-              </button>
-            </div>
-          </div>
-
-          <!-- ช่องกรอกคำสั่ง SQL -->
-          <div class="pt-4 space-y-3">
-            <div class="relative">
-              <textarea id="sql-input-box" rows="4" class="w-full bg-slate-900 text-emerald-400 font-mono text-xs p-4 rounded-2xl border border-stone-700 focus:outline-none focus:ring-2 focus:ring-glam-rose shadow-inner" placeholder="พิมพ์คำสั่ง SQL ที่ต้องการค้นหา เช่น SELECT * FROM ebooks WHERE price < 300"></textarea>
-            </div>
-            <div class="flex justify-between items-center">
-              <span id="sql-status-msg" class="text-xs text-stone-500 font-medium"></span>
-              <div class="space-x-2">
-                <button onclick="clearSqlQuery()" class="px-4 py-2 border rounded-xl text-stone-500 font-bold text-xs hover:bg-stone-50">ล้างคำสั่ง</button>
-                <button onclick="executeAdminSql()" class="bg-gradient-to-r from-emerald-600 to-teal-700 hover:brightness-110 text-white font-bold text-xs px-6 py-2 rounded-xl shadow transition font-heading">
-                  ▶ ดำเนินการ (Run SQL)
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- กล่องแสดงผลลัพธ์ตารางข้อมูลจากการรัน SQL -->
-        <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
-            <h4 class="font-bold font-heading text-glam-roseDark text-sm">📋 ผลลัพธ์จากการค้นหา (Query Results)</h4>
-            <span id="sql-result-count" class="text-xs font-price font-bold text-stone-500 bg-white border border-stone-200 px-3 py-1 rounded-full">0 แถว</span>
-          </div>
-          <div class="overflow-x-auto max-h-[420px]">
-            <table class="w-full text-left border-collapse text-xs">
-              <thead id="sql-result-thead" class="bg-glam-milk text-glam-roseDark uppercase font-bold sticky top-0 border-b border-glam-roseLight/70">
-                <tr><th class="py-3 px-4">ผลลัพธ์จะปรากฏที่นี่</th></tr>
-              </thead>
-              <tbody id="sql-result-tbody" class="divide-y divide-glam-milk text-stone-700">
-                <tr><td class="p-6 text-center text-stone-400">ยังไม่มีการรันคำสั่ง SQL</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-        <!-- รายงานที่ 1: ยอดขายตามช่วงเวลา -->
+        <!-- 4 Reports -->
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
           <div class="p-4 border-b border-glam-milk bg-glam-cream">
-            <h4 class="font-bold font-heading text-glam-roseDark text-sm">📊 รายงานที่ 1: สรุปยอดขายตามช่วงเวลา (Sales over Time)</h4>
+            <h4 class="font-bold font-heading text-glam-roseDark text-sm">📊 รายงานที่ 1: สรุปยอดขายตามช่วงเวลา</h4>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
@@ -379,21 +309,20 @@
                   <th class="py-3 px-5">ช่วงวันที่</th>
                   <th class="py-3 px-5 text-center">จำนวนคำสั่งซื้อ</th>
                   <th class="py-3 px-5 text-right">ยอดขายรวม (บาท)</th>
-                  <th class="py-3 px-5 text-right">เฉลี่ยต่อบิล</th>
+                  <th class="py-3 px-5 text-right">ยอดเฉลี่ย</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
-                <tr><td class="py-3 px-5 font-bold">2026-08-01 ถึง 2026-08-15</td><td class="py-3 px-5 text-center">9 บิล</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿3,190.00</td><td class="py-3 px-5 text-right">฿354.44</td></tr>
-                <tr><td class="py-3 px-5 font-bold">2026-08-16 ถึง 2026-08-31</td><td class="py-3 px-5 text-center">8 บิล</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,860.00</td><td class="py-3 px-5 text-right">฿357.50</td></tr>
+                <tr><td class="py-3 px-5 font-bold">2026-08-01 ถึง 2026-08-15</td><td class="py-3 px-5 text-center">9 รายการ</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿3,190.00</td><td class="py-3 px-5 text-right">฿354.44</td></tr>
+                <tr><td class="py-3 px-5 font-bold">2026-08-16 ถึง 2026-08-31</td><td class="py-3 px-5 text-center">8 รายการ</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,860.00</td><td class="py-3 px-5 text-right">฿357.50</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- รายงานที่ 2: E-Book ขายดี -->
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
           <div class="p-4 border-b border-glam-milk bg-glam-cream">
-            <h4 class="font-bold font-heading text-glam-roseDark text-sm">🏆 รายงานที่ 2: 5 อันดับ E-Book ขายดีที่สุด (Top Sellers)</h4>
+            <h4 class="font-bold font-heading text-glam-roseDark text-sm">🏆 รายงานที่ 2: 5 อันดับ E-Book ขายดีที่สุด</h4>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
@@ -403,111 +332,50 @@
                   <th class="py-3 px-5">ชื่อ E-Book</th>
                   <th class="py-3 px-5">หมวดหมู่</th>
                   <th class="py-3 px-5 text-center">จำนวนที่ขายได้</th>
-                  <th class="py-3 px-5 text-right">ยอดขายรวม (บาท)</th>
+                  <th class="py-3 px-5 text-right">ยอดขายรวม</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
-                <tr>
-                  <td class="py-3 px-5 text-center font-bold text-glam-roseDark">1</td>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">Mastering SQL & Database Design</td>
-                  <td class="py-3 px-5 text-stone-500">เทคโนโลยีและการเขียนโค้ด</td>
-                  <td class="py-3 px-5 text-center font-bold">8 เล่ม</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,800.00</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-5 text-center font-bold text-glam-roseDark">2</td>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">Modern Web Development with React</td>
-                  <td class="py-3 px-5 text-stone-500">เทคโนโลยีและการเขียนโค้ด</td>
-                  <td class="py-3 px-5 text-center font-bold">6 เล่ม</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,520.00</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-5 text-center font-bold text-glam-roseDark">3</td>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">Atomic Habits: พลังแห่งนิสัยเล็กๆ</td>
-                  <td class="py-3 px-5 text-stone-500">พัฒนาตนเองและจิตวิทยา</td>
-                  <td class="py-3 px-5 text-center font-bold">5 เล่ม</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,400.00</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-5 text-center font-bold text-glam-roseDark">4</td>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">การเงินง่ายๆ สำหรับมนุษย์เงินเดือน</td>
-                  <td class="py-3 px-5 text-stone-500">ธุรกิจและการเงิน</td>
-                  <td class="py-3 px-5 text-center font-bold">5 เล่ม</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,250.00</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-5 text-center font-bold text-glam-roseDark">5</td>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">Startup Blueprint: จาก 0 สู่ 100 ล้าน</td>
-                  <td class="py-3 px-5 text-stone-500">ธุรกิจและการเงิน</td>
-                  <td class="py-3 px-5 text-center font-bold">4 เล่ม</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,280.00</td>
-                </tr>
+                <tr><td class="py-3 px-5 text-center font-bold text-glam-roseDark">1</td><td class="py-3 px-5 font-bold">Mastering SQL & Database Design</td><td class="py-3 px-5 text-stone-500">เทคโนโลยี</td><td class="py-3 px-5 text-center font-bold">8 เล่ม</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿2,800.00</td></tr>
+                <tr><td class="py-3 px-5 text-center font-bold text-glam-roseDark">2</td><td class="py-3 px-5 font-bold">Modern Web Development with React</td><td class="py-3 px-5 text-stone-500">เทคโนโลยี</td><td class="py-3 px-5 text-center font-bold">6 เล่ม</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿2,520.00</td></tr>
+                <tr><td class="py-3 px-5 text-center font-bold text-glam-roseDark">3</td><td class="py-3 px-5 font-bold">Atomic Habits: พลังแห่งนิสัยเล็กๆ</td><td class="py-3 px-5 text-stone-500">พัฒนาตนเอง</td><td class="py-3 px-5 text-center font-bold">5 เล่ม</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿1,400.00</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- รายงานที่ 3: ยอดขายตามหมวดหมู่ -->
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
           <div class="p-4 border-b border-glam-milk bg-glam-cream">
-            <h4 class="font-bold font-heading text-glam-roseDark text-sm">🏷️ รายงานที่ 3: สรุปยอดขายตามหมวดหมู่ (Sales by Category)</h4>
+            <h4 class="font-bold font-heading text-glam-roseDark text-sm">🏷️ รายงานที่ 3: สรุปยอดขายตามหมวดหมู่</h4>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="bg-glam-milk text-glam-roseDark font-heading uppercase font-bold">
-                  <th class="py-3 px-5">รหัสหมวดหมู่</th>
+                  <th class="py-3 px-5">รหัส</th>
                   <th class="py-3 px-5">ชื่อหมวดหมู่</th>
                   <th class="py-3 px-5 text-center">จำนวนคำสั่งซื้อ</th>
-                  <th class="py-3 px-5 text-center">จำนวนเล่มที่ขายได้</th>
-                  <th class="py-3 px-5 text-right">ยอดขายรวมหมวดหมู่</th>
+                  <th class="py-3 px-5 text-center">จำนวนเล่ม</th>
+                  <th class="py-3 px-5 text-right">ยอดขายรวม</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
-                <tr>
-                  <td class="py-3 px-5 font-mono text-stone-400">#CAT-01</td>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">เทคโนโลยีและการเขียนโค้ด</td>
-                  <td class="py-3 px-5 text-center">14 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold">18 เล่ม</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿6,840.00</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-5 font-mono text-stone-400">#CAT-02</td>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">ธุรกิจและการเงิน</td>
-                  <td class="py-3 px-5 text-center">8 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold">10 เล่ม</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,960.00</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-5 font-mono text-stone-400">#CAT-03</td>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">พัฒนาตนเองและจิตวิทยา</td>
-                  <td class="py-3 px-5 text-center">6 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold">7 เล่ม</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,930.00</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-5 font-mono text-stone-400">#CAT-04</td>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">นิยายและวรรณกรรม</td>
-                  <td class="py-3 px-5 text-center">5 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold">6 เล่ม</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,390.00</td>
-                </tr>
+                <tr><td class="py-3 px-5 font-mono text-stone-400">#01</td><td class="py-3 px-5 font-bold">เทคโนโลยีและการเขียนโค้ด</td><td class="py-3 px-5 text-center">14 บิล</td><td class="py-3 px-5 text-center font-bold">18 เล่ม</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿6,840.00</td></tr>
+                <tr><td class="py-3 px-5 font-mono text-stone-400">#02</td><td class="py-3 px-5 font-bold">ธุรกิจและการเงิน</td><td class="py-3 px-5 text-center">8 บิล</td><td class="py-3 px-5 text-center font-bold">10 เล่ม</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿2,960.00</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- รายงานที่ 4: ลูกค้าและคำสั่งซื้อ -->
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
           <div class="p-4 border-b border-glam-milk bg-glam-cream">
-            <h4 class="font-bold font-heading text-glam-roseDark text-sm">👤 รายงานที่ 4: สรุปพฤติกรรมลูกค้าและสถานะคำสั่งซื้อ (Customer Behavior)</h4>
+            <h4 class="font-bold font-heading text-glam-roseDark text-sm">👤 รายงานที่ 4: สรุปพฤติกรรมลูกค้าและสถานะคำสั่งซื้อ</h4>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
               <thead>
                 <tr class="bg-glam-milk text-glam-roseDark font-heading uppercase font-bold">
                   <th class="py-3 px-5">ชื่อลูกค้า</th>
-                  <th class="py-3 px-5">อีเมล</th>
                   <th class="py-3 px-5 text-center text-emerald-700">ยืนยันแล้ว</th>
                   <th class="py-3 px-5 text-center text-amber-700">รอตรวจสอบ</th>
                   <th class="py-3 px-5 text-center text-rose-700">ยกเลิก</th>
@@ -516,48 +384,15 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
-                <tr>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">คุณสุพิชญา ชันนำคำ</td>
-                  <td class="py-3 px-5 text-stone-400 font-mono">supitchaya@gmail.com</td>
-                  <td class="py-3 px-5 text-center font-bold text-emerald-600">6 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold text-amber-600">1 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold text-stone-400">0 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold">7 บิล</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,340.00</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">คุณสมชาย สายอ่าน</td>
-                  <td class="py-3 px-5 text-stone-400 font-mono">somchai@gmail.com</td>
-                  <td class="py-3 px-5 text-center font-bold text-emerald-600">5 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold text-amber-600">0 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold text-rose-500">1 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold">6 บิล</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,980.00</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">คุณวนิดา แก้วมณี</td>
-                  <td class="py-3 px-5 text-stone-400 font-mono">wanida@gmail.com</td>
-                  <td class="py-3 px-5 text-center font-bold text-emerald-600">4 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold text-amber-600">1 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold text-stone-400">0 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold">5 บิล</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,450.00</td>
-                </tr>
-                <tr>
-                  <td class="py-3 px-5 font-bold text-glam-deepText">คุณธนพร ทรงดี</td>
-                  <td class="py-3 px-5 text-stone-400 font-mono">thanaporn@gmail.com</td>
-                  <td class="py-3 px-5 text-center font-bold text-emerald-600">3 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold text-amber-600">1 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold text-stone-400">0 บิล</td>
-                  <td class="py-3 px-5 text-center font-bold">4 บิล</td>
-                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,160.00</td>
-                </tr>
+                <tr><td class="py-3 px-5 font-bold">คุณสุพิชญา ชันนำคำ</td><td class="py-3 px-5 text-center font-bold text-emerald-600">6 บิล</td><td class="py-3 px-5 text-center font-bold text-amber-600">1 บิล</td><td class="py-3 px-5 text-center font-bold text-stone-400">0 บิล</td><td class="py-3 px-5 text-center font-bold">7 บิล</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿2,340.00</td></tr>
+                <tr><td class="py-3 px-5 font-bold">คุณสมชาย สายอ่าน</td><td class="py-3 px-5 text-center font-bold text-emerald-600">5 บิล</td><td class="py-3 px-5 text-center font-bold text-amber-600">0 บิล</td><td class="py-3 px-5 text-center font-bold text-rose-500">1 บิล</td><td class="py-3 px-5 text-center font-bold">6 บิล</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿1,980.00</td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
-      <!-- แท็บ 5: SQL Query Console (ค้นหาข้อมูลตารางด้วย SQL) -->
+
+      <!-- แท็บ 5: SQL Query Console (กล่องที่ต้องการ) -->
       <div id="admin-subtab-sql" class="hidden space-y-6">
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
           <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-glam-milk pb-4">
@@ -573,7 +408,6 @@
             </div>
           </div>
 
-          <!-- ตัวอย่างคำสั่ง SQL ลัดสำหรับคลิกทดสอบ -->
           <div class="pt-3">
             <span class="text-xs font-bold text-stone-600 block mb-2 font-heading">⚡ คำสั่ง SQL ลัดยอดนิยม (คลิกเพื่อทดสอบ):</span>
             <div class="flex flex-wrap gap-2 text-xs">
@@ -592,7 +426,6 @@
             </div>
           </div>
 
-          <!-- ช่องกรอกคำสั่ง SQL -->
           <div class="pt-4 space-y-3">
             <div class="relative">
               <textarea id="sql-input-box" rows="4" class="w-full bg-slate-900 text-emerald-400 font-mono text-xs p-4 rounded-2xl border border-stone-700 focus:outline-none focus:ring-2 focus:ring-glam-rose shadow-inner" placeholder="พิมพ์คำสั่ง SQL ที่ต้องการค้นหา เช่น SELECT * FROM ebooks WHERE price < 300"></textarea>
@@ -609,7 +442,6 @@
           </div>
         </div>
 
-        <!-- กล่องแสดงผลลัพธ์ตารางข้อมูลจากการรัน SQL -->
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
           <div class="p-4 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
             <h4 class="font-bold font-heading text-glam-roseDark text-sm">📋 ผลลัพธ์จากการค้นหา (Query Results)</h4>
@@ -631,9 +463,7 @@
 
   </main>
 
-  <!-- ==================== MODALS ==================== -->
-
-  <!-- MODAL แก้ไขข้อมูลส่วนตัว -->
+  <!-- MODALS -->
   <div id="edit-profile-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.2rem] shadow-2xl p-6 border border-glam-roseLight modal-animate">
       <div class="flex justify-between items-center mb-4">
@@ -657,7 +487,6 @@
     </div>
   </div>
 
-  <!-- MODAL จัดการหมวดหมู่ -->
   <div id="category-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-[2.2rem] shadow-2xl p-6 border border-glam-roseLight modal-animate space-y-4">
       <div class="flex justify-between items-center border-b border-glam-milk pb-3">
@@ -672,7 +501,6 @@
     </div>
   </div>
 
-  <!-- MODAL ตะกร้าสินค้า -->
   <div id="cart-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border border-glam-roseLight modal-animate">
       <div class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white px-7 py-4 flex justify-between items-center">
@@ -731,7 +559,6 @@
     </div>
   </div>
 
-  <!-- MODAL ตรวจสอบสลิป & จัดการสถานะ -->
   <div id="admin-slip-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden border border-glam-roseLight modal-animate">
       <div class="bg-slate-800 text-white px-6 py-4 flex justify-between items-center">
@@ -755,7 +582,6 @@
     </div>
   </div>
 
-  <!-- MODAL ข้อมูลหนังสือ + รีวิว -->
   <div id="book-detail-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col h-[88vh] border border-glam-roseLight modal-animate">
       <div class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white px-6 py-4 flex justify-between items-center shrink-0">
@@ -794,7 +620,6 @@
     </div>
   </div>
 
-  <!-- MODAL อีเมลรับไฟล์ -->
   <div id="inbox-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh] border border-glam-roseLight modal-animate">
       <div class="bg-gradient-to-r from-glam-roseDark to-slate-800 text-white px-6 py-4 flex justify-between items-center">
@@ -811,7 +636,6 @@
     </div>
   </div>
 
-  <!-- MODAL เข้าสู่ระบบ / สมัครสมาชิก -->
   <div id="auth-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.2rem] shadow-2xl p-7 border border-glam-roseLight modal-animate">
       <div class="flex justify-between items-center mb-5">
@@ -843,7 +667,6 @@
     </div>
   </div>
 
-  <!-- MODAL เพิ่ม / แก้ไขหนังสือ -->
   <div id="book-form-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-glam-roseLight modal-animate">
       <div id="book-form-header" class="bg-gradient-to-r from-emerald-600 to-teal-800 text-white px-6 py-4 flex justify-between items-center">
@@ -905,6 +728,8 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    const samplePdf = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+
     const defaultCategories = [
       { id: 1, name: 'เทคโนโลยีและการเขียนโค้ด' },
       { id: 2, name: 'ธุรกิจและการเงิน' },
@@ -918,21 +743,19 @@
       { username: 'wanida_k',     password: 'password123', name: 'คุณวนิดา แก้วมณี',        email: 'wanida@gmail.com',  role: 'customer' }
     ];
 
-    const samplePdfUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
-
     const defaultBooks = [
-      { id: 1, title: 'Mastering SQL & Database Design', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 350.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.9, badge: '🔥 Best Seller', isActive: true, desc: 'คู่มือออกแบบฐานข้อมูลเชิงสัมพันธ์ตั้งแต่ 1NF ถึง 3NF การเขียน Index และการ Tuning SQL Query', cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl },
-      { id: 2, title: 'Modern Web Development with React', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 420.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 5.0, badge: '⭐ Editor Pick', isActive: true, desc: 'ก้าวทันเทคโนโลยีเว็บยุคใหม่ด้วย React, Tailwind CSS และการเชื่อมต่อ RESTful APIs', cover: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl },
-      { id: 3, title: 'Python Data Analysis for Beginners', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 380.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.8, badge: '', isActive: true, desc: 'เริ่มต้นวิเคราะห์ข้อมูลและสร้าง Data Visualization ด้วย Pandas และ Numpy', cover: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl },
-      { id: 4, title: 'การเงินง่ายๆ สำหรับมนุษย์เงินเดือน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 250.00, author: 'วิศรุต การเงินดี', rating: 4.9, badge: '🔥 Best Seller', isActive: true, desc: 'แผนที่การเงินฉบับทำตามได้ทันที การจัดสรรเงินเดือน วางแผนภาษี และลงทุนกองทุนรวม', cover: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl },
-      { id: 5, title: 'Startup Blueprint: จาก 0 สู่ 100 ล้าน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 320.00, author: 'วิศรุต การเงินดี', rating: 4.7, badge: '', isActive: true, desc: 'กลยุทธ์สร้างธุรกิจสตาร์ทอัพให้เติบโตแบบก้าวกระโดด', cover: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl },
-      { id: 6, title: 'Digital Marketing Strategy 2026', catId: 2, catName: 'ธุรกิจและการเงิน', price: 290.00, author: 'วิศรุต การเงินดี', rating: 4.8, badge: '✨ New Release', isActive: true, desc: 'เจาะลึกการทำการตลาดยุค AI และสร้าง Personal Branding ให้ติดตลาด', cover: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl },
-      { id: 7, title: 'Atomic Habits: พลังแห่งนิสัยเล็กๆ', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 280.00, author: 'กุลดา จิตวิญญาณ', rating: 5.0, badge: '💖 Must Read', isActive: true, desc: 'เปลี่ยนชีวิตให้สำเร็จได้ด้วยการปรับพฤติกรรมเพียงวันละ 1%', cover: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl },
-      { id: 8, title: 'The Art of Deep Work: ทำงานให้สำเร็จ', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 270.00, author: 'กุลดา จิตวิญญาณ', rating: 4.7, badge: '', isActive: true, desc: 'ศิลปะการจดจ่อในโลกที่เต็มไปด้วยสิ่งรบกวน วิธีสร้างสมาธิขั้นสูง', cover: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl },
-      { id: 9, title: 'จิตวิทยาการสื่อสารในที่ทำงาน', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 260.00, author: 'กุลดา จิตวิญญาณ', rating: 4.8, badge: '', isActive: true, desc: 'เทคนิคการเจรจาต่อรอง การปฏิเสธอย่างสุภาพ และการสร้างความสัมพันธ์', cover: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl },
-      { id: 10, title: 'มังกรไร้เงา ภาค 1: กำเนิดแดนสนธยา', catId: 4, catName: 'นิยายและวรรณกรรม', price: 220.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '', isActive: true, desc: 'การผจญภัยในดินแดนเวทมนตร์โบราณที่ถูกลืม', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl },
-      { id: 11, title: 'มังกรไร้เงา ภาค 2: ศึกบัลลังก์มนตรา', catId: 4, catName: 'นิยายและวรรณกรรม', price: 240.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '🔥 Hot', isActive: true, desc: 'สงครามแย่งชิงบัลลังก์มนตราปะทุขึ้น พันธมิตรกลายเป็นศัตรู', cover: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl },
-      { id: 12, title: 'คดีฆาตกรรมห้องสมุดลับโบราณ', catId: 4, catName: 'นิยายและวรรณกรรม', price: 230.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.8, badge: '', isActive: true, desc: 'ปริศนาการตายของบรรณารักษ์ชราในห้องหนังสือต้องห้าม', cover: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdfUrl }
+      { id: 1, title: 'Mastering SQL & Database Design', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 350.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.9, badge: '🔥 Best Seller', isActive: true, desc: 'คู่มือออกแบบฐานข้อมูลเชิงสัมพันธ์ตั้งแต่ 1NF ถึง 3NF การเขียน Index และการ Tuning SQL Query', cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 2, title: 'Modern Web Development with React', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 420.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 5.0, badge: '⭐ Editor Pick', isActive: true, desc: 'ก้าวทันเทคโนโลยีเว็บยุคใหม่ด้วย React, Tailwind CSS และการเชื่อมต่อ RESTful APIs', cover: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 3, title: 'Python Data Analysis for Beginners', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 380.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.8, badge: '', isActive: true, desc: 'เริ่มต้นวิเคราะห์ข้อมูลและสร้าง Data Visualization ด้วย Pandas และ Numpy', cover: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 4, title: 'การเงินง่ายๆ สำหรับมนุษย์เงินเดือน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 250.00, author: 'วิศรุต การเงินดี', rating: 4.9, badge: '🔥 Best Seller', isActive: true, desc: 'แผนที่การเงินฉบับทำตามได้ทันที การจัดสรรเงินเดือน วางแผนภาษี และลงทุนกองทุนรวม', cover: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 5, title: 'Startup Blueprint: จาก 0 สู่ 100 ล้าน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 320.00, author: 'วิศรุต การเงินดี', rating: 4.7, badge: '', isActive: true, desc: 'กลยุทธ์สร้างธุรกิจสตาร์ทอัพให้เติบโตแบบก้าวกระโดด', cover: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 6, title: 'Digital Marketing Strategy 2026', catId: 2, catName: 'ธุรกิจและการเงิน', price: 290.00, author: 'วิศรุต การเงินดี', rating: 4.8, badge: '✨ New Release', isActive: true, desc: 'เจาะลึกการทำการตลาดยุค AI และสร้าง Personal Branding ให้ติดตลาด', cover: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 7, title: 'Atomic Habits: พลังแห่งนิสัยเล็กๆ', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 280.00, author: 'กุลดา จิตวิญญาณ', rating: 5.0, badge: '💖 Must Read', isActive: true, desc: 'เปลี่ยนชีวิตให้สำเร็จได้ด้วยการปรับพฤติกรรมเพียงวันละ 1%', cover: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 8, title: 'The Art of Deep Work: ทำงานให้สำเร็จ', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 270.00, author: 'กุลดา จิตวิญญาณ', rating: 4.7, badge: '', isActive: true, desc: 'ศิลปะการจดจ่อในโลกที่เต็มไปด้วยสิ่งรบกวน วิธีสร้างสมาธิขั้นสูง', cover: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 9, title: 'จิตวิทยาการสื่อสารในที่ทำงาน', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 260.00, author: 'กุลดา จิตวิญญาณ', rating: 4.8, badge: '', isActive: true, desc: 'เทคนิคการเจรจาต่อรอง การปฏิเสธอย่างสุภาพ และการสร้างความสัมพันธ์', cover: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 10, title: 'มังกรไร้เงา ภาค 1: กำเนิดแดนสนธยา', catId: 4, catName: 'นิยายและวรรณกรรม', price: 220.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '', isActive: true, desc: 'การผจญภัยในดินแดนเวทมนตร์โบราณที่ถูกลืม', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 11, title: 'มังกรไร้เงา ภาค 2: ศึกบัลลังก์มนตรา', catId: 4, catName: 'นิยายและวรรณกรรม', price: 240.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '🔥 Hot', isActive: true, desc: 'สงครามแย่งชิงบัลลังก์มนตราปะทุขึ้น พันธมิตรกลายเป็นศัตรู', cover: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 12, title: 'คดีฆาตกรรมห้องสมุดลับโบราณ', catId: 4, catName: 'นิยายและวรรณกรรม', price: 230.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.8, badge: '', isActive: true, desc: 'ปริศนาการตายของบรรณารักษ์ชราในห้องหนังสือต้องห้าม', cover: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf }
     ];
 
     let categories = JSON.parse(localStorage.getItem('bookie_cats')) || defaultCategories;
@@ -944,7 +767,6 @@
     let cart = [];
     let selectedPaymentMethod = 'พร้อมเพย์ QR';
     let currentUploadedSlip = 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80';
-    let currentInspectOrderId = null;
 
     function saveAllState() {
       localStorage.setItem('bookie_cats', JSON.stringify(categories));
@@ -1088,7 +910,6 @@
     }
 
     function adminInspectSlip(orderId) {
-      currentInspectOrderId = orderId;
       const o = cloudOrders.find(x => x.id === orderId);
       if (!o) return;
       document.getElementById('admin-view-slip-img').src = o.slipUrl;
@@ -1196,7 +1017,7 @@
         id: newOrderId, username: currentUser.username, customer: currentUser.name, email: currentUser.email || 'customer@example.com',
         datetime: fullDateTime, date: fullDateTime.split(' ')[0], timestamp: Date.now(), method: selectedPaymentMethod,
         items: cart.map(c => `${c.title} (x${c.qty})`), total: total, status: 'pending', slipUrl: currentUploadedSlip,
-        dlUrl: cart[0].dlUrl || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+        dlUrl: cart[0].dlUrl || samplePdf
       };
 
       try {
@@ -1372,7 +1193,6 @@
     function deleteBook(id) { if (confirm('ลบหนังสือเล่มนี้?')) { books = books.filter(x => x.id !== id); saveAllState(); renderBooks(); renderAdminBooks(); } }
     function toggleBookStatus(id) { const b = books.find(x => x.id === id); if (b) { b.isActive = !b.isActive; saveAllState(); renderBooks(); renderAdminBooks(); } }
 
-    // ปรับปรุงฟังก์ชันสลับแท็บให้รองรับแท็บ 'sql'
     function switchAdminTab(tab) {
       document.getElementById('admin-subtab-orders').classList.add('hidden');
       document.getElementById('admin-subtab-books').classList.add('hidden');
@@ -1399,7 +1219,6 @@
       }
     }
 
-    // ฟังก์ชันช่วยใส่ตัวอย่าง SQL ลงในกล่องข้อความ
     function setSqlExample(query) {
       document.getElementById('sql-input-box').value = query;
       executeAdminSql();
@@ -1413,7 +1232,6 @@
       document.getElementById('sql-status-msg').innerText = '';
     }
 
-    // ฟังก์ชันรันคำสั่ง SQL ด้วย AlaSQL บนข้อมูลจริง
     function executeAdminSql() {
       const query = document.getElementById('sql-input-box').value.trim();
       const statusMsg = document.getElementById('sql-status-msg');
@@ -1434,7 +1252,7 @@
       try {
         alasql.tables = {
           ebooks: { data: books },
-          orders: { data: cloudOrders.length ? cloudOrders : orders },
+          orders: { data: cloudOrders.length ? cloudOrders : [] },
           users: { data: users },
           categories: { data: categories }
         };
