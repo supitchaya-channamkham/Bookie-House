@@ -714,13 +714,16 @@
     const SUPABASE_URL = 'https://mwssmnujkjizyielpeufl.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13c21udWpraml6eWllbHBldWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3ODYzNjYsImV4cCI6MjEwNjM2MjM2Nn0.vjKgEG5z3AMvWi3HcfYjfifT9Dhw5_QrvgchAGnb_Oo';
 
+    // บันทึกการอ้างอิง Supabase CDN library ไว้ก่อนถูกประกาศ var supabase ทับใน global scope
+    const _supabaseLib = window.supabase;
     var supabase = null;
     try {
-      if (window.supabase && typeof window.supabase.createClient === 'function') {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      if (_supabaseLib && typeof _supabaseLib.createClient === 'function') {
+        const activeUrl = SUPABASE_URL.replace('mwssmnujkjizyielpeufl', 'mwsmnujkjizyielpeufl');
+        supabase = _supabaseLib.createClient(activeUrl, SUPABASE_ANON_KEY);
       }
     } catch (e) {
-      console.warn("Supabase init skipped:", e);
+      console.warn("Supabase init error:", e);
     }
 
     const samplePdf = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
@@ -766,21 +769,23 @@
     async function loadAllSupabaseData() {
       if (!supabase) return;
       try {
-        const { data: catData } = await supabase.from('categories').select('*').order('category_id');
-        if (catData && catData.length > 0) {
+        // 1. ดึงหมวดหมู่หนังสือ categories
+        const { data: catData, error: catErr } = await supabase.from('categories').select('*').order('category_id');
+        if (!catErr && catData && catData.length > 0) {
           categories = catData.map(c => ({ id: c.category_id, name: c.category_name }));
           renderCategoryDropdowns();
         }
 
-        const { data: bookData } = await supabase.from('ebooks').select('*, categories(category_name), authors(author_name)').order('ebook_id');
-        if (bookData && bookData.length > 0) {
+        // 2. ดึงหนังสือ ebooks พร้อมหมวดหมู่และผู้แต่ง
+        const { data: bookData, error: bookErr } = await supabase.from('ebooks').select('*, categories(category_name), authors(author_name)').order('ebook_id');
+        if (!bookErr && bookData && bookData.length > 0) {
           books = bookData.map(b => ({
             id: b.ebook_id,
             title: b.title,
             catId: b.category_id,
-            catName: b.categories ? b.categories.category_name : 'ทั่วไป',
-            author: b.authors ? b.authors.author_name : 'ไม่ระบุ',
-            price: parseFloat(b.price),
+            catName: (b.categories && b.categories.category_name) ? b.categories.category_name : 'ทั่วไป',
+            author: (b.authors && b.authors.author_name) ? b.authors.author_name : 'ไม่ระบุ',
+            price: parseFloat(b.price || 0),
             rating: 5.0,
             badge: b.ebook_id === 1 ? '🔥 Best Seller' : '',
             isActive: b.is_active,
@@ -792,22 +797,79 @@
           renderAdminBooks();
         }
 
-        const { data: orderData } = await supabase.from('orders').select('*, users(full_name, email, username), order_items(quantity, ebooks(title)), payments(slip_image_url, payment_method)').order('order_id', { ascending: false });
-        if (orderData && orderData.length > 0) {
-          cloudOrders = orderData.map(o => ({
-            id: o.order_id,
-            username: o.users ? o.users.username : 'customer',
-            customer: o.users ? o.users.full_name : 'ลูกค้าทั่วไป',
-            email: o.users ? o.users.email : '-',
-            datetime: new Date(o.order_datetime).toLocaleString('th-TH'),
-            date: o.order_datetime ? o.order_datetime.split('T')[0] : '',
-            method: o.payments && o.payments.length ? o.payments[0].payment_method : 'พร้อมเพย์ QR',
-            items: o.order_items ? o.order_items.map(i => `${i.ebooks?.title || 'E-Book'} (x${i.quantity})`) : ['รายการหนังสือ'],
-            total: parseFloat(o.total_amount),
-            status: o.order_status,
-            slipUrl: o.payments && o.payments.length ? o.payments[0].slip_image_url : currentUploadedSlip,
-            dlUrl: samplePdf
+        // 3. ดึงคำสั่งซื้อ orders, รายการสินค้า order_items, การชำระเงิน payments และผู้ใช้ users
+        const [ordersRes, itemsRes, paymentsRes, usersRes] = await Promise.all([
+          supabase.from('orders').select('*').order('order_id', { ascending: false }),
+          supabase.from('order_items').select('*'),
+          supabase.from('payments').select('*'),
+          supabase.from('users').select('*')
+        ]);
+
+        const orderData = ordersRes.data || [];
+        const itemsData = itemsRes.data || [];
+        const payData = paymentsRes.data || [];
+        const userData = usersRes.data || [];
+
+        if (userData && userData.length > 0) {
+          users = userData.map(u => ({
+            id: u.user_id,
+            username: u.username,
+            password: 'password123',
+            name: u.full_name || u.username,
+            email: u.email || '-',
+            role: u.role_id === 1 ? 'admin' : 'customer'
           }));
+          if (currentUser) {
+            const matchedUser = users.find(u => u.username === currentUser.username);
+            if (matchedUser) {
+              currentUser = { ...currentUser, ...matchedUser };
+            }
+          }
+          renderAdminUsers();
+        }
+
+        if (orderData && orderData.length > 0) {
+          const ebookMap = {};
+          books.forEach(b => { ebookMap[b.id] = b.title; });
+
+          const userMap = {};
+          users.forEach(u => { userMap[u.id] = u; });
+
+          const itemsByOrder = {};
+          itemsData.forEach(item => {
+            const oid = item.order_id;
+            if (!itemsByOrder[oid]) itemsByOrder[oid] = [];
+            const title = ebookMap[item.ebook_id] || `E-Book #${item.ebook_id}`;
+            itemsByOrder[oid].push(`${title} (x${item.quantity || 1})`);
+          });
+
+          const payByOrder = {};
+          payData.forEach(p => {
+            payByOrder[p.order_id] = p;
+          });
+
+          cloudOrders = orderData.map(o => {
+            const u = userMap[o.user_id] || {};
+            const p = payByOrder[o.order_id] || {};
+            const orderItems = itemsByOrder[o.order_id] || ['รายการหนังสือ'];
+            const dtStr = o.order_datetime || new Date().toISOString();
+            return {
+              id: o.order_id,
+              userId: o.user_id,
+              username: u.username || 'customer',
+              customer: u.name || 'ลูกค้าทั่วไป',
+              email: u.email || '-',
+              datetime: new Date(dtStr).toLocaleString('th-TH'),
+              date: dtStr.split('T')[0] || '',
+              method: p.payment_method || 'พร้อมเพย์ QR',
+              items: orderItems,
+              total: parseFloat(o.total_amount || 0),
+              status: o.order_status || 'pending',
+              slipUrl: (p.slip_image_url && p.slip_image_url.startsWith('http')) ? p.slip_image_url : currentUploadedSlip,
+              dlUrl: samplePdf
+            };
+          });
+
           renderAdminOrders();
           renderCustomerOrders();
         }
@@ -819,12 +881,15 @@
     if (supabase) {
       try {
         supabase.channel('public:db-changes')
-          .on('postgres_changes', { event: '*', schema: 'public' }, () => {
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+            loadAllSupabaseData();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'ebooks' }, () => {
             loadAllSupabaseData();
           })
           .subscribe();
       } catch (e) {
-        console.warn(e);
+        console.warn('Realtime subscription error:', e);
       }
     }
 
@@ -982,74 +1047,72 @@
     async function confirmOrderWithSlip() {
       if (cart.length === 0) { alert('ไม่มีสินค้าในตะกร้า'); return; }
       if (!currentUser) { openAuthModal('login'); return; }
+      if (!supabase) { alert('ระบบยังไม่ได้เชื่อมต่อกับ Supabase กรุณาตรวจสอบการตั้งค่าเครือข่าย'); return; }
+
       const total = cart.reduce((sum, b) => sum + (b.price * b.qty), 0);
-      const newOrderId = Math.floor(100 + Math.random() * 900);
 
-      const slipUrlToSave = (currentUploadedSlip && currentUploadedSlip.startsWith('http')) 
-        ? currentUploadedSlip 
-        : 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80';
+      // กำหนดให้รูปสลิป slip_image_url ใช้ URL เริ่มต้นแบบสั้นหากเป็น Base64 ขนาดยาว เพื่อป้องกันข้อผิดพลาด String Data Right Truncation
+      const defaultSlipUrl = 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80';
+      const slipUrlToSave = (currentUploadedSlip && currentUploadedSlip.startsWith('http') && currentUploadedSlip.length <= 255)
+        ? currentUploadedSlip
+        : defaultSlipUrl;
 
-      if (supabase) {
-        try {
-          const { data: orderData, error: orderErr } = await supabase
-            .from('orders')
-            .insert([{
-              total_amount: total,
-              order_status: 'pending'
-            }])
-            .select()
-            .single();
+      try {
+        // 1. บันทึกลงตาราง orders ส่งเฉพาะฟิลด์ที่จำเป็น และกำหนด user_id เพื่อไม่ให้ติดเงื่อนไข Foreign Key หรือ NOT NULL
+        const userIdToUse = (currentUser && currentUser.id) ? currentUser.id : 1;
+        const { data: orderData, error: orderErr } = await supabase
+          .from('orders')
+          .insert([{
+            user_id: userIdToUse,
+            total_amount: total,
+            order_status: 'pending'
+          }])
+          .select()
+          .single();
 
-          if (!orderErr && orderData) {
-            const createdOrderId = orderData.order_id;
-            const itemsPayload = cart.map(item => ({
-              order_id: createdOrderId,
-              ebook_id: item.id || 1,
-              quantity: item.qty,
-              price_per_unit: item.price
-            }));
-            await supabase.from('order_items').insert(itemsPayload);
-            await supabase.from('payments').insert([{
-              order_id: createdOrderId,
-              payment_method: selectedPaymentMethod,
-              slip_image_url: slipUrlToSave,
-              is_verified: false
-            }]);
-
-            cart = [];
-            updateCartUI();
-            toggleCartModal();
-            alert(`สั่งซื้อสำเร็จ! บันทึกลง Supabase แล้ว (#ORD-${createdOrderId})`);
-            await loadAllSupabaseData();
-            navigate('orders');
-            return;
-          }
-        } catch (err) {
-          console.warn('Online insert fallback:', err);
+        if (orderErr || !orderData) {
+          console.error('Supabase order insert error:', orderErr);
+          alert('บันทึกคำสั่งซื้อไม่สำเร็จ: ' + (orderErr ? orderErr.message : 'ไม่ได้รับข้อมูลจากเซิร์ฟเวอร์'));
+          return;
         }
+
+        const createdOrderId = orderData.order_id;
+
+        // 2. บันทึกรายการสินค้าลง order_items
+        const itemsPayload = cart.map(item => ({
+          order_id: createdOrderId,
+          ebook_id: item.id || 1,
+          quantity: item.qty || 1,
+          price_per_unit: item.price
+        }));
+        const { error: itemsErr } = await supabase.from('order_items').insert(itemsPayload);
+        if (itemsErr) {
+          console.warn('order_items insert warning:', itemsErr);
+        }
+
+        // 3. บันทึกข้อมูลการชำระเงินลง payments
+        const { error: paymentErr } = await supabase.from('payments').insert([{
+          order_id: createdOrderId,
+          payment_method: selectedPaymentMethod || 'พร้อมเพย์ QR',
+          slip_image_url: slipUrlToSave,
+          is_verified: false
+        }]);
+        if (paymentErr) {
+          console.warn('payments insert warning:', paymentErr);
+        }
+
+        // ล้างตะกร้า ปิด Modal แจ้งเตือน และโหลดข้อมูลล่าสุดทันที
+        cart = [];
+        updateCartUI();
+        toggleCartModal();
+        alert(`สั่งซื้อสำเร็จ! บันทึกลง Supabase เรียบร้อย (#ORD-${createdOrderId})`);
+
+        await loadAllSupabaseData();
+        navigate('orders');
+      } catch (err) {
+        console.error('Confirm order error:', err);
+        alert('เกิดข้อผิดพลาดในการสั่งซื้อ: ' + err.message);
       }
-
-      const localOrderObj = {
-        id: newOrderId,
-        username: currentUser.username,
-        customer: currentUser.name,
-        email: currentUser.email || 'customer@example.com',
-        datetime: new Date().toLocaleString('th-TH'),
-        date: new Date().toISOString().split('T')[0],
-        method: selectedPaymentMethod,
-        items: cart.map(c => `${c.title} (x${c.qty})`),
-        total: total,
-        status: 'pending',
-        slipUrl: slipUrlToSave,
-        dlUrl: cart[0].dlUrl || samplePdf
-      };
-
-      cloudOrders.unshift(localOrderObj);
-      cart = [];
-      updateCartUI();
-      toggleCartModal();
-      alert(`สั่งซื้อสำเร็จ! รหัสคำสั่งซื้อ #${localOrderObj.id}`);
-      navigate('orders');
     }
 
     function renderCustomerOrders() {
