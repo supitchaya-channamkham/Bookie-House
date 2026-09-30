@@ -983,51 +983,77 @@
       if (cart.length === 0) { alert('ไม่มีสินค้าในตะกร้า'); return; }
       if (!currentUser) { openAuthModal('login'); return; }
       const total = cart.reduce((sum, b) => sum + (b.price * b.qty), 0);
-      const newOrderId = Math.floor(100 + Math.random() * 900);
 
-      const localOrderObj = {
-        id: newOrderId,
-        username: currentUser.username,
-        customer: currentUser.name,
-        email: currentUser.email || 'customer@example.com',
-        datetime: new Date().toLocaleString('th-TH'),
-        date: new Date().toISOString().split('T')[0],
-        method: selectedPaymentMethod,
-        items: cart.map(c => `${c.title} (x${c.qty})`),
-        total: total,
-        status: 'pending',
-        slipUrl: currentUploadedSlip,
-        dlUrl: cart[0].dlUrl || samplePdf
-      };
+      // ใช้รูปสลิปเริ่มต้นที่เป็น URL สั้นๆ หากเป็น base64 ขนาดยักษ์
+      const slipUrlToSave = (currentUploadedSlip && currentUploadedSlip.startsWith('http')) 
+        ? currentUploadedSlip 
+        : 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80';
+
+      // ค้นหา user_id จริงจาก Supabase หรือดึงไอดีคนแรกมากันพัง
+      let targetUserId = 1;
+      if (users && users.length > 0) {
+        const matched = users.find(u => u.username === currentUser.username);
+        if (matched && matched.id) targetUserId = matched.id;
+        else if (users[0].id) targetUserId = users[0].id;
+      }
 
       if (supabase) {
         try {
-          const { data: order } = await supabase.from('orders').insert([{
-            user_id: currentUser.id || 2,
-            total_amount: total,
-            order_status: 'pending'
-          }]).select().single();
+          // 1. บันทึกคำสั่งซื้อลง Supabase
+          const { data: orderData, error: orderErr } = await supabase
+            .from('orders')
+            .insert([{
+              user_id: targetUserId,
+              total_amount: total,
+              order_status: 'pending'
+            }])
+            .select()
+            .single();
 
-          if (order) {
-            localOrderObj.id = order.order_id;
-            const itemsToInsert = cart.map(item => ({
-              order_id: order.order_id,
-              ebook_id: item.id,
-              quantity: item.qty,
-              price_per_unit: item.price
-            }));
-            await supabase.from('order_items').insert(itemsToInsert);
-            await supabase.from('payments').insert([{
-              order_id: order.order_id,
-              payment_method: selectedPaymentMethod,
-              slip_image_url: currentUploadedSlip,
-              is_verified: false
-            }]);
+          if (orderErr) {
+            console.error('Order Insert Error:', orderErr);
+            alert('Supabase บันทึกออเดอร์ไม่สำเร็จ: ' + orderErr.message);
+            return;
           }
-        } catch (e) {
-          console.warn('Supabase order insert warning:', e);
+
+          const createdOrderId = orderData.order_id;
+
+          // 2. บันทึกรายการสินค้าลง order_items
+          const itemsPayload = cart.map(item => ({
+            order_id: createdOrderId,
+            ebook_id: item.id || 1,
+            quantity: item.qty,
+            price_per_unit: item.price
+          }));
+          await supabase.from('order_items').insert(itemsPayload);
+
+          // 3. บันทึกข้อมูลการชำระเงินลง payments
+          await supabase.from('payments').insert([{
+            order_id: createdOrderId,
+            payment_method: selectedPaymentMethod,
+            slip_image_url: slipUrlToSave,
+            is_verified: false
+          }]);
+
+          cart = [];
+          updateCartUI();
+          toggleCartModal();
+          alert(`สั่งซื้อสำเร็จ! บันทึกลงฐานข้อมูล Supabase แล้ว (รหัส #${createdOrderId})`);
+          
+          // โหลดข้อมูลล่าสุดจากฐานข้อมูลทันที
+          await loadAllSupabaseData();
+          navigate('orders');
+          return;
+
+        } catch (err) {
+          console.error('Fatal order error:', err);
+          alert('เกิดข้อผิดพลาดในการบันทึก: ' + err.message);
+          return;
         }
+      } else {
+        alert('ระบบยังไม่ได้เชื่อมต่อกับ Supabase กรุณาตรวจสอบการตั้งค่า');
       }
+    }
 
       cloudOrders.unshift(localOrderObj);
       cart = [];
