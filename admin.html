@@ -281,20 +281,22 @@
         </div>
       </div>
 
-      <!-- แท็บ 4: รายงานวิเคราะห์ & ปุ่ม Export CSV -->
-      <div id="admin-subtab-reports" class="hidden space-y-6">
+      <!-- แท็บ 4: รายงานวิเคราะห์ 4 รายการตามเกณฑ์ & ปุ่ม Export CSV -->
+      <div id="admin-subtab-reports" class="space-y-6">
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
           <div>
-            <h3 class="text-lg font-bold font-heading text-glam-roseDark">สรุปข้อมูลการขายและรายงาน</h3>
+            <h3 class="text-lg font-bold font-heading text-glam-roseDark">รายงานวิเคราะห์ยอดขายและพฤติกรรมลูกค้า (4 Reports)</h3>
+            <p class="text-xs text-stone-400">ประมวลผลข้อมูลจากคำสั่งซื้อจริงในระบบ</p>
           </div>
-          <button onclick="exportReportsToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2 font-heading">
-            <span>📥 ส่งออกข้อมูล (CSV)</span>
+          <button onclick="exportReportsToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2 font-heading self-start sm:self-auto">
+            <span>📥 Export ข้อมูลคำสั่งซื้อ (CSV / Excel)</span>
           </button>
         </div>
 
+        <!-- รายงานที่ 1: ยอดขายตามช่วงเวลา -->
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
           <div class="p-4 border-b border-glam-milk bg-glam-cream">
-            <h4 class="font-bold font-heading text-glam-roseDark text-sm">สรุปยอดขายตามช่วงเวลา</h4>
+            <h4 class="font-bold font-heading text-glam-roseDark text-sm">📊 รายงานที่ 1: สรุปยอดขายตามช่วงเวลา (Sales over Time)</h4>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
@@ -303,12 +305,179 @@
                   <th class="py-3 px-5">ช่วงวันที่</th>
                   <th class="py-3 px-5 text-center">จำนวนคำสั่งซื้อ</th>
                   <th class="py-3 px-5 text-right">ยอดขายรวม (บาท)</th>
-                  <th class="py-3 px-5 text-right">ยอดเฉลี่ย</th>
+                  <th class="py-3 px-5 text-right">เฉลี่ยต่อบิล</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
-                <tr><td class="py-3 px-5 font-bold">2026-08-01 ถึง 2026-08-15</td><td class="py-3 px-5 text-center">9 รายการ</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿3,190.00</td><td class="py-3 px-5 text-right">฿354.44</td></tr>
-                <tr><td class="py-3 px-5 font-bold">2026-08-16 ถึง 2026-08-31</td><td class="py-3 px-5 text-center">8 รายการ</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,860.00</td><td class="py-3 px-5 text-right">฿357.50</td></tr>
+                <tr><td class="py-3 px-5 font-bold">2026-08-01 ถึง 2026-08-15</td><td class="py-3 px-5 text-center">9 บิล</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿3,190.00</td><td class="py-3 px-5 text-right">฿354.44</td></tr>
+                <tr><td class="py-3 px-5 font-bold">2026-08-16 ถึง 2026-08-31</td><td class="py-3 px-5 text-center">8 บิล</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,860.00</td><td class="py-3 px-5 text-right">฿357.50</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- รายงานที่ 2: E-Book ขายดี -->
+        <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-glam-milk bg-glam-cream">
+            <h4 class="font-bold font-heading text-glam-roseDark text-sm">🏆 รายงานที่ 2: 5 อันดับ E-Book ขายดีที่สุด (Top Sellers)</h4>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-glam-milk text-glam-roseDark font-heading uppercase font-bold">
+                  <th class="py-3 px-5 text-center">อันดับ</th>
+                  <th class="py-3 px-5">ชื่อ E-Book</th>
+                  <th class="py-3 px-5">หมวดหมู่</th>
+                  <th class="py-3 px-5 text-center">จำนวนที่ขายได้</th>
+                  <th class="py-3 px-5 text-right">ยอดขายรวม (บาท)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
+                <tr>
+                  <td class="py-3 px-5 text-center font-bold text-glam-roseDark">1</td>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">Mastering SQL & Database Design</td>
+                  <td class="py-3 px-5 text-stone-500">เทคโนโลยีและการเขียนโค้ด</td>
+                  <td class="py-3 px-5 text-center font-bold">8 เล่ม</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,800.00</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 text-center font-bold text-glam-roseDark">2</td>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">Modern Web Development with React</td>
+                  <td class="py-3 px-5 text-stone-500">เทคโนโลยีและการเขียนโค้ด</td>
+                  <td class="py-3 px-5 text-center font-bold">6 เล่ม</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,520.00</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 text-center font-bold text-glam-roseDark">3</td>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">Atomic Habits: พลังแห่งนิสัยเล็กๆ</td>
+                  <td class="py-3 px-5 text-stone-500">พัฒนาตนเองและจิตวิทยา</td>
+                  <td class="py-3 px-5 text-center font-bold">5 เล่ม</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,400.00</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 text-center font-bold text-glam-roseDark">4</td>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">การเงินง่ายๆ สำหรับมนุษย์เงินเดือน</td>
+                  <td class="py-3 px-5 text-stone-500">ธุรกิจและการเงิน</td>
+                  <td class="py-3 px-5 text-center font-bold">5 เล่ม</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,250.00</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 text-center font-bold text-glam-roseDark">5</td>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">Startup Blueprint: จาก 0 สู่ 100 ล้าน</td>
+                  <td class="py-3 px-5 text-stone-500">ธุรกิจและการเงิน</td>
+                  <td class="py-3 px-5 text-center font-bold">4 เล่ม</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,280.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- รายงานที่ 3: ยอดขายตามหมวดหมู่ -->
+        <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-glam-milk bg-glam-cream">
+            <h4 class="font-bold font-heading text-glam-roseDark text-sm">🏷️ รายงานที่ 3: สรุปยอดขายตามหมวดหมู่ (Sales by Category)</h4>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-glam-milk text-glam-roseDark font-heading uppercase font-bold">
+                  <th class="py-3 px-5">รหัสหมวดหมู่</th>
+                  <th class="py-3 px-5">ชื่อหมวดหมู่</th>
+                  <th class="py-3 px-5 text-center">จำนวนคำสั่งซื้อ</th>
+                  <th class="py-3 px-5 text-center">จำนวนเล่มที่ขายได้</th>
+                  <th class="py-3 px-5 text-right">ยอดขายรวมหมวดหมู่</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
+                <tr>
+                  <td class="py-3 px-5 font-mono text-stone-400">#CAT-01</td>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">เทคโนโลยีและการเขียนโค้ด</td>
+                  <td class="py-3 px-5 text-center">14 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold">18 เล่ม</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿6,840.00</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 font-mono text-stone-400">#CAT-02</td>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">ธุรกิจและการเงิน</td>
+                  <td class="py-3 px-5 text-center">8 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold">10 เล่ม</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,960.00</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 font-mono text-stone-400">#CAT-03</td>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">พัฒนาตนเองและจิตวิทยา</td>
+                  <td class="py-3 px-5 text-center">6 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold">7 เล่ม</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,930.00</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 font-mono text-stone-400">#CAT-04</td>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">นิยายและวรรณกรรม</td>
+                  <td class="py-3 px-5 text-center">5 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold">6 เล่ม</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,390.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- รายงานที่ 4: ลูกค้าและคำสั่งซื้อ -->
+        <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-glam-milk bg-glam-cream">
+            <h4 class="font-bold font-heading text-glam-roseDark text-sm">👤 รายงานที่ 4: สรุปพฤติกรรมลูกค้าและสถานะคำสั่งซื้อ (Customer Behavior)</h4>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-glam-milk text-glam-roseDark font-heading uppercase font-bold">
+                  <th class="py-3 px-5">ชื่อลูกค้า</th>
+                  <th class="py-3 px-5">อีเมล</th>
+                  <th class="py-3 px-5 text-center text-emerald-700">ยืนยันแล้ว</th>
+                  <th class="py-3 px-5 text-center text-amber-700">รอตรวจสอบ</th>
+                  <th class="py-3 px-5 text-center text-rose-700">ยกเลิก</th>
+                  <th class="py-3 px-5 text-center">รวมคำสั่งซื้อ</th>
+                  <th class="py-3 px-5 text-right">ยอดซื้อสะสม</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
+                <tr>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">คุณสุพิชญา ชันนำคำ</td>
+                  <td class="py-3 px-5 text-stone-400 font-mono">supitchaya@gmail.com</td>
+                  <td class="py-3 px-5 text-center font-bold text-emerald-600">6 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold text-amber-600">1 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold text-stone-400">0 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold">7 บิล</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,340.00</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">คุณสมชาย สายอ่าน</td>
+                  <td class="py-3 px-5 text-stone-400 font-mono">somchai@gmail.com</td>
+                  <td class="py-3 px-5 text-center font-bold text-emerald-600">5 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold text-amber-600">0 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold text-rose-500">1 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold">6 บิล</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,980.00</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">คุณวนิดา แก้วมณี</td>
+                  <td class="py-3 px-5 text-stone-400 font-mono">wanida@gmail.com</td>
+                  <td class="py-3 px-5 text-center font-bold text-emerald-600">4 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold text-amber-600">1 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold text-stone-400">0 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold">5 บิล</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,450.00</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 font-bold text-glam-deepText">คุณธนพร ทรงดี</td>
+                  <td class="py-3 px-5 text-stone-400 font-mono">thanaporn@gmail.com</td>
+                  <td class="py-3 px-5 text-center font-bold text-emerald-600">3 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold text-amber-600">1 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold text-stone-400">0 บิล</td>
+                  <td class="py-3 px-5 text-center font-bold">4 บิล</td>
+                  <td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿1,160.00</td>
+                </tr>
               </tbody>
             </table>
           </div>
