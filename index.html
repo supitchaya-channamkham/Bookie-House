@@ -553,28 +553,54 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL ตะกร้าสินค้า ==================== -->
+  <!-- ==================== MODAL ตะกร้าสินค้า + ชำระเงินแนบสลิปในตัว ==================== -->
   <div id="cart-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-glam-roseLight modal-animate">
+    <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-glam-roseLight">
       <div class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white px-6 py-4 flex justify-between items-center">
         <h3 class="text-base font-bold font-heading flex items-center gap-2">
-          <span>🛍️ ตะกร้าหนังสือของคุณ</span>
+          <span>🛍️ ตะกร้าหนังสือและชำระเงิน</span>
         </h3>
         <button onclick="toggleCartModal()" class="text-rose-200 hover:text-white text-lg">✕</button>
       </div>
-      <div id="cart-items-container" class="p-6 overflow-y-auto space-y-4 flex-1"></div>
-      <div class="p-6 bg-glam-cream border-t border-glam-roseLight">
-        <div class="flex justify-between items-center mb-4">
-          <span class="text-stone-600 text-sm">ยอดชำระสุทธิ:</span>
+
+      <div class="p-6 overflow-y-auto space-y-4 flex-1">
+        <!-- รายการหนังสือในตะกร้า -->
+        <div id="cart-items-container" class="space-y-3"></div>
+
+        <!-- ยอดชำระ -->
+        <div class="bg-glam-cream p-4 rounded-2xl border border-glam-roseLight flex justify-between items-center">
+          <span class="text-stone-600 text-xs font-bold font-heading">ยอดชำระสุทธิ:</span>
           <span id="cart-total-price" class="text-2xl font-bold font-price text-glam-roseDark">฿0.00</span>
         </div>
-        <button onclick="openCheckoutModal()" class="w-full bg-gradient-to-r from-glam-rose to-glam-roseDark hover:brightness-105 text-white font-bold py-3.5 rounded-2xl transition shadow-md text-sm font-heading">
-          ไปที่หน้าชำระเงินและแนบสลิป 💳✨
+
+        <!-- ส่วนชำระเงินและอัปโหลดสลิป (จะแสดงเมื่อมีหนังสือในตะกร้า) -->
+        <div id="payment-slip-section" class="space-y-3 pt-2 border-t border-glam-roseLight/70">
+          <div class="text-center p-3 bg-white rounded-2xl border border-stone-200">
+            <p class="font-bold text-xs text-stone-700 mb-2 font-heading">สแกนชำระผ่าน PromptPay (QR Code จำลอง)</p>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=BookieHousePayment" alt="QR Code" class="w-32 h-32 mx-auto rounded-lg border">
+            <p class="text-[10px] text-stone-400 mt-1">ชื่อบัญชี: บจก. บุ๊คกี้ เฮ้าส์ ดิจิทัล</p>
+          </div>
+
+          <!-- ช่องอัปโหลดไฟล์สลิป -->
+          <div class="space-y-1.5">
+            <label class="block font-bold text-xs text-stone-700 font-heading">🧾 แนบสลิปการโอนเงิน (Slip Upload) *</label>
+            <input type="file" id="slip-file-input" accept="image/*" onchange="previewSlip(event)" class="w-full text-xs text-stone-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-glam-roseLight file:text-glam-roseDark hover:file:bg-glam-rose hover:file:text-white cursor-pointer">
+            
+            <div id="slip-preview-container" class="p-2 bg-stone-50 rounded-xl border text-center">
+              <span class="text-[10px] text-stone-400 block mb-1">ภาพสลิปที่จะส่งให้แอดมินตรวจ:</span>
+              <img id="slip-preview-img" src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80" alt="Slip Preview" class="max-h-36 mx-auto rounded-lg shadow-sm border">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-glam-cream border-t border-glam-roseLight">
+        <button onclick="confirmOrderWithSlip()" class="w-full bg-gradient-to-r from-glam-rose to-glam-roseDark hover:brightness-105 text-white font-bold py-3.5 rounded-2xl transition shadow-md text-sm font-heading">
+          ยืนยันการโอนเงินและส่งสลิปให้แอดมิน ✨
         </button>
       </div>
     </div>
   </div>
-
   <!-- ==================== MODAL 3: ชำระเงิน + อัปโหลดสลิป ==================== -->
   <div id="checkout-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden border border-glam-roseLight modal-animate">
