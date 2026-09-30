@@ -77,7 +77,7 @@
           <span>📧 อีเมลรับไฟล์</span>
           <span id="inbox-badge" class="bg-rose-500 text-white font-price text-[10px] px-1.5 py-0.2 rounded-full">0</span>
         </button>
-        <button id="nav-admin-btn" onclick="navigate('admin')" class="hidden bg-gradient-to-r from-glam-roseDark to-slate-800 text-white font-medium px-3.5 py-1.5 rounded-full text-xs shadow-sm hover:shadow transition">⚙️ แอดมินหลังบ้าน</button>
+        <button id="nav-admin-btn" onclick="navigate('admin')" class="hidden bg-gradient-to-r from-glam-roseDark to-slate-800 text-white font-medium px-3.5 py-1.5 rounded-full text-xs shadow-sm hover:shadow transition">⚙️ จัดการระบบหลังบ้าน</button>
 
         <button id="cart-button" onclick="toggleCartModal()" class="relative bg-white hover:bg-glam-roseLight/50 border border-glam-rose/40 text-glam-roseDark px-4 py-2 rounded-2xl flex items-center space-x-2 transition shadow-sm hover:scale-105 active:scale-95">
           <span class="text-base">🛍️</span>
@@ -91,11 +91,11 @@
         </div>
 
         <div id="user-profile" class="hidden items-center space-x-2 bg-white border border-glam-rose/20 px-3 py-1.5 rounded-2xl shadow-sm">
-          <button onclick="openEditProfileModal()" title="คลิกเพื่อแก้ไขข้อมูลส่วนตัว" class="flex items-center gap-1.5 hover:text-glam-rose transition">
-            <div class="w-6 h-6 rounded-full bg-glam-roseLight text-glam-roseDark flex items-center justify-center font-bold text-xs">✏️</div>
-            <span id="user-display-name" class="text-xs text-glam-roseDark font-bold underline decoration-dotted"></span>
+          <button onclick="openEditProfileModal()" title="แก้ไขข้อมูลส่วนตัว" class="flex items-center gap-1.5 hover:text-glam-rose transition">
+            <div class="w-6 h-6 rounded-full bg-glam-roseLight text-glam-roseDark flex items-center justify-center font-bold text-xs">👤</div>
+            <span id="user-display-name" class="text-xs text-glam-roseDark font-bold"></span>
           </button>
-          <button onclick="logout()" class="text-[11px] text-stone-400 hover:text-rose-600 transition font-medium pl-1">ออก</button>
+          <button onclick="logout()" class="text-[11px] text-stone-400 hover:text-rose-600 transition font-medium pl-1">ออกจากระบบ</button>
         </div>
       </div>
     </div>
@@ -109,14 +109,14 @@
       <div class="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#41272C] via-[#5C323C] to-[#2B171B] text-white p-8 md:p-14 shadow-xl border border-glam-rose/20">
         <div class="relative z-10 max-w-2xl space-y-4">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-glam-goldShine text-xs font-semibold">
-            <span>💖 The Glamour Digital Bookshelf</span>
+            <span>✨ The Glamour Digital Bookshelf</span>
           </div>
           <h1 class="text-3xl md:text-5xl font-heading font-extrabold tracking-tight leading-snug">
             สัมผัสสุนทรียะแห่งการอ่าน <br>
-            <span class="shimmer-text">ในโลก E-Book ระดับเอ็กซ์คลูซีฟ</span>
+            <span class="shimmer-text">ในโลก E-Book ระดับพรีเมียม</span>
           </h1>
           <p class="text-rose-100/90 text-sm md:text-base leading-relaxed font-light">
-            ระบบสั่งซื้อ E-Book เชื่อมต่อ Cloud Database แบบ Realtime ตรวจสอบสลิป และรับลิงก์ดาวน์โหลดทันที
+            คัดสรรหนังสือและวรรณกรรมดิจิทัลชั้นนำ สั่งซื้อง่าย ชำระเงินสะดวก พร้อมรับลิงก์สำหรับเปิดอ่านได้ทันที
           </p>
         </div>
       </div>
@@ -125,7 +125,7 @@
       <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
         <div class="relative w-full md:w-3/5">
           <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-glam-rose text-base">🔍</span>
-          <input type="text" id="search-input" oninput="renderBooks()" placeholder="ค้นหาด้วยชื่อหนังสือ หรือคำสำคัญ หรือชื่อผู้แต่ง..." 
+          <input type="text" id="search-input" oninput="renderBooks()" placeholder="ค้นหาชื่อหนังสือ นักเขียน หรือเนื้อหาที่สนใจ..." 
                  class="w-full bg-glam-cream border border-glam-roseLight/80 rounded-2xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-glam-rose">
         </div>
         <div class="w-full md:w-2/5 flex items-center gap-3">
@@ -137,10 +137,9 @@
       <div>
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-xl font-heading font-bold text-glam-roseDark flex items-center gap-2">
-            <span>✨ คลังหนังสือแนะนำ</span>
+            <span>หนังสือทั้งหมด</span>
             <span class="text-xs font-normal text-stone-500 bg-glam-roseLight/60 px-2.5 py-0.5 rounded-full font-price font-semibold">(<span id="book-count-label">0</span> เล่ม)</span>
           </h2>
-          <span class="text-xs text-stone-400 font-light">คลิกที่เล่มเพื่อดูชื่อ, ผู้แต่ง, หมวดหมู่, ภาพปก และรีวิว 📖</span>
         </div>
         <div id="books-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7"></div>
       </div>
@@ -148,26 +147,21 @@
 
     <!-- 2. VIEW: คำสั่งซื้อและสิทธิ์ดาวน์โหลด -->
     <section id="view-orders" class="hidden space-y-6">
-      <div class="flex justify-between items-end border-b border-glam-roseLight pb-4">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-glam-rose font-heading">My Orders & Library</span>
-          <h2 class="text-2xl font-heading font-bold text-glam-roseDark mt-1">ประวัติคำสั่งซื้อและสิทธิ์ดาวน์โหลด E-Book</h2>
-        </div>
-        <div class="text-xs bg-glam-roseLight/80 text-glam-roseDark px-3 py-1.5 rounded-full font-medium">
-          🔒 สิทธิ์ดาวน์โหลดจะเปิดเฉพาะ E-Book ในสถานะที่ยืนยันแล้วเท่านั้น
-        </div>
+      <div class="border-b border-glam-roseLight pb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-glam-rose font-heading">My Orders & Library</span>
+        <h2 class="text-2xl font-heading font-bold text-glam-roseDark mt-1">ประวัติคำสั่งซื้อและหนังสือของฉัน</h2>
       </div>
       <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
         <table class="w-full text-left border-collapse text-sm">
           <thead>
             <tr class="bg-glam-milk text-glam-roseDark text-xs uppercase font-bold tracking-wider font-heading">
               <th class="py-4 px-5">รหัสคำสั่งซื้อ</th>
-              <th class="py-4 px-5">วัน-เวลาที่สั่งซื้อ</th>
-              <th class="py-4 px-5">รายการ E-Book</th>
-              <th class="py-4 px-5">วิธีชำระ</th>
+              <th class="py-4 px-5">วันที่สั่งซื้อ</th>
+              <th class="py-4 px-5">รายการหนังสือ</th>
+              <th class="py-4 px-5">ช่องทางชำระเงิน</th>
               <th class="py-4 px-5">ยอดสุทธิ</th>
               <th class="py-4 px-5">สถานะ</th>
-              <th class="py-4 px-5 text-center">สิทธิ์ดาวน์โหลด</th>
+              <th class="py-4 px-5 text-center">ดาวน์โหลด</th>
             </tr>
           </thead>
           <tbody id="customer-orders-tbody" class="divide-y divide-glam-milk"></tbody>
@@ -175,22 +169,22 @@
       </div>
     </section>
 
-    <!-- 3. VIEW: ศูนย์ควบคุมแอดมินหลังบ้าน (ครอบคลุมครบทั้ง 5 ข้อกำหนด) -->
+    <!-- 3. VIEW: ศูนย์ควบคุมแอดมินหลังบ้าน -->
     <section id="view-admin" class="hidden space-y-8">
       <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 border-b border-glam-roseLight pb-5">
         <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-rose-500 font-heading">Boutique Administration</span>
-          <h2 class="text-2xl font-heading font-bold text-glam-roseDark mt-1">ระบบบริหารจัดการร้าน (Admin Control)</h2>
+          <span class="text-xs font-bold uppercase tracking-wider text-rose-500 font-heading">Administration</span>
+          <h2 class="text-2xl font-heading font-bold text-glam-roseDark mt-1">ระบบบริหารจัดการร้าน</h2>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <button onclick="openBookFormModal('add')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm transition">➕ เพิ่ม E-Book</button>
-          <button onclick="openCategoryManageModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm transition">🏷️️ จัดการหมวดหมู่</button>
+          <button onclick="openBookFormModal('add')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm transition">➕ เพิ่มหนังสือใหม่</button>
+          <button onclick="openCategoryManageModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm transition">🏷 จัดการหมวดหมู่</button>
           
           <div class="inline-flex rounded-xl p-1 bg-white border border-glam-roseLight shadow-sm text-xs font-bold font-heading">
-            <button onclick="switchAdminTab('orders')" id="btn-admin-tab-orders" class="px-3 py-1.5 rounded-lg bg-glam-roseDark text-white transition">คำสั่งซื้อ & สลิป</button>
-            <button onclick="switchAdminTab('books')" id="btn-admin-tab-books" class="px-3 py-1.5 rounded-lg text-glam-deepText hover:text-glam-rose transition">จัดการ E-Book</button>
+            <button onclick="switchAdminTab('orders')" id="btn-admin-tab-orders" class="px-3 py-1.5 rounded-lg bg-glam-roseDark text-white transition">คำสั่งซื้อ</button>
+            <button onclick="switchAdminTab('books')" id="btn-admin-tab-books" class="px-3 py-1.5 rounded-lg text-glam-deepText hover:text-glam-rose transition">รายการหนังสือ</button>
             <button onclick="switchAdminTab('users')" id="btn-admin-tab-users" class="px-3 py-1.5 rounded-lg text-glam-deepText hover:text-glam-rose transition">จัดการผู้ใช้</button>
-            <button onclick="switchAdminTab('reports')" id="btn-admin-tab-reports" class="px-3 py-1.5 rounded-lg text-glam-deepText hover:text-glam-rose transition">รายงาน & Export</button>
+            <button onclick="switchAdminTab('reports')" id="btn-admin-tab-reports" class="px-3 py-1.5 rounded-lg text-glam-deepText hover:text-glam-rose transition">รายงานวิเคราะห์</button>
           </div>
         </div>
       </div>
@@ -200,46 +194,41 @@
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
           <span class="text-xs text-stone-500 font-medium">ยอดขายรวมสุทธิ</span>
           <p class="text-2xl font-bold font-price text-glam-roseDark mt-1" id="admin-total-revenue">฿0.00</p>
-          <span class="text-[11px] text-emerald-600 font-semibold">ออเดอร์สถานะยืนยันแล้ว</span>
         </div>
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
           <span class="text-xs text-stone-500 font-medium">คำสั่งซื้อทั้งหมด</span>
           <p class="text-2xl font-bold font-price text-slate-800 mt-1" id="admin-total-orders-count">0 รายการ</p>
-          <span class="text-[11px] text-stone-400">อัปเดตแบบ Realtime</span>
         </div>
         <div class="bg-glam-roseLight/40 p-5 rounded-3xl border border-glam-rose/30 shadow-sm">
-          <span class="text-xs text-glam-roseDark font-medium">รอตรวจสอบสลิป</span>
+          <span class="text-xs text-glam-roseDark font-medium">รอตรวจสอบ</span>
           <p class="text-2xl font-bold font-price text-glam-roseDark mt-1" id="admin-pending-badge">0 รายการ</p>
-          <span class="text-[11px] text-rose-600 font-semibold">คลิกตรวจสลิปเพื่อเปลี่ยนสถานะ</span>
         </div>
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
           <span class="text-xs text-stone-500 font-medium">หนังสือในระบบ</span>
           <p class="text-2xl font-bold font-price text-glam-champagne mt-1" id="admin-total-books">0 เล่ม</p>
-          <span class="text-[11px] text-stone-400" id="admin-total-cats-badge">0 หมวดหมู่</span>
         </div>
       </div>
 
-      <!-- แท็บ 1: จัดการคำสั่งซื้อ + ค้นหา + ตรวจสลิป + สลับสถานะ (ยืนยัน/รอชำระ/ยกเลิก) -->
+      <!-- แท็บ 1: คำสั่งซื้อ -->
       <div id="admin-subtab-orders" class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
-        <div class="p-4 border-b border-glam-milk bg-glam-cream flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="p-4 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
           <div class="relative w-full sm:w-80">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-stone-400 text-xs">🔍</span>
-            <input type="text" id="admin-order-search" oninput="renderAdminOrders()" placeholder="ค้นหา Order ID หรือชื่อลูกค้า..." class="w-full bg-white border border-glam-roseLight rounded-xl pl-9 pr-3 py-1.5 text-xs focus:ring-1 focus:ring-glam-rose">
+            <input type="text" id="admin-order-search" oninput="renderAdminOrders()" placeholder="ค้นหาตามรหัสคำสั่งซื้อ หรือชื่อลูกค้า..." class="w-full bg-white border border-glam-roseLight rounded-xl pl-9 pr-3 py-1.5 text-xs focus:ring-1 focus:ring-glam-rose">
           </div>
-          <span class="text-xs text-stone-400">คลิกตรวจสอบสลิป หรือสลับสถานะเป็น ยืนยัน / รอชำระ / ยกเลิก</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
               <tr class="bg-glam-milk text-glam-roseDark text-xs uppercase font-bold font-heading">
-                <th class="py-3.5 px-4">Order ID</th>
+                <th class="py-3.5 px-4">รหัสคำสั่งซื้อ</th>
                 <th class="py-3.5 px-4">ลูกค้า</th>
                 <th class="py-3.5 px-4">วัน-เวลา</th>
                 <th class="py-3.5 px-4">วิธีชำระ</th>
                 <th class="py-3.5 px-4">ยอดเงิน</th>
-                <th class="py-3.5 px-4">สลิป</th>
-                <th class="py-3.5 px-4">สถานะคำสั่งซื้อ</th>
-                <th class="py-3.5 px-4 text-center">จัดการสถานะ</th>
+                <th class="py-3.5 px-4">หลักฐาน</th>
+                <th class="py-3.5 px-4">สถานะ</th>
+                <th class="py-3.5 px-4 text-center">การดำเนินการ</th>
               </tr>
             </thead>
             <tbody id="all-admin-orders-tbody" class="divide-y divide-glam-milk"></tbody>
@@ -247,10 +236,10 @@
         </div>
       </div>
 
-      <!-- แท็บ 2: จัดการ E-Book (เพิ่ม/แก้ไข/ลบ/เปิด-ปิดการขาย) -->
+      <!-- แท็บ 2: จัดการ E-Book -->
       <div id="admin-subtab-books" class="hidden bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
         <div class="p-4 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
-          <h3 class="font-bold font-heading text-glam-roseDark text-sm">จัดการรายการหนังสือ E-Book (เพิ่ม ลบ แก้ไข ปิดการขาย)</h3>
+          <h3 class="font-bold font-heading text-glam-roseDark text-sm">คลังหนังสือทั้งหมด</h3>
           <span id="admin-book-count-tag" class="text-xs bg-glam-roseLight text-glam-roseDark px-3 py-1 rounded-full font-bold"></span>
         </div>
         <div class="overflow-x-auto">
@@ -262,8 +251,8 @@
                 <th class="py-3 px-4">หมวดหมู่</th>
                 <th class="py-3 px-4">ผู้แต่ง</th>
                 <th class="py-3 px-4">ราคา</th>
-                <th class="py-3 px-4">สถานะขาย</th>
-                <th class="py-3 px-4 text-center">การจัดการ</th>
+                <th class="py-3 px-4">สถานะ</th>
+                <th class="py-3 px-4 text-center">จัดการ</th>
               </tr>
             </thead>
             <tbody id="admin-books-tbody" class="divide-y divide-glam-milk"></tbody>
@@ -271,21 +260,20 @@
         </div>
       </div>
 
-      <!-- แท็บ 3: จัดการผู้ใช้ (ดูข้อมูลสมาชิก & สลับบทบาท ลูกค้า/ผู้ดูแล) -->
+      <!-- แท็บ 3: จัดการผู้ใช้ -->
       <div id="admin-subtab-users" class="hidden bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
         <div class="p-4 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
-          <h3 class="font-bold font-heading text-glam-roseDark text-sm">จัดการผู้ใช้งาน & กำหนดบทบาท (Customer / Admin)</h3>
-          <span class="text-xs text-stone-400">กำหนดบทบาทอย่างน้อย: ลูกค้า กับ ผู้ดูแล</span>
+          <h3 class="font-bold font-heading text-glam-roseDark text-sm">รายชื่อผู้ใช้งานและกำหนดสิทธิ์</h3>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
               <tr class="bg-glam-milk text-glam-roseDark text-xs uppercase font-bold font-heading">
-                <th class="py-3.5 px-4">Username</th>
+                <th class="py-3.5 px-4">ชื่อผู้ใช้</th>
                 <th class="py-3.5 px-4">ชื่อ - นามสกุล</th>
                 <th class="py-3.5 px-4">อีเมล</th>
-                <th class="py-3.5 px-4">บทบาทปัจจุบัน</th>
-                <th class="py-3.5 px-4 text-center">สลับบทบาท</th>
+                <th class="py-3.5 px-4">สิทธิ์การใช้งาน</th>
+                <th class="py-3.5 px-4 text-center">ปรับสิทธิ์</th>
               </tr>
             </thead>
             <tbody id="admin-users-tbody" class="divide-y divide-glam-milk"></tbody>
@@ -297,17 +285,16 @@
       <div id="admin-subtab-reports" class="hidden space-y-6">
         <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
           <div>
-            <h3 class="text-lg font-bold font-heading text-glam-roseDark">รายงานวิเคราะห์ยอดขายและพฤติกรรมลูกค้า</h3>
-            <p class="text-xs text-stone-400">ประมวลผลข้อมูลจากคำสั่งซื้อจริงในระบบ</p>
+            <h3 class="text-lg font-bold font-heading text-glam-roseDark">สรุปข้อมูลการขายและรายงาน</h3>
           </div>
-          <button onclick="exportReportsToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2 font-heading self-start sm:self-auto">
-            <span>📥 Export ข้อมูลคำสั่งซื้อ (CSV / Excel)</span>
+          <button onclick="exportReportsToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2 font-heading">
+            <span>📥 ส่งออกข้อมูล (CSV)</span>
           </button>
         </div>
 
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
           <div class="p-4 border-b border-glam-milk bg-glam-cream">
-            <h4 class="font-bold font-heading text-glam-roseDark text-sm">📊 รายงานสรุปยอดขายตามช่วงเวลา</h4>
+            <h4 class="font-bold font-heading text-glam-roseDark text-sm">สรุปยอดขายตามช่วงเวลา</h4>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
@@ -316,12 +303,12 @@
                   <th class="py-3 px-5">ช่วงวันที่</th>
                   <th class="py-3 px-5 text-center">จำนวนคำสั่งซื้อ</th>
                   <th class="py-3 px-5 text-right">ยอดขายรวม (บาท)</th>
-                  <th class="py-3 px-5 text-right">เฉลี่ยต่อบิล</th>
+                  <th class="py-3 px-5 text-right">ยอดเฉลี่ย</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
-                <tr><td class="py-3 px-5 font-bold">2026-08-01 ถึง 2026-08-15</td><td class="py-3 px-5 text-center">9 บิล</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿3,190.00</td><td class="py-3 px-5 text-right">฿354.44</td></tr>
-                <tr><td class="py-3 px-5 font-bold">2026-08-16 ถึง 2026-08-31</td><td class="py-3 px-5 text-center">8 บิล</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,860.00</td><td class="py-3 px-5 text-right">฿357.50</td></tr>
+                <tr><td class="py-3 px-5 font-bold">2026-08-01 ถึง 2026-08-15</td><td class="py-3 px-5 text-center">9 รายการ</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿3,190.00</td><td class="py-3 px-5 text-right">฿354.44</td></tr>
+                <tr><td class="py-3 px-5 font-bold">2026-08-16 ถึง 2026-08-31</td><td class="py-3 px-5 text-center">8 รายการ</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,860.00</td><td class="py-3 px-5 text-right">฿357.50</td></tr>
               </tbody>
             </table>
           </div>
@@ -333,57 +320,57 @@
 
   <!-- ==================== MODALS ==================== -->
 
-  <!-- MODAL แก้ไขข้อมูลพื้นฐานสมาชิก (สิ่งที่เกณฑ์ผู้ใช้ต้องการ) -->
+  <!-- MODAL แก้ไขข้อมูลส่วนตัว -->
   <div id="edit-profile-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.2rem] shadow-2xl p-6 border border-glam-roseLight modal-animate">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="font-bold text-glam-roseDark font-heading text-base">✏️ แก้ไขข้อมูลส่วนตัว</h3>
+        <h3 class="font-bold text-glam-roseDark font-heading text-base">แก้ไขข้อมูลส่วนตัว</h3>
         <button onclick="closeEditProfileModal()" class="text-stone-400 hover:text-stone-600 text-lg">✕</button>
       </div>
       <form onsubmit="handleSaveProfile(event)" class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-stone-600 mb-1">ชื่อ - นามสกุลจริง:</label>
+          <label class="block font-bold text-stone-600 mb-1">ชื่อ - นามสกุล:</label>
           <input type="text" id="edit-profile-name" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl px-3 py-2">
         </div>
         <div>
-          <label class="block font-bold text-stone-600 mb-1">อีเมลติดต่อ / รับไฟล์ E-Book:</label>
+          <label class="block font-bold text-stone-600 mb-1">อีเมล:</label>
           <input type="email" id="edit-profile-email" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl px-3 py-2">
         </div>
         <div class="pt-2 flex justify-end gap-2">
           <button type="button" onclick="closeEditProfileModal()" class="px-4 py-2 border rounded-xl font-bold text-stone-500">ยกเลิก</button>
-          <button type="submit" class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white px-4 py-2 rounded-xl font-bold shadow">บันทึกการแก้ไข</button>
+          <button type="submit" class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white px-4 py-2 rounded-xl font-bold shadow">บันทึก</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL จัดการหมวดหมู่ (สิ่งที่เกณฑ์แอดมินต้องการ) -->
+  <!-- MODAL จัดการหมวดหมู่ -->
   <div id="category-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-[2.2rem] shadow-2xl p-6 border border-glam-roseLight modal-animate space-y-4">
       <div class="flex justify-between items-center border-b border-glam-milk pb-3">
-        <h3 class="font-bold text-glam-roseDark font-heading text-base">🏷️ จัดการหมวดหมู่หนังสือ (Categories)</h3>
+        <h3 class="font-bold text-glam-roseDark font-heading text-base">จัดการหมวดหมู่หนังสือ</h3>
         <button onclick="closeCategoryManageModal()" class="text-stone-400 hover:text-stone-600 text-lg">✕</button>
       </div>
       <div class="flex gap-2">
-        <input type="text" id="new-cat-name-input" placeholder="พิมพ์ชื่อหมวดหมู่ใหม่..." class="flex-1 bg-glam-cream border border-glam-roseLight rounded-xl px-3 py-2 text-xs">
+        <input type="text" id="new-cat-name-input" placeholder="ระบุชื่อหมวดหมู่..." class="flex-1 bg-glam-cream border border-glam-roseLight rounded-xl px-3 py-2 text-xs">
         <button onclick="addNewCategory()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl font-bold text-xs shadow whitespace-nowrap">+ เพิ่มหมวดหมู่</button>
       </div>
       <div class="max-h-60 overflow-y-auto space-y-2" id="category-list-container"></div>
     </div>
   </div>
 
-  <!-- MODAL ตะกร้าสินค้า (เพิ่ม/ลดจำนวน/ลบ/คำนวณราคาก่อนสั่งซื้อ) -->
+  <!-- MODAL ตะกร้าสินค้า -->
   <div id="cart-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[92vh] border border-glam-roseLight modal-animate">
       <div class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white px-7 py-4 flex justify-between items-center">
-        <h3 class="text-lg font-bold font-heading flex items-center gap-2"><span>🛍️ ตะกร้าหนังสือและการชำระเงิน</span></h3>
+        <h3 class="text-lg font-bold font-heading flex items-center gap-2"><span>🛍️ ตะกร้าสินค้าและการชำระเงิน</span></h3>
         <button onclick="toggleCartModal()" class="text-rose-200 hover:text-white text-xl">✕</button>
       </div>
       <div class="p-6 md:p-8 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-2 gap-8 bg-glam-cream/20">
         <div class="flex flex-col justify-between space-y-4 border-b md:border-b-0 md:border-r border-glam-roseLight/80 pb-6 md:pb-0 md:pr-8">
           <div>
             <h4 class="font-bold text-sm text-glam-roseDark uppercase font-heading tracking-wide mb-3 flex items-center justify-between">
-              <span>📚 รายการ E-Book ที่เลือก</span>
+              <span>รายการหนังสือในตะกร้า</span>
               <span id="cart-item-count" class="text-xs text-stone-400 font-normal font-price"></span>
             </h4>
             <div id="cart-items-container" class="space-y-3 max-h-[320px] overflow-y-auto pr-1"></div>
@@ -401,23 +388,23 @@
         </div>
 
         <div class="space-y-4">
-          <h4 class="font-bold text-sm text-glam-roseDark uppercase font-heading tracking-wide">💳 เลือกวิธีชำระเงิน & แนบหลักฐานจำลอง</h4>
+          <h4 class="font-bold text-sm text-glam-roseDark uppercase font-heading tracking-wide">ช่องทางชำระเงิน & แนบหลักฐาน</h4>
           <div class="grid grid-cols-2 gap-2 font-heading">
             <button type="button" id="pay-opt-qr" onclick="selectPayMethod('qr')" class="py-2.5 px-3 rounded-xl border-2 border-glam-rose bg-glam-roseLight/30 text-glam-roseDark font-bold text-xs flex items-center justify-center gap-1">⚡ พร้อมเพย์ QR</button>
             <button type="button" id="pay-opt-bank" onclick="selectPayMethod('bank')" class="py-2.5 px-3 rounded-xl border-2 border-stone-200 bg-white text-stone-600 font-bold text-xs flex items-center justify-center gap-1">🏦 โอนผ่านธนาคาร</button>
           </div>
           <div id="pay-detail-qr" class="text-center p-3.5 bg-white rounded-2xl border border-stone-200 space-y-2">
-            <p class="font-bold text-xs text-stone-700">สแกนชำระเงินจำลองผ่านพร้อมเพย์</p>
+            <p class="font-bold text-xs text-stone-700">สแกน QR เพื่อชำระเงิน</p>
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=BookieHousePayment" alt="QR Code" class="w-28 h-28 mx-auto rounded-lg border">
-            <p class="text-[10px] text-stone-400">บจก. บุ๊คกี้ เฮ้าส์ ดิจิทัล (บัญชีทดสอบระบบ)</p>
+            <p class="text-[10px] text-stone-400">บจก. บุ๊คกี้ เฮ้าส์ ดิจิทัล</p>
           </div>
           <div id="pay-detail-bank" class="hidden p-3.5 bg-white rounded-2xl border border-stone-200 space-y-1 text-xs text-stone-700">
-            <p class="font-bold text-stone-800">บัญชีธนาคารจำลอง:</p>
-            <p>ธนาคาร: กสิกรไทย (KBANK)</p>
+            <p class="font-bold text-stone-800">บัญชีธนาคาร:</p>
+            <p>ธนาคารกสิกรไทย (KBANK)</p>
             <p>เลขที่บัญชี: <b class="font-price text-glam-roseDark">789-2-34567-8</b></p>
           </div>
           <div class="space-y-1.5">
-            <label class="block font-bold text-xs text-stone-700">🧾 แนบหลักฐานสลิปจำลอง (ห้ามใช้ข้อมูลบัตร/บัญชีจริง)</label>
+            <label class="block font-bold text-xs text-stone-700">หลักฐานการโอนเงิน (สลิป)</label>
             <input type="file" id="slip-file-input" accept="image/*" onchange="previewSlip(event)" class="w-full text-xs text-stone-500 file:mr-3 file:py-1 file:px-3 file:rounded-xl file:border-0 file:bg-glam-roseLight file:text-glam-roseDark cursor-pointer">
             <div class="p-2 bg-stone-50 rounded-xl border border-stone-200 text-center">
               <img id="slip-preview-img" src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80" alt="Slip Preview" class="max-h-24 mx-auto rounded-lg object-contain">
@@ -425,18 +412,17 @@
           </div>
         </div>
       </div>
-      <div class="p-4 bg-glam-cream border-t border-glam-roseLight flex flex-col sm:flex-row justify-between items-center gap-3">
-        <span class="text-xs text-stone-500 font-light">🕒 บันทึกรายการสั่งซื้อ รายการย่อย ยอดชำระ และสถานะขึ้น Cloud</span>
-        <button onclick="confirmOrderWithSlip()" class="w-full sm:w-auto bg-gradient-to-r from-glam-rose to-glam-roseDark text-white font-bold py-3 px-8 rounded-2xl shadow-md text-sm font-heading">ยืนยันการสั่งซื้อ ✨</button>
+      <div class="p-4 bg-glam-cream border-t border-glam-roseLight flex justify-end items-center">
+        <button onclick="confirmOrderWithSlip()" class="w-full sm:w-auto bg-gradient-to-r from-glam-rose to-glam-roseDark text-white font-bold py-3 px-8 rounded-2xl shadow-md text-sm font-heading">ยืนยันคำสั่งซื้อ</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL ตรวจสอบสลิป & เปลี่ยนสถานะ (รอชำระ, ยืนยันแล้ว, ยกเลิก) -->
+  <!-- MODAL ตรวจสอบสลิป & จัดการสถานะ -->
   <div id="admin-slip-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden border border-glam-roseLight modal-animate">
       <div class="bg-slate-800 text-white px-6 py-4 flex justify-between items-center">
-        <h3 class="text-sm font-bold font-heading">🧾 ตรวจสอบหลักฐานจำลอง & เปลี่ยนสถานะ</h3>
+        <h3 class="text-sm font-bold font-heading">หลักฐานการโอนเงิน & ปรับสถานะ</h3>
         <button onclick="closeAdminSlipModal()" class="text-stone-400 hover:text-white text-lg">✕</button>
       </div>
       <div class="p-5 space-y-4 text-center">
@@ -446,21 +432,21 @@
         <p id="admin-view-slip-info" class="text-xs text-stone-600 font-medium"></p>
         
         <div class="space-y-2 pt-2">
-          <button id="btn-status-confirm" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl font-bold text-xs shadow">✓ เปลี่ยนเป็น: ยืนยันแล้ว (อนุมัติส่งไฟล์)</button>
+          <button id="btn-status-confirm" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl font-bold text-xs shadow">✓ ยืนยันคำสั่งซื้อ</button>
           <div class="flex gap-2">
-            <button id="btn-status-pending" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl font-bold text-xs shadow">⏳ รอชำระ/ตรวจ</button>
-            <button id="btn-status-cancel" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-xl font-bold text-xs shadow">✕ ยกเลิกออเดอร์</button>
+            <button id="btn-status-pending" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl font-bold text-xs shadow">รอชำระเงิน</button>
+            <button id="btn-status-cancel" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-xl font-bold text-xs shadow">ยกเลิกคำสั่งซื้อ</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL ดูข้อมูล E-Book + รีวิว -->
+  <!-- MODAL ข้อมูลหนังสือ + รีวิว -->
   <div id="book-detail-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col h-[88vh] border border-glam-roseLight modal-animate">
       <div class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white px-6 py-4 flex justify-between items-center shrink-0">
-        <h3 class="text-base font-bold font-heading">📖 ข้อมูลหนังสือและรีวิวจากผู้อ่านจริง</h3>
+        <h3 class="text-base font-bold font-heading">ข้อมูลหนังสือ</h3>
         <button onclick="closeBookDetailModal()" class="text-rose-200 hover:text-white text-xl">✕</button>
       </div>
       <div class="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1 bg-[#FFFDF9]">
@@ -472,19 +458,19 @@
             <p class="text-xs text-stone-500">ผู้แต่ง: <span id="detail-author" class="font-semibold text-glam-roseDark"></span></p>
             <p class="text-xs text-stone-500">หมวดหมู่: <span id="detail-category" class="font-medium text-stone-700"></span></p>
             <div class="pt-1">
-              <span class="text-[11px] text-stone-400">ราคาพิเศษฉบับ E-Book:</span>
+              <span class="text-[11px] text-stone-400">ราคา:</span>
               <p id="detail-price" class="text-2xl font-price font-bold text-glam-roseDark"></p>
             </div>
           </div>
         </div>
         <div class="bg-white p-4 rounded-3xl border border-glam-roseLight/70 space-y-1 shadow-sm">
-          <h4 class="font-bold text-xs uppercase tracking-wide text-glam-roseDark font-heading">📝 คำอธิบาย / เรื่องย่อ</h4>
+          <h4 class="font-bold text-xs uppercase tracking-wide text-glam-roseDark font-heading">เรื่องย่อ</h4>
           <p id="detail-description" class="text-xs text-stone-600 leading-relaxed font-light"></p>
         </div>
         <div class="bg-white p-4 rounded-3xl border border-glam-roseLight/70 space-y-2 shadow-sm text-xs">
-          <h4 class="font-bold uppercase tracking-wide text-glam-roseDark font-heading">💬 รีวิวจากผู้อ่าน</h4>
+          <h4 class="font-bold uppercase tracking-wide text-glam-roseDark font-heading">รีวิวจากผู้อ่าน</h4>
           <div class="divide-y divide-glam-milk">
-            <div class="pt-2"><p class="font-bold text-stone-700">คุณพิมพ์ชนก น. <span class="text-amber-500">★★★★★</span></p><p class="text-stone-600 font-light">"เนื้อหาเขียนเข้าใจง่ายมาก ดาวน์โหลดเป็น PDF อ่านบนแท็บเล็ตสบายตา คุ้มค่ามากค่ะ"</p></div>
+            <div class="pt-2"><p class="font-bold text-stone-700">คุณพิมพ์ชนก น. <span class="text-amber-500">★★★★★</span></p><p class="text-stone-600 font-light">"เนื้อหาเขียนเข้าใจง่าย ดาวน์โหลดเป็น PDF เปิดอ่านบนแท็บเล็ตได้สะดวก คุ้มค่ามากค่ะ"</p></div>
           </div>
         </div>
       </div>
@@ -495,12 +481,12 @@
     </div>
   </div>
 
-  <!-- MODAL กล่องอีเมลรับไฟล์ -->
+  <!-- MODAL อีเมลรับไฟล์ -->
   <div id="inbox-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh] border border-glam-roseLight modal-animate">
       <div class="bg-gradient-to-r from-glam-roseDark to-slate-800 text-white px-6 py-4 flex justify-between items-center">
         <div>
-          <h3 class="text-base font-bold font-heading">📧 กล่องข้อความอีเมลของคุณ</h3>
+          <h3 class="text-base font-bold font-heading">กล่องข้อความอีเมล</h3>
           <p id="inbox-user-email" class="text-xs text-rose-200"></p>
         </div>
         <button onclick="closeInboxModal()" class="text-rose-200 hover:text-white text-lg">✕</button>
@@ -512,7 +498,7 @@
     </div>
   </div>
 
-  <!-- MODAL Auth -->
+  <!-- MODAL เข้าสู่ระบบ / สมัครสมาชิก -->
   <div id="auth-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-[2.2rem] shadow-2xl p-7 border border-glam-roseLight modal-animate">
       <div class="flex justify-between items-center mb-5">
@@ -524,46 +510,46 @@
       </div>
       <div class="space-y-3">
         <div id="register-field-fullname" class="hidden">
-          <label class="block text-xs font-bold text-stone-600 mb-1">ชื่อ - นามสกุลจริง:</label>
+          <label class="block text-xs font-bold text-stone-600 mb-1">ชื่อ - นามสกุล:</label>
           <input type="text" id="auth-fullname" class="w-full bg-glam-cream border border-glam-roseLight rounded-2xl px-3 py-2 text-sm">
         </div>
         <div id="register-field-email" class="hidden">
-          <label class="block text-xs font-bold text-stone-600 mb-1">อีเมลรับ E-Book:</label>
+          <label class="block text-xs font-bold text-stone-600 mb-1">อีเมล:</label>
           <input type="email" id="auth-email" class="w-full bg-glam-cream border border-glam-roseLight rounded-2xl px-3 py-2 text-sm">
         </div>
         <div>
-          <label class="block text-xs font-bold text-stone-600 mb-1">ชื่อผู้ใช้งาน (Username):</label>
+          <label class="block text-xs font-bold text-stone-600 mb-1">ชื่อผู้ใช้งาน:</label>
           <input type="text" id="auth-username" class="w-full bg-glam-cream border border-glam-roseLight rounded-2xl px-3 py-2 text-sm">
         </div>
         <div>
-          <label class="block text-xs font-bold text-stone-600 mb-1">รหัสผ่าน (Password):</label>
+          <label class="block text-xs font-bold text-stone-600 mb-1">รหัสผ่าน:</label>
           <input type="password" id="auth-password" class="w-full bg-glam-cream border border-glam-roseLight rounded-2xl px-3 py-2 text-sm">
         </div>
-        <button id="auth-submit-btn" onclick="submitAuthForm()" class="w-full bg-gradient-to-r from-glam-rose to-glam-roseDark text-white py-3 rounded-2xl font-bold text-sm shadow mt-2 font-heading">เข้าสู่ระบบ ✨</button>
+        <button id="auth-submit-btn" onclick="submitAuthForm()" class="w-full bg-gradient-to-r from-glam-rose to-glam-roseDark text-white py-3 rounded-2xl font-bold text-sm shadow mt-2 font-heading">เข้าสู่ระบบ</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL แอดมิน เพิ่ม/แก้ไขหนังสือ -->
+  <!-- MODAL เพิ่ม / แก้ไขหนังสือ -->
   <div id="book-form-modal" class="fixed inset-0 bg-[#341C21]/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-glam-roseLight modal-animate">
       <div id="book-form-header" class="bg-gradient-to-r from-emerald-600 to-teal-800 text-white px-6 py-4 flex justify-between items-center">
-        <h3 id="book-form-title" class="text-base font-bold font-heading">➕ เพิ่ม E-Book เล่มใหม่ (Admin)</h3>
+        <h3 id="book-form-title" class="text-base font-bold font-heading">เพิ่มหนังสือใหม่</h3>
         <button onclick="closeBookFormModal()" class="text-emerald-200 hover:text-white text-lg">✕</button>
       </div>
       <form onsubmit="handleSaveBook(event)" class="p-6 space-y-3 text-xs max-h-[80vh] overflow-y-auto">
         <input type="hidden" id="edit-book-id" value="">
         <div>
-          <label class="block font-bold text-stone-700 mb-1">ชื่อหนังสือ (Title) *</label>
+          <label class="block font-bold text-stone-700 mb-1">ชื่อหนังสือ *</label>
           <input type="text" id="form-book-title" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-bold text-stone-700 mb-1">กำหนดหมวดหมู่ให้ E Book *</label>
+            <label class="block font-bold text-stone-700 mb-1">หมวดหมู่ *</label>
             <select id="form-book-cat" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5"></select>
           </div>
           <div>
-            <label class="block font-bold text-stone-700 mb-1">ราคา E-Book (บาท) *</label>
+            <label class="block font-bold text-stone-700 mb-1">ราคา (บาท) *</label>
             <input type="number" id="form-book-price" min="0" step="10" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5">
           </div>
         </div>
@@ -572,20 +558,20 @@
           <input type="text" id="form-book-author" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5">
         </div>
         <div>
-          <label class="block font-bold text-stone-700 mb-1">ภาพหน้าปก (URL) *</label>
+          <label class="block font-bold text-stone-700 mb-1">URL รูปภาพหน้าปก *</label>
           <input type="url" id="form-book-cover" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 font-mono">
         </div>
         <div>
-          <label class="block font-bold text-stone-700 mb-1">ลิงก์ดาวน์โหลด E-Book (.pdf) *</label>
+          <label class="block font-bold text-stone-700 mb-1">URL ไฟล์ E-Book (.pdf) *</label>
           <input type="url" id="form-book-dl" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 font-mono">
         </div>
         <div>
-          <label class="block font-bold text-stone-700 mb-1">คำอธิบายหนังสือ / เรื่องย่อ</label>
+          <label class="block font-bold text-stone-700 mb-1">เรื่องย่อ</label>
           <textarea id="form-book-desc" rows="3" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5"></textarea>
         </div>
         <div class="pt-2 flex justify-end gap-2 font-heading">
           <button type="button" onclick="closeBookFormModal()" class="px-4 py-2 border rounded-xl font-bold text-stone-500">ยกเลิก</button>
-          <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-xl shadow">บันทึกข้อมูล ✨</button>
+          <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-xl shadow">บันทึก</button>
         </div>
       </form>
     </div>
@@ -674,7 +660,7 @@
         document.getElementById('view-orders').classList.remove('hidden');
         renderCustomerOrders();
       } else if (view === 'admin') {
-        if (!currentUser || currentUser.role !== 'admin') { alert('สงวนสิทธิ์เฉพาะ Admin เท่านั้น'); return; }
+        if (!currentUser || currentUser.role !== 'admin') { alert('สงวนสิทธิ์เฉพาะผู้ดูแลระบบ'); return; }
         document.getElementById('view-admin').classList.remove('hidden');
         renderAdminOrders();
         renderAdminBooks();
@@ -682,7 +668,6 @@
       }
     }
 
-    // แก้ไขข้อมูลพื้นฐานสมาชิก (User Spec)
     function openEditProfileModal() {
       if (!currentUser) return;
       document.getElementById('edit-profile-name').value = currentUser.name;
@@ -701,16 +686,14 @@
       saveAllState();
       applyUserSession();
       closeEditProfileModal();
-      alert('✅ แก้ไขข้อมูลส่วนตัวเรียบร้อยแล้ว!');
+      alert('บันทึกข้อมูลเรียบร้อยแล้ว');
     }
 
-    // จัดการหมวดหมู่ (Admin Spec)
     function renderCategoryDropdowns() {
       const filterEl = document.getElementById('category-filter');
       const formEl = document.getElementById('form-book-cat');
-      filterEl.innerHTML = '<option value="all">🌷 ทั้งหมด ทุกหมวดหมู่</option>' + categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      filterEl.innerHTML = '<option value="all">ทั้งหมด ทุกหมวดหมู่</option>' + categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
       formEl.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-      document.getElementById('admin-total-cats-badge').innerText = `${categories.length} หมวดหมู่`;
     }
     function openCategoryManageModal() {
       renderCategoryList();
@@ -722,7 +705,7 @@
       container.innerHTML = categories.map(c => `
         <div class="flex justify-between items-center bg-stone-50 p-2.5 rounded-xl border border-stone-200 text-xs">
           <span class="font-bold text-stone-700">${c.name}</span>
-          <div class="space-x-1">
+          <div class="space-x-2">
             <button onclick="editCategoryName(${c.id})" class="text-amber-600 hover:underline">แก้ไข</button>
             <button onclick="deleteCategory(${c.id})" class="text-rose-600 hover:underline">ลบ</button>
           </div>
@@ -761,7 +744,6 @@
       }
     }
 
-    // จัดการผู้ใช้งาน (Admin Spec)
     function renderAdminUsers() {
       const tbody = document.getElementById('admin-users-tbody');
       tbody.innerHTML = users.map(u => `
@@ -771,7 +753,7 @@
           <td class="py-3 px-4 text-stone-500">${u.email || '-'}</td>
           <td class="py-3 px-4">
             <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${u.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
-              ${u.role === 'admin' ? '👑 ผู้ดูแล (Admin)' : '👤 ลูกค้า (Customer)'}
+              ${u.role === 'admin' ? 'ผู้ดูแล (Admin)' : 'ลูกค้า (Customer)'}
             </span>
           </td>
           <td class="py-3 px-4 text-center">
@@ -788,16 +770,14 @@
       u.role = u.role === 'admin' ? 'customer' : 'admin';
       saveAllState();
       renderAdminUsers();
-      alert(`เปลี่ยนบทบาทคุณ ${u.name} เป็น ${u.role} สำเร็จ`);
     }
 
-    // จัดการคำสั่งซื้อ + เปลี่ยนสถานะ (Admin Spec)
     function adminInspectSlip(orderId) {
       currentInspectOrderId = orderId;
       const o = cloudOrders.find(x => x.id === orderId);
       if (!o) return;
       document.getElementById('admin-view-slip-img').src = o.slipUrl;
-      document.getElementById('admin-view-slip-info').innerText = `ออเดอร์ #${o.id} | ยอดเงิน ฿${parseFloat(o.total).toFixed(2)} | สถานะปัจจุบัน: [${o.status}]`;
+      document.getElementById('admin-view-slip-info').innerText = `ออเดอร์ #${o.id} | ยอดเงิน ฿${parseFloat(o.total).toFixed(2)}`;
 
       document.getElementById('btn-status-confirm').onclick = () => updateOrderStatus(o, 'confirmed');
       document.getElementById('btn-status-pending').onclick = () => updateOrderStatus(o, 'pending');
@@ -821,13 +801,11 @@
           saveAllState();
         }
         closeAdminSlipModal();
-        alert(`✅ อัปเดตสถานะออเดอร์ #${order.id} เป็น [${newStatus}] เรียบร้อยแล้ว`);
       } catch (e) { alert('Error: ' + e.message); }
     }
 
-    // Export รายงานเป็น CSV (Admin Spec)
     function exportReportsToCSV() {
-      if (cloudOrders.length === 0) { alert('ไม่มีข้อมูลคำสั่งซื้อสำหรับ Export'); return; }
+      if (cloudOrders.length === 0) { alert('ไม่มีข้อมูลสำหรับส่งออก'); return; }
       let csv = '\uFEFFOrderID,Customer,Email,DateTime,Method,Items,Total,Status\n';
       cloudOrders.forEach(o => {
         csv += `"#ORD-${o.id}","${o.customer}","${o.email}","${o.datetime}","${o.method}","${o.items.join('; ')}","${o.total}","${o.status}"\n`;
@@ -835,14 +813,13 @@
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `BookieHouse_Orders_${new Date().toISOString().slice(0,10)}.csv`;
+      link.download = `Orders_${new Date().toISOString().slice(0,10)}.csv`;
       link.click();
     }
 
-    // ตะกร้าสินค้า (เพิ่ม/ลดจำนวน/ลบ/คำนวณราคา)
     function addToCart(bookId) {
-      if (!currentUser) { alert('กรุณาเข้าสู่ระบบก่อน'); openAuthModal('login'); return; }
-      if (currentUser.role === 'admin') { alert('บัญชี Admin สั่งซื้อไม่ได้'); return; }
+      if (!currentUser) { alert('กรุณาเข้าสู่ระบบก่อนเลือกซื้อหนังสือ'); openAuthModal('login'); return; }
+      if (currentUser.role === 'admin') { alert('บัญชีผู้ดูแลระบบไม่สามารถสั่งซื้อได้'); return; }
       const b = books.find(x => x.id === bookId);
       const existing = cart.find(x => x.id === bookId);
       if (existing) { existing.qty += 1; } else { cart.push({ ...b, qty: 1 }); }
@@ -864,7 +841,7 @@
       const subtotalEl = document.getElementById('cart-subtotal-price');
 
       if (cart.length === 0) {
-        container.innerHTML = '<div class="text-center py-10 text-stone-400 text-xs">ยังไม่มีหนังสือในตะกร้า 🌸</div>';
+        container.innerHTML = '<div class="text-center py-10 text-stone-400 text-xs">ยังไม่มีสินค้าในตะกร้า</div>';
         totalEl.innerText = '฿0.00'; subtotalEl.innerText = '฿0.00';
         return;
       }
@@ -891,7 +868,6 @@
       subtotalEl.innerText = `฿${total.toFixed(2)}`;
     }
 
-    // สั่งซื้อ
     async function confirmOrderWithSlip() {
       if (cart.length === 0) { alert('ไม่มีสินค้าในตะกร้า'); return; }
       if (!currentUser) { openAuthModal('login'); return; }
@@ -911,7 +887,7 @@
       try {
         await db.collection('orders').add(newOrder);
         cart = []; updateCartUI(); toggleCartModal();
-        alert(`🎉 สั่งซื้อ #ORD-${newOrderId} เรียบร้อยแล้ว!`);
+        alert(`สั่งซื้อสำเร็จ รหัสคำสั่งซื้อ #${newOrderId}`);
         navigate('orders');
       } catch (e) { alert(e.message); }
     }
@@ -967,8 +943,8 @@
       if (!currentUser || !tbody) return;
       const userOrders = cloudOrders.filter(o => o.username === currentUser.username);
       tbody.innerHTML = userOrders.map(o => {
-        let badge = o.status === 'confirmed' ? '<span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">ยืนยันแล้ว</span>' : (o.status === 'pending' ? '<span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-bold">รอชำระ/รอตรวจ</span>' : '<span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-1 rounded-full font-bold">ยกเลิก</span>');
-        let action = o.status === 'confirmed' ? `<a href="${o.dlUrl}" target="_blank" class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white text-xs px-3.5 py-2 rounded-xl font-bold shadow inline-block">⬇ ดาวน์โหลด E-Book</a>` : '<span class="text-xs text-stone-400 italic">ล็อก (ต้องได้รับการยืนยันก่อน)</span>';
+        let badge = o.status === 'confirmed' ? '<span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">ยืนยันแล้ว</span>' : (o.status === 'pending' ? '<span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-bold">รอตรวจสอบ</span>' : '<span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-1 rounded-full font-bold">ยกเลิก</span>');
+        let action = o.status === 'confirmed' ? `<a href="${o.dlUrl}" target="_blank" class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white text-xs px-3.5 py-2 rounded-xl font-bold shadow inline-block">⬇ ดาวน์โหลด</a>` : '<span class="text-xs text-stone-400 italic">-</span>';
         return `
           <tr class="hover:bg-glam-cream/50">
             <td class="py-4 px-5 font-mono font-bold text-glam-roseDark">#ORD-${o.id}</td>
@@ -993,7 +969,7 @@
       tbody.innerHTML = filtered.map(o => {
         if (o.status === 'confirmed') totalRev += parseFloat(o.total || 0);
         if (o.status === 'pending') pendingCount++;
-        let badge = o.status === 'confirmed' ? '<span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold">ยืนยันแล้ว</span>' : (o.status === 'pending' ? '<span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-bold">รอชำระ</span>' : '<span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-bold">ยกเลิก</span>');
+        let badge = o.status === 'confirmed' ? '<span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold">ยืนยันแล้ว</span>' : (o.status === 'pending' ? '<span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-full font-bold">รอตรวจสอบ</span>' : '<span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-bold">ยกเลิก</span>');
         return `
           <tr class="hover:bg-glam-cream/50">
             <td class="py-3 px-4 font-mono font-bold text-glam-roseDark">#ORD-${o.id}</td>
@@ -1003,7 +979,7 @@
             <td class="py-3 px-4 font-bold font-price text-glam-roseDark">฿${parseFloat(o.total).toFixed(2)}</td>
             <td class="py-3 px-4"><img src="${o.slipUrl}" onclick="adminInspectSlip(${o.id})" class="w-8 h-8 object-cover rounded cursor-pointer border"></td>
             <td class="py-3 px-4">${badge}</td>
-            <td class="py-3 px-4 text-center"><button onclick="adminInspectSlip(${o.id})" class="bg-glam-roseDark text-white text-xs px-3 py-1.5 rounded-xl font-bold">🧾 ตรวจสอบ / เปลี่ยนสถานะ</button></td>
+            <td class="py-3 px-4 text-center"><button onclick="adminInspectSlip(${o.id})" class="bg-glam-roseDark text-white text-xs px-3 py-1.5 rounded-xl font-bold">ตรวจสอบ</button></td>
           </tr>
         `;
       }).join('');
@@ -1023,7 +999,7 @@
           <td class="py-2.5 px-4 text-xs text-stone-600">${b.catName}</td>
           <td class="py-2.5 px-4 text-xs text-stone-500">${b.author}</td>
           <td class="py-2.5 px-4 font-bold text-glam-roseDark">฿${b.price.toFixed(2)}</td>
-          <td class="py-2.5 px-4"><button onclick="toggleBookStatus(${b.id})" class="text-[11px] font-bold px-2 py-0.5 rounded-full ${b.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'}">${b.isActive ? '🟢 เปิดขาย' : '⚪ ปิดการขาย'}</button></td>
+          <td class="py-2.5 px-4"><button onclick="toggleBookStatus(${b.id})" class="text-[11px] font-bold px-2 py-0.5 rounded-full ${b.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-600'}">${b.isActive ? 'เปิดขาย' : 'ปิดการขาย'}</button></td>
           <td class="py-2.5 px-4 text-center space-x-1"><button onclick="openBookFormModal('edit', ${b.id})" class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded">แก้ไข</button><button onclick="deleteBook(${b.id})" class="bg-rose-100 text-rose-700 text-xs px-2 py-1 rounded">ลบ</button></td>
         </tr>
       `).join('');
@@ -1120,26 +1096,26 @@
       document.getElementById('auth-fullname').value = ''; document.getElementById('auth-email').value = '';
       document.getElementById('register-field-fullname').classList.toggle('hidden', m !== 'register');
       document.getElementById('register-field-email').classList.toggle('hidden', m !== 'register');
-      document.getElementById('auth-title').innerText = m === 'register' ? 'สมัครสมาชิกใหม่' : 'เข้าสู่ระบบ';
-      document.getElementById('auth-submit-btn').innerText = m === 'register' ? 'สมัครสมาชิก ✨' : 'เข้าสู่ระบบ ✨';
+      document.getElementById('auth-title').innerText = m === 'register' ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ';
+      document.getElementById('auth-submit-btn').innerText = m === 'register' ? 'สมัครสมาชิก' : 'เข้าสู่ระบบ';
       document.getElementById('auth-modal').classList.remove('hidden');
     }
     function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
     function submitAuthForm() {
       const u = document.getElementById('auth-username').value.trim();
       const p = document.getElementById('auth-password').value.trim();
-      if (!u || !p) { alert('กรอกข้อมูลให้ครบ'); return; }
+      if (!u || !p) { alert('กรุณากรอกข้อมูลให้ครบถ้วน'); return; }
       if (authMode === 'register') {
         const fn = document.getElementById('auth-fullname').value.trim();
         const em = document.getElementById('auth-email').value.trim();
-        if (!fn || !em) { alert('กรอกชื่อและอีเมล'); return; }
-        if (users.some(x => x.username.toLowerCase() === u.toLowerCase())) { alert('Username นี้มีแล้ว'); return; }
+        if (!fn || !em) { alert('กรุณากรอกชื่อและอีเมล'); return; }
+        if (users.some(x => x.username.toLowerCase() === u.toLowerCase())) { alert('ชื่อผู้ใช้งานนี้มีอยู่ในระบบแล้ว'); return; }
         const newUser = { username: u, password: p, name: fn, email: em, role: 'customer' };
         users.push(newUser); currentUser = newUser; saveAllState(); applyUserSession(); closeAuthModal(); navigate('shop');
       } else {
         const found = users.find(x => x.username.toLowerCase() === u.toLowerCase() && x.password === p);
         if (found) { currentUser = found; saveAllState(); applyUserSession(); closeAuthModal(); if (found.role === 'admin') navigate('admin'); else navigate('shop'); }
-        else { alert('Username หรือ Password ไม่ถูกต้อง'); }
+        else { alert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'); }
       }
     }
     function logout() { currentUser = null; saveAllState(); applyUserSession(); navigate('shop'); }
@@ -1178,11 +1154,11 @@
       document.getElementById('inbox-user-email').innerText = `กล่องจดหมายของ: ${currentUser.email || currentUser.username}`;
       const container = document.getElementById('inbox-list-container');
       const myEmails = sentEmails.filter(e => e.toEmail === currentUser.email || e.toName === currentUser.name);
-      container.innerHTML = myEmails.length === 0 ? '<div class="text-center py-10 text-stone-400 text-xs">ยังไม่มีอีเมลส่งเข้ามา</div>' : myEmails.map(mail => `
+      container.innerHTML = myEmails.length === 0 ? '<div class="text-center py-10 text-stone-400 text-xs">ยังไม่มีข้อความเข้า</div>' : myEmails.map(mail => `
         <div class="bg-white p-4 rounded-2xl border border-glam-roseLight space-y-2">
           <div class="flex justify-between items-center"><h4 class="font-bold text-sm text-glam-deepText">${mail.subject}</h4><span class="text-[10px] text-stone-400">${mail.date}</span></div>
-          <p class="text-xs text-stone-600">ได้รับชำระสำหรับ: <b>${mail.items.join(', ')}</b> แล้ว</p>
-          <a href="${mail.dlUrl}" target="_blank" class="inline-block bg-glam-roseDark text-white text-xs px-3 py-1.5 rounded-xl font-bold shadow">⬇️ ดาวน์โหลด E-Book (.PDF)</a>
+          <p class="text-xs text-stone-600">การสั่งซื้อสำหรับ: <b>${mail.items.join(', ')}</b> ได้รับการยืนยันเรียบร้อยแล้ว</p>
+          <a href="${mail.dlUrl}" target="_blank" class="inline-block bg-glam-roseDark text-white text-xs px-3 py-1.5 rounded-xl font-bold shadow">ดาวน์โหลด E-Book (.PDF)</a>
         </div>
       `).join('');
       document.getElementById('inbox-modal').classList.remove('hidden');
