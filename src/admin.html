@@ -557,6 +557,76 @@
           </div>
         </div>
       </div>
+      <!-- แท็บ 5: SQL Query Console (ค้นหาข้อมูลตารางด้วย SQL) -->
+      <div id="admin-subtab-sql" class="hidden space-y-6">
+        <div class="bg-white p-5 rounded-3xl border border-glam-roseLight shadow-sm">
+          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-glam-milk pb-4">
+            <div>
+              <h3 class="text-lg font-bold font-heading text-glam-roseDark flex items-center gap-2">
+                <span>💻 SQL Query Console (ค้นหาและสอบถามข้อมูลตาราง)</span>
+              </h3>
+              <p class="text-xs text-stone-400 mt-0.5">พิมพ์คำสั่ง SQL เพื่อค้นหาข้อมูลจากตารางในระบบได้ทันที (รองรับ SELECT, WHERE, ORDER BY, GROUP BY)</p>
+            </div>
+            <div class="flex gap-2 text-[11px] font-mono bg-stone-50 border border-stone-200 px-3 py-1.5 rounded-xl text-stone-600">
+              <span>ตารางที่ค้นหาได้:</span>
+              <b class="text-glam-roseDark">ebooks</b> | <b class="text-glam-roseDark">orders</b> | <b class="text-glam-roseDark">users</b> | <b class="text-glam-roseDark">categories</b>
+            </div>
+          </div>
+
+          <!-- ตัวอย่างคำสั่ง SQL ลัดสำหรับคลิกทดสอบ -->
+          <div class="pt-3">
+            <span class="text-xs font-bold text-stone-600 block mb-2 font-heading">⚡ คำสั่ง SQL ลัดยอดนิยม (คลิกเพื่อทดสอบ):</span>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <button type="button" onclick="setSqlExample('SELECT id, title, author, price, catName FROM ebooks WHERE price >= 300 ORDER BY price DESC')" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
+                1. หนังสือราคา >= 300 บาท
+              </button>
+              <button type="button" onclick="setSqlExample('SELECT id, customer, total, method, status FROM orders WHERE status = \'confirmed\'' )" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
+                2. ออเดอร์ที่ยืนยันแล้ว
+              </button>
+              <button type="button" onclick="setSqlExample('SELECT catName, COUNT(*) AS total_books, ROUND(AVG(price), 2) AS avg_price FROM ebooks GROUP BY catName')" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
+                3. สรุปจำนวนและราคาเฉลี่ยตามหมวดหมู่
+              </button>
+              <button type="button" onclick="setSqlExample('SELECT username, name, email, role FROM users')" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
+                4. รายชื่อสมาชิกทั้งหมด
+              </button>
+            </div>
+          </div>
+
+          <!-- ช่องกรอกคำสั่ง SQL -->
+          <div class="pt-4 space-y-3">
+            <div class="relative">
+              <textarea id="sql-input-box" rows="4" class="w-full bg-slate-900 text-emerald-400 font-mono text-xs p-4 rounded-2xl border border-stone-700 focus:outline-none focus:ring-2 focus:ring-glam-rose shadow-inner" placeholder="พิมพ์คำสั่ง SQL ที่ต้องการค้นหา เช่น SELECT * FROM ebooks WHERE price < 300"></textarea>
+            </div>
+            <div class="flex justify-between items-center">
+              <span id="sql-status-msg" class="text-xs text-stone-500 font-medium"></span>
+              <div class="space-x-2">
+                <button type="button" onclick="clearSqlQuery()" class="px-4 py-2 border rounded-xl text-stone-500 font-bold text-xs hover:bg-stone-50">ล้างคำสั่ง</button>
+                <button type="button" onclick="executeAdminSql()" class="bg-gradient-to-r from-emerald-600 to-teal-700 hover:brightness-110 text-white font-bold text-xs px-6 py-2 rounded-xl shadow transition font-heading">
+                  ▶ ดำเนินการ (Run SQL)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- กล่องแสดงผลลัพธ์ตารางข้อมูลจากการรัน SQL -->
+        <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
+            <h4 class="font-bold font-heading text-glam-roseDark text-sm">📋 ผลลัพธ์จากการค้นหา (Query Results)</h4>
+            <span id="sql-result-count" class="text-xs font-price font-bold text-stone-500 bg-white border border-stone-200 px-3 py-1 rounded-full">0 แถว</span>
+          </div>
+          <div class="overflow-x-auto max-h-[420px]">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead id="sql-result-thead" class="bg-glam-milk text-glam-roseDark uppercase font-bold sticky top-0 border-b border-glam-roseLight/70">
+                <tr><th class="py-3 px-4">ผลลัพธ์จะปรากฏที่นี่</th></tr>
+              </thead>
+              <tbody id="sql-result-tbody" class="divide-y divide-glam-milk text-stone-700">
+                <tr><td class="p-6 text-center text-stone-400">ยังไม่มีการรันคำสั่ง SQL</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </section>
 
   </main>
@@ -1403,7 +1473,7 @@
         countBadge.innerText = 'Error';
       }
     }
-    
+
     function toggleCartModal() { document.getElementById('cart-modal').classList.toggle('hidden'); }
     function selectPayMethod(m) {
       selectedPaymentMethod = m === 'qr' ? 'พร้อมเพย์ QR' : 'โอนผ่านธนาคาร';
