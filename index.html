@@ -733,71 +733,69 @@
     let currentUploadedSlip = 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80';
 
     // 2. ดึงข้อมูลจริงจากตาราง SQL บน Supabase
+    // ใส่ชุดข้อมูลสำรองไว้ หน้าร้านจะได้ไม่ว่างเปล่า
+    const defaultCategoriesBackup = [
+      { id: 1, name: 'เทคโนโลยีและการเขียนโค้ด' },
+      { id: 2, name: 'ธุรกิจและการเงิน' },
+      { id: 3, name: 'พัฒนาตนเองและจิตวิทยา' },
+      { id: 4, name: 'นิยายและวรรณกรรม' }
+    ];
+
+    const defaultBooksBackup = [
+      { id: 1, title: 'Mastering SQL & Database Design', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 350.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.9, badge: '🔥 Best Seller', isActive: true, desc: 'คู่มือออกแบบฐานข้อมูลเชิงสัมพันธ์ตั้งแต่ 1NF ถึง 3NF', cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 2, title: 'Modern Web Development with React', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 420.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 5.0, badge: '⭐ Editor Pick', isActive: true, desc: 'ก้าวทันเทคโนโลยีเว็บยุคใหม่ด้วย React และ Tailwind CSS', cover: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 3, title: 'Python Data Analysis for Beginners', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 380.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.8, badge: '', isActive: true, desc: 'เริ่มต้นวิเคราะห์ข้อมูลและสร้าง Data Visualization', cover: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 4, title: 'การเงินง่ายๆ สำหรับมนุษย์เงินเดือน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 250.00, author: 'วิศรุต การเงินดี', rating: 4.9, badge: '🔥 Best Seller', isActive: true, desc: 'แผนที่การเงินฉบับทำตามได้ทันที การจัดสรรเงินเดือน', cover: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 5, title: 'Startup Blueprint: จาก 0 สู่ 100 ล้าน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 320.00, author: 'วิศรุต การเงินดี', rating: 4.7, badge: '', isActive: true, desc: 'กลยุทธ์สร้างธุรกิจสตาร์ทอัพให้เติบโตแบบก้าวกระโดด', cover: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 6, title: 'Digital Marketing Strategy 2026', catId: 2, catName: 'ธุรกิจและการเงิน', price: 290.00, author: 'วิศรุต การเงินดี', rating: 4.8, badge: '✨ New Release', isActive: true, desc: 'เจาะลึกการทำการตลาดยุค AI และสร้าง Personal Branding', cover: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 7, title: 'Atomic Habits: พลังแห่งนิสัยเล็กๆ', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 280.00, author: 'กุลดา จิตวิญญาณ', rating: 5.0, badge: '💖 Must Read', isActive: true, desc: 'เปลี่ยนชีวิตให้สำเร็จได้ด้วยการปรับพฤติกรรมทีละนิด', cover: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 8, title: 'The Art of Deep Work: ทำงานให้สำเร็จ', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 270.00, author: 'กุลดา จิตวิญญาณ', rating: 4.7, badge: '', isActive: true, desc: 'ศิลปะการจดจ่อในโลกที่เต็มไปด้วยสิ่งรบกวน', cover: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 9, title: 'จิตวิทยาการสื่อสารในที่ทำงาน', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 260.00, author: 'กุลดา จิตวิญญาณ', rating: 4.8, badge: '', isActive: true, desc: 'เทคนิคการเจรจาต่อรอง การพูดคุยอย่างสร้างสรรค์', cover: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 10, title: 'มังกรไร้เงา ภาค 1: กำเนิดแดนสนธยา', catId: 4, catName: 'นิยายและวรรณกรรม', price: 220.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '', isActive: true, desc: 'การผจญภัยในดินแดนเวทมนตร์โบราณที่ถูกลืม', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 11, title: 'มังกรไร้เงา ภาค 2: ศึกบัลลังก์มนตรา', catId: 4, catName: 'นิยายและวรรณกรรม', price: 240.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '🔥 Hot', isActive: true, desc: 'สงครามแย่งชิงบัลลังก์มนตราปะทุขึ้น พันธมิตรกลายเป็นศัตรู', cover: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
+      { id: 12, title: 'คดีฆาตกรรมห้องสมุดลับโบราณ', catId: 4, catName: 'นิยายและวรรณกรรม', price: 230.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.8, badge: '', isActive: true, desc: 'ปริศนาการตายของบรรณารักษ์ชราในห้องหนังสือต้องห้าม', cover: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf }
+    ];
+
+    // โหลดข้อมูลแบบปลอดภัย ไม่ปล่อยให้หน้าเว็บว่าง
     async function loadAllSupabaseData() {
-      try {
-        // ดึง categories
-        const { data: catData } = await supabase.from('categories').select('*').order('category_id');
-        if (catData && catData.length) {
-          categories = catData.map(c => ({ id: c.category_id, name: c.category_name }));
-          renderCategoryDropdowns();
-        }
+      // 1. นำข้อมูลสำรองขึ้นแสดงทันทีก่อน ไม่ต้องรอคอยโหลด
+      if (categories.length === 0) categories = defaultCategoriesBackup;
+      if (books.length === 0) books = defaultBooksBackup;
+      renderCategoryDropdowns();
+      renderBooks();
+      renderAdminBooks();
 
-        // ดึง users
-        const { data: userData } = await supabase.from('users').select('*, roles(role_name)').order('user_id');
-        if (userData && userData.length) {
-          users = userData.map(u => ({
-            id: u.user_id,
-            username: u.username,
-            name: u.full_name,
-            email: u.email,
-            role: u.roles ? u.roles.role_name.toLowerCase() : 'customer'
-          }));
-          renderAdminUsers();
-        }
+      // 2. ลองพยายามเชื่อมต่อไปยัง Supabase ถ้ามี key ถูกต้อง
+      if (typeof supabase !== 'undefined' && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
+        try {
+          const { data: catData, error: catErr } = await supabase.from('categories').select('*').order('category_id');
+          if (!catErr && catData && catData.length > 0) {
+            categories = catData.map(c => ({ id: c.category_id, name: c.category_name }));
+            renderCategoryDropdowns();
+          }
 
-        // ดึง ebooks
-        const { data: bookData } = await supabase.from('ebooks').select('*, categories(category_name), authors(author_name)').order('ebook_id');
-        if (bookData && bookData.length) {
-          books = bookData.map(b => ({
-            id: b.ebook_id,
-            title: b.title,
-            catId: b.category_id,
-            catName: b.categories ? b.categories.category_name : 'ทั่วไป',
-            author: b.authors ? b.authors.author_name : 'ไม่ระบุ',
-            price: parseFloat(b.price),
-            rating: 5.0,
-            badge: b.ebook_id === 1 ? '🔥 Best Seller' : '',
-            isActive: b.is_active,
-            desc: b.description || 'ไม่มีคำอธิบาย',
-            cover: b.cover_image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80',
-            dlUrl: samplePdf
-          }));
-          renderBooks();
-          renderAdminBooks();
+          const { data: bookData, error: bookErr } = await supabase.from('ebooks').select('*, categories(category_name), authors(author_name)').order('ebook_id');
+          if (!bookErr && bookData && bookData.length > 0) {
+            books = bookData.map(b => ({
+              id: b.ebook_id,
+              title: b.title,
+              catId: b.category_id,
+              catName: b.categories ? b.categories.category_name : 'ทั่วไป',
+              author: b.authors ? b.authors.author_name : 'ไม่ระบุ',
+              price: parseFloat(b.price),
+              rating: 5.0,
+              badge: b.ebook_id === 1 ? '🔥 Best Seller' : '',
+              isActive: b.is_active,
+              desc: b.description || 'ไม่มีคำอธิบาย',
+              cover: b.cover_image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80',
+              dlUrl: samplePdf
+            }));
+            renderBooks();
+            renderAdminBooks();
+          }
+        } catch (e) {
+          console.warn('เชื่อมต่อ Supabase ล้มเหลว กำลังใช้ข้อมูลสำรองแทน:', e);
         }
-
-        // ดึง orders พร้อมรายการสินค้า
-        const { data: orderData } = await supabase.from('orders').select('*, users(full_name, email), order_items(quantity, ebooks(title)), payments(slip_image_url, payment_method)').order('order_id', { ascending: false });
-        if (orderData && orderData.length) {
-          cloudOrders = orderData.map(o => ({
-            id: o.order_id,
-            username: o.users ? o.users.username : 'customer',
-            customer: o.users ? o.users.full_name : 'ลูกค้าทั่วไป',
-            email: o.users ? o.users.email : '-',
-            datetime: new Date(o.order_datetime).toLocaleString('th-TH'),
-            date: o.order_datetime ? o.order_datetime.split('T')[0] : '',
-            method: o.payments && o.payments.length ? o.payments[0].payment_method : 'พร้อมเพย์ QR',
-            items: o.order_items ? o.order_items.map(i => `${i.ebooks?.title || 'E-Book'} (x${i.quantity})`) : ['รายการหนังสือ'],
-            total: parseFloat(o.total_amount),
-            status: o.order_status,
-            slipUrl: o.payments && o.payments.length ? o.payments[0].slip_image_url : currentUploadedSlip,
-            dlUrl: samplePdf
-          }));
-          renderAdminOrders();
-          renderCustomerOrders();
-        }
-      } catch (err) {
-        console.error('Supabase load error:', err);
       }
     }
 
