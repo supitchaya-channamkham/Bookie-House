@@ -712,9 +712,9 @@
   <!-- JAVASCRIPT & SUPABASE LOGIC -->
   <script>
     const SUPABASE_URL = 'https://mwssmnujkjizyielpeufl.supabase.co';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13c21udWpraml6eWllbHBldWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3ODYzNjYsImV4cCI6MjEwNjM2MjM2Nn0.vjKgEG5z3AMvWi3HcfYjfifT9Dhw5_QrvgchAGnb_Oo';
 
-    let supabase = null;
+    var supabase = null;
     try {
       if (window.supabase && typeof window.supabase.createClient === 'function' && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
