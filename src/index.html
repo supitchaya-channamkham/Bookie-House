@@ -1232,6 +1232,7 @@
       document.getElementById('sql-status-msg').innerText = '';
     }
 
+    // ระบบประมวลผล SQL ด้วย JavaScript ในตัว (ไม่ต้องพึ่งพา CDN ภายนอก)
     function executeAdminSql() {
       const query = document.getElementById('sql-input-box').value.trim();
       const statusMsg = document.getElementById('sql-status-msg');
@@ -1244,35 +1245,117 @@
         return;
       }
 
-      if (typeof alasql === 'undefined') {
-        alert('ไลบรารี AlaSQL กำลังโหลด กรุณารอสักครู่แล้วลองใหม่ครับ');
-        return;
-      }
-
       try {
-        alasql.tables = {
-          ebooks: { data: books },
-          orders: { data: cloudOrders.length ? cloudOrders : [] },
-          users: { data: users },
-          categories: { data: categories }
-        };
-
         const startTime = performance.now();
-        const results = alasql(query);
+        
+        // 1. ระบุตารางเป้าหมาย
+        let targetData = [];
+        const lowerQ = query.toLowerCase();
+        
+        if (lowerQ.includes('from ebooks')) {
+          targetData = JSON.parse(JSON.stringify(books));
+        } else if (lowerQ.includes('from orders')) {
+          targetData = JSON.parse(JSON.stringify(cloudOrders.length ? cloudOrders : []));
+        } else if (lowerQ.includes('from users')) {
+          targetData = JSON.parse(JSON.stringify(users));
+        } else if (lowerQ.includes('from categories')) {
+          targetData = JSON.parse(JSON.stringify(categories));
+        } else {
+          throw new Error('ไม่พบชื่อตารางที่ระบุ (รองรับ: ebooks, orders, users, categories)');
+        }
+
+        // 2. จัดการ WHERE
+        if (lowerQ.includes('where')) {
+          const wherePart = query.split(/where/i)[1].split(/order by|group by/i)[0].trim();
+          
+          if (wherePart.includes('>=')) {
+            const [field, val] = wherePart.split('>=').map(s => s.trim().replace(/['"]/g, ''));
+            targetData = targetData.filter(item => parseFloat(item[field]) >= parseFloat(val));
+          } else if (wherePart.includes('<=')) {
+            const [field, val] = wherePart.split('<=').map(s => s.trim().replace(/['"]/g, ''));
+            targetData = targetData.filter(item => parseFloat(item[field]) <= parseFloat(val));
+          } else if (wherePart.includes('>')) {
+            const [field, val] = wherePart.split('>').map(s => s.trim().replace(/['"]/g, ''));
+            targetData = targetData.filter(item => parseFloat(item[field]) > parseFloat(val));
+          } else if (wherePart.includes('<')) {
+            const [field, val] = wherePart.split('<').map(s => s.trim().replace(/['"]/g, ''));
+            targetData = targetData.filter(item => parseFloat(item[field]) < parseFloat(val));
+          } else if (wherePart.includes('=')) {
+            const [field, val] = wherePart.split('=').map(s => s.trim().replace(/['"]/g, ''));
+            targetData = targetData.filter(item => String(item[field]).toLowerCase() === String(val).toLowerCase());
+          }
+        }
+
+        // 3. จัดการ GROUP BY (รองรับ COUNT, AVG, SUM)
+        if (lowerQ.includes('group by')) {
+          const groupField = query.split(/group by/i)[1].split(/order by/i)[0].trim();
+          const groups = {};
+          
+          targetData.forEach(row => {
+            const key = row[groupField] || 'ไม่ระบุ';
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(row);
+          });
+
+          targetData = Object.keys(groups).map(key => {
+            const items = groups[key];
+            const sumPrice = items.reduce((s, x) => s + (parseFloat(x.price) || 0), 0);
+            return {
+              [groupField]: key,
+              total_items: items.length,
+              total_price: sumPrice.toFixed(2),
+              avg_price: (sumPrice / items.length).toFixed(2)
+            };
+          });
+        }
+
+        // 4. จัดการ ORDER BY
+        if (lowerQ.includes('order by')) {
+          const orderPart = query.split(/order by/i)[1].trim();
+          const isDesc = /desc/i.test(orderPart);
+          const sortField = orderPart.replace(/desc|asc/gi, '').trim();
+
+          targetData.sort((a, b) => {
+            const valA = a[sortField];
+            const valB = b[sortField];
+            if (!isNaN(valA) && !isNaN(valB)) {
+              return isDesc ? valB - valA : valA - valB;
+            }
+            return isDesc ? String(valB).localeCompare(String(valA)) : String(valA).localeCompare(String(valB));
+          });
+        }
+
+        // 5. จัดการคอลัมน์ SELECT
+        const selectPart = query.split(/from/i)[0].replace(/select/i, '').trim();
+        let finalResults = targetData;
+
+        if (selectPart !== '*' && !lowerQ.includes('group by')) {
+          const selectedFields = selectPart.split(',').map(s => s.trim());
+          finalResults = targetData.map(item => {
+            const newObj = {};
+            selectedFields.forEach(f => {
+              newObj[f] = item[f] !== undefined ? item[f] : '-';
+            });
+            return newObj;
+          });
+        }
+
         const execTime = (performance.now() - startTime).toFixed(2);
 
-        if (!Array.isArray(results) || results.length === 0) {
+        if (finalResults.length === 0) {
           thead.innerHTML = '<tr><th class="py-3 px-4">ผลลัพธ์</th></tr>';
-          tbody.innerHTML = '<tr><td class="p-6 text-center text-stone-400">ไม่พบข้อมูลที่ตรงกับเงื่อนไขคำสั่ง SQL</td></tr>';
+          tbody.innerHTML = '<tr><td class="p-6 text-center text-stone-400">ไม่พบแถวข้อมูลที่ตรงกับเงื่อนไข</td></tr>';
           countBadge.innerText = '0 แถว';
-          statusMsg.innerHTML = `<span class="text-emerald-600">✓ ประมวลผลสำเร็จ (${execTime} ms) - ไม่พบแถวข้อมูล</span>`;
+          statusMsg.innerHTML = `<span class="text-emerald-600">✓ ดำเนินการสำเร็จ (${execTime} ms) - 0 รายการ</span>`;
           return;
         }
 
-        const columns = Object.keys(results[0]);
-        thead.innerHTML = `<tr>${columns.map(col => `<th class="py-3 px-4 font-mono">${col}</th>`).join('')}</tr>`;
+        // สร้าง Thead
+        const columns = Object.keys(finalResults[0]);
+        thead.innerHTML = `<tr>${columns.map(col => `<th class="py-3 px-4 font-mono font-bold">${col}</th>`).join('')}</tr>`;
 
-        tbody.innerHTML = results.map(row => `
+        // สร้าง Tbody
+        tbody.innerHTML = finalResults.map(row => `
           <tr class="hover:bg-glam-cream/50 transition">
             ${columns.map(col => {
               let val = row[col];
@@ -1282,12 +1365,12 @@
           </tr>
         `).join('');
 
-        countBadge.innerText = `${results.length} แถว`;
-        statusMsg.innerHTML = `<span class="text-emerald-600 font-bold">✓ ดึงข้อมูลสำเร็จ ${results.length} รายการ (${execTime} ms)</span>`;
+        countBadge.innerText = `${finalResults.length} แถว`;
+        statusMsg.innerHTML = `<span class="text-emerald-600 font-bold">✓ ดึงข้อมูลสำเร็จ ${finalResults.length} รายการ (${execTime} ms)</span>`;
 
       } catch (err) {
         statusMsg.innerHTML = `<span class="text-rose-600 font-bold">❌ ข้อผิดพลาด SQL: ${err.message}</span>`;
-        tbody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-rose-500 font-mono text-xs">${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td class="p-6 text-center text-rose-500 font-mono text-xs">${err.message}</td></tr>`;
         countBadge.innerText = 'Error';
       }
     }
