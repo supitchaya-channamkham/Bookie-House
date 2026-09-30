@@ -51,6 +51,9 @@
   <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+  
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="selection:bg-glam-roseLight selection:text-glam-roseDark">
 
@@ -712,91 +715,98 @@
 
   <!-- JAVASCRIPT & CLOUD LOGIC -->
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDs8diJc28O0ZaaOjiypbYC8b2aQung02E",
-      authDomain: "bookie-house-69d39.firebaseapp.com",
-      projectId: "bookie-house-69d39",
-      storageBucket: "bookie-house-69d39.firebasestorage.app",
-      messagingSenderId: "740325880651",
-      appId: "1:740325880651:web:8a8469bbbad8b77e8d6ece",
-      measurementId: "G-THB87MZPTV"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    // 1. ตั้งค่าการเชื่อมต่อ Supabase
+    const SUPABASE_URL = 'https://mwssmnujkjizyielpeufl.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13c21udWpraml6eWllbHBldWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3ODYzNjYsImV4cCI6MjEwNjM2MjM2Nn0.vjKgEG5z3AMvWi3HcfYjfifT9Dhw5_QrvgchAGnb_Oo'; // นำ anon public key ของคุณมาใส่ตรงนี้
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const samplePdf = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
-    const defaultCategories = [
-      { id: 1, name: 'เทคโนโลยีและการเขียนโค้ด' },
-      { id: 2, name: 'ธุรกิจและการเงิน' },
-      { id: 3, name: 'พัฒนาตนเองและจิตวิทยา' },
-      { id: 4, name: 'นิยายและวรรณกรรม' }
-    ];
-
-    const defaultUsers = [
-      { username: 'admin_bookie', password: 'password123', name: 'คุณแอดมิน Bookie House', email: 'admin@bookiehouse.com', role: 'admin' },
-      { username: 'somchai_s',    password: 'password123', name: 'คุณสมชาย สายอ่าน',        email: 'somchai@gmail.com', role: 'customer' },
-      { username: 'wanida_k',     password: 'password123', name: 'คุณวนิดา แก้วมณี',        email: 'wanida@gmail.com',  role: 'customer' }
-    ];
-
-    const defaultBooks = [
-      { id: 1, title: 'Mastering SQL & Database Design', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 350.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.9, badge: '🔥 Best Seller', isActive: true, desc: 'คู่มือออกแบบฐานข้อมูลเชิงสัมพันธ์ตั้งแต่ 1NF ถึง 3NF การเขียน Index และการ Tuning SQL Query', cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
-      { id: 2, title: 'Modern Web Development with React', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 420.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 5.0, badge: '⭐ Editor Pick', isActive: true, desc: 'ก้าวทันเทคโนโลยีเว็บยุคใหม่ด้วย React, Tailwind CSS และการเชื่อมต่อ RESTful APIs', cover: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
-      { id: 3, title: 'Python Data Analysis for Beginners', catId: 1, catName: 'เทคโนโลยีและการเขียนโค้ด', price: 380.00, author: 'ดร. อนุชา พาเขียนโค้ด', rating: 4.8, badge: '', isActive: true, desc: 'เริ่มต้นวิเคราะห์ข้อมูลและสร้าง Data Visualization ด้วย Pandas และ Numpy', cover: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
-      { id: 4, title: 'การเงินง่ายๆ สำหรับมนุษย์เงินเดือน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 250.00, author: 'วิศรุต การเงินดี', rating: 4.9, badge: '🔥 Best Seller', isActive: true, desc: 'แผนที่การเงินฉบับทำตามได้ทันที การจัดสรรเงินเดือน วางแผนภาษี และลงทุนกองทุนรวม', cover: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
-      { id: 5, title: 'Startup Blueprint: จาก 0 สู่ 100 ล้าน', catId: 2, catName: 'ธุรกิจและการเงิน', price: 320.00, author: 'วิศรุต การเงินดี', rating: 4.7, badge: '', isActive: true, desc: 'กลยุทธ์สร้างธุรกิจสตาร์ทอัพให้เติบโตแบบก้าวกระโดด', cover: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
-      { id: 6, title: 'Digital Marketing Strategy 2026', catId: 2, catName: 'ธุรกิจและการเงิน', price: 290.00, author: 'วิศรุต การเงินดี', rating: 4.8, badge: '✨ New Release', isActive: true, desc: 'เจาะลึกการทำการตลาดยุค AI และสร้าง Personal Branding ให้ติดตลาด', cover: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
-      { id: 7, title: 'Atomic Habits: พลังแห่งนิสัยเล็กๆ', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 280.00, author: 'กุลดา จิตวิญญาณ', rating: 5.0, badge: '💖 Must Read', isActive: true, desc: 'เปลี่ยนชีวิตให้สำเร็จได้ด้วยการปรับพฤติกรรมเพียงวันละ 1%', cover: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
-      { id: 8, title: 'The Art of Deep Work: ทำงานให้สำเร็จ', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 270.00, author: 'กุลดา จิตวิญญาณ', rating: 4.7, badge: '', isActive: true, desc: 'ศิลปะการจดจ่อในโลกที่เต็มไปด้วยสิ่งรบกวน วิธีสร้างสมาธิขั้นสูง', cover: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
-      { id: 9, title: 'จิตวิทยาการสื่อสารในที่ทำงาน', catId: 3, catName: 'พัฒนาตนเองและจิตวิทยา', price: 260.00, author: 'กุลดา จิตวิญญาณ', rating: 4.8, badge: '', isActive: true, desc: 'เทคนิคการเจรจาต่อรอง การปฏิเสธอย่างสุภาพ และการสร้างความสัมพันธ์', cover: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
-      { id: 10, title: 'มังกรไร้เงา ภาค 1: กำเนิดแดนสนธยา', catId: 4, catName: 'นิยายและวรรณกรรม', price: 220.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '', isActive: true, desc: 'การผจญภัยในดินแดนเวทมนตร์โบราณที่ถูกลืม', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
-      { id: 11, title: 'มังกรไร้เงา ภาค 2: ศึกบัลลังก์มนตรา', catId: 4, catName: 'นิยายและวรรณกรรม', price: 240.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.9, badge: '🔥 Hot', isActive: true, desc: 'สงครามแย่งชิงบัลลังก์มนตราปะทุขึ้น พันธมิตรกลายเป็นศัตรู', cover: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf },
-      { id: 12, title: 'คดีฆาตกรรมห้องสมุดลับโบราณ', catId: 4, catName: 'นิยายและวรรณกรรม', price: 230.00, author: 'นลินทิพย์ นิยายฝัน', rating: 4.8, badge: '', isActive: true, desc: 'ปริศนาการตายของบรรณารักษ์ชราในห้องหนังสือต้องห้าม', cover: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=400&q=80', dlUrl: samplePdf }
-    ];
-
-    let categories = JSON.parse(localStorage.getItem('bookie_cats')) || defaultCategories;
-    let users = JSON.parse(localStorage.getItem('bookie_users')) || defaultUsers;
-    let books = defaultBooks; // ใช้ค่าเริ่มต้นก่อน ขณะรอซิงก์กับ Cloud Firestore
-    let sentEmails = JSON.parse(localStorage.getItem('bookie_emails')) || [];
-    let currentUser = JSON.parse(localStorage.getItem('bookie_current_user')) || null;
+    let categories = [];
+    let users = [];
+    let books = [];
     let cloudOrders = [];
     let cart = [];
+    let sentEmails = JSON.parse(localStorage.getItem('bookie_emails')) || [];
+    let currentUser = JSON.parse(localStorage.getItem('bookie_current_user')) || null;
     let selectedPaymentMethod = 'พร้อมเพย์ QR';
     let currentUploadedSlip = 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=300&q=80';
 
-    function saveAllState() {
-      localStorage.setItem('bookie_cats', JSON.stringify(categories));
-      localStorage.setItem('bookie_users', JSON.stringify(users));
-      localStorage.setItem('bookie_emails', JSON.stringify(sentEmails));
-      localStorage.setItem('bookie_current_user', JSON.stringify(currentUser));
+    // 2. ดึงข้อมูลจริงจากตาราง SQL บน Supabase
+    async function loadAllSupabaseData() {
+      try {
+        // ดึง categories
+        const { data: catData } = await supabase.from('categories').select('*').order('category_id');
+        if (catData && catData.length) {
+          categories = catData.map(c => ({ id: c.category_id, name: c.category_name }));
+          renderCategoryDropdowns();
+        }
+
+        // ดึง users
+        const { data: userData } = await supabase.from('users').select('*, roles(role_name)').order('user_id');
+        if (userData && userData.length) {
+          users = userData.map(u => ({
+            id: u.user_id,
+            username: u.username,
+            name: u.full_name,
+            email: u.email,
+            role: u.roles ? u.roles.role_name.toLowerCase() : 'customer'
+          }));
+          renderAdminUsers();
+        }
+
+        // ดึง ebooks
+        const { data: bookData } = await supabase.from('ebooks').select('*, categories(category_name), authors(author_name)').order('ebook_id');
+        if (bookData && bookData.length) {
+          books = bookData.map(b => ({
+            id: b.ebook_id,
+            title: b.title,
+            catId: b.category_id,
+            catName: b.categories ? b.categories.category_name : 'ทั่วไป',
+            author: b.authors ? b.authors.author_name : 'ไม่ระบุ',
+            price: parseFloat(b.price),
+            rating: 5.0,
+            badge: b.ebook_id === 1 ? '🔥 Best Seller' : '',
+            isActive: b.is_active,
+            desc: b.description || 'ไม่มีคำอธิบาย',
+            cover: b.cover_image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80',
+            dlUrl: samplePdf
+          }));
+          renderBooks();
+          renderAdminBooks();
+        }
+
+        // ดึง orders พร้อมรายการสินค้า
+        const { data: orderData } = await supabase.from('orders').select('*, users(full_name, email), order_items(quantity, ebooks(title)), payments(slip_image_url, payment_method)').order('order_id', { ascending: false });
+        if (orderData && orderData.length) {
+          cloudOrders = orderData.map(o => ({
+            id: o.order_id,
+            username: o.users ? o.users.username : 'customer',
+            customer: o.users ? o.users.full_name : 'ลูกค้าทั่วไป',
+            email: o.users ? o.users.email : '-',
+            datetime: new Date(o.order_datetime).toLocaleString('th-TH'),
+            date: o.order_datetime ? o.order_datetime.split('T')[0] : '',
+            method: o.payments && o.payments.length ? o.payments[0].payment_method : 'พร้อมเพย์ QR',
+            items: o.order_items ? o.order_items.map(i => `${i.ebooks?.title || 'E-Book'} (x${i.quantity})`) : ['รายการหนังสือ'],
+            total: parseFloat(o.total_amount),
+            status: o.order_status,
+            slipUrl: o.payments && o.payments.length ? o.payments[0].slip_image_url : currentUploadedSlip,
+            dlUrl: samplePdf
+          }));
+          renderAdminOrders();
+          renderCustomerOrders();
+        }
+      } catch (err) {
+        console.error('Supabase load error:', err);
+      }
     }
 
-    // 1. ซิงก์คำสั่งซื้อจาก Firestore แบบ Realtime
-    db.collection('orders').orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
-      cloudOrders = [];
-      snapshot.forEach(doc => cloudOrders.push({ firestoreId: doc.id, ...doc.data() }));
-      renderAdminOrders();
-      renderCustomerOrders();
-      updateInboxBadge();
-    }, err => console.warn(err));
-
-    // 2. ซิงก์คลังหนังสือจาก Firestore แบบ Realtime (ข้ามเครื่องได้จริง 100%)
-    db.collection('books').onSnapshot(async (snapshot) => {
-      if (snapshot.empty) {
-        // หากบน Firestore ยังไม่มีข้อมูล ให้เอา 12 เล่มตั้งต้นขึ้น Cloud ทันที
-        for (const b of defaultBooks) {
-          await db.collection('books').doc(String(b.id)).set(b);
-        }
-      } else {
-        const loadedBooks = [];
-        snapshot.forEach(doc => loadedBooks.push(doc.data()));
-        loadedBooks.sort((a, b) => a.id - b.id);
-        books = loadedBooks;
-        renderBooks();
-        renderAdminBooks();
-      }
-    }, err => console.warn("Books Firestore sync error:", err));
+    // 3. ติดตามแบบ Realtime (ถ้ามีการแก้ใน Supabase Table Editor หน้าเว็บจะอัปเดตทันที)
+    supabase.channel('public:db-changes')
+      .on('postgres_changes', { event: '*', schema: 'public' }, () => {
+        loadAllSupabaseData();
+      })
+      .subscribe();
 
     function navigate(view) {
       document.getElementById('view-shop').classList.add('hidden');
@@ -826,30 +836,29 @@
       document.getElementById('edit-profile-modal').classList.remove('hidden');
     }
     function closeEditProfileModal() { document.getElementById('edit-profile-modal').classList.add('hidden'); }
-    function handleSaveProfile(e) {
+    async function handleSaveProfile(e) {
       e.preventDefault();
       const newName = document.getElementById('edit-profile-name').value.trim();
       const newEmail = document.getElementById('edit-profile-email').value.trim();
       currentUser.name = newName;
       currentUser.email = newEmail;
-      const u = users.find(x => x.username === currentUser.username);
-      if (u) { u.name = newName; u.email = newEmail; }
-      saveAllState();
+      
+      if (currentUser.id) {
+        await supabase.from('users').update({ full_name: newName, email: newEmail }).eq('user_id', currentUser.id);
+      }
+      localStorage.setItem('bookie_current_user', JSON.stringify(currentUser));
       applyUserSession();
       closeEditProfileModal();
-      alert('บันทึกข้อมูลเรียบร้อยแล้ว');
+      alert('บันทึกข้อมูลเรียบร้อย');
     }
 
     function renderCategoryDropdowns() {
       const filterEl = document.getElementById('category-filter');
       const formEl = document.getElementById('form-book-cat');
-      filterEl.innerHTML = '<option value="all">ทั้งหมด ทุกหมวดหมู่</option>' + categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-      formEl.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      if (filterEl) filterEl.innerHTML = '<option value="all">ทั้งหมด ทุกหมวดหมู่</option>' + categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      if (formEl) formEl.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
     }
-    function openCategoryManageModal() {
-      renderCategoryList();
-      document.getElementById('category-modal').classList.remove('hidden');
-    }
+    function openCategoryManageModal() { renderCategoryList(); document.getElementById('category-modal').classList.remove('hidden'); }
     function closeCategoryManageModal() { document.getElementById('category-modal').classList.add('hidden'); }
     function renderCategoryList() {
       const container = document.getElementById('category-list-container');
@@ -863,40 +872,33 @@
         </div>
       `).join('');
     }
-    function addNewCategory() {
+    async function addNewCategory() {
       const input = document.getElementById('new-cat-name-input');
       const name = input.value.trim();
       if (!name) return;
-      const newId = categories.length ? Math.max(...categories.map(c => c.id)) + 1 : 1;
-      categories.push({ id: newId, name: name });
+      await supabase.from('categories').insert([{ category_name: name }]);
       input.value = '';
-      saveAllState();
-      renderCategoryDropdowns();
-      renderCategoryList();
+      loadAllSupabaseData();
     }
-    function editCategoryName(id) {
+    async function editCategoryName(id) {
       const c = categories.find(x => x.id === id);
       if (!c) return;
       const newName = prompt('แก้ไขชื่อหมวดหมู่:', c.name);
       if (newName && newName.trim()) {
-        c.name = newName.trim();
-        saveAllState();
-        renderCategoryDropdowns();
-        renderCategoryList();
-        renderBooks();
+        await supabase.from('categories').update({ category_name: newName.trim() }).eq('category_id', id);
+        loadAllSupabaseData();
       }
     }
-    function deleteCategory(id) {
-      if (confirm('ยืนยันลบหมวดหมู่นี้?')) {
-        categories = categories.filter(x => x.id !== id);
-        saveAllState();
-        renderCategoryDropdowns();
-        renderCategoryList();
+    async function deleteCategory(id) {
+      if (confirm('ยืนยันลบหมวดหมู่นี้จากฐานข้อมูล?')) {
+        await supabase.from('categories').delete().eq('category_id', id);
+        loadAllSupabaseData();
       }
     }
 
     function renderAdminUsers() {
       const tbody = document.getElementById('admin-users-tbody');
+      if (!tbody) return;
       tbody.innerHTML = users.map(u => `
         <tr class="hover:bg-glam-cream/40">
           <td class="py-3 px-4 font-mono font-bold text-glam-roseDark">${u.username}</td>
@@ -909,18 +911,18 @@
           </td>
           <td class="py-3 px-4 text-center">
             <button onclick="toggleUserRole('${u.username}')" class="text-xs bg-stone-100 hover:bg-stone-200 px-3 py-1 rounded-xl font-bold">
-              สลับเป็น ${u.role === 'admin' ? 'ลูกค้า' : 'ผู้ดูแล'}
+              สลับสิทธิ์
             </button>
           </td>
         </tr>
       `).join('');
     }
-    function toggleUserRole(username) {
+    async function toggleUserRole(username) {
       const u = users.find(x => x.username === username);
       if (!u) return;
-      u.role = u.role === 'admin' ? 'customer' : 'admin';
-      saveAllState();
-      renderAdminUsers();
+      const newRoleId = u.role === 'admin' ? 2 : 1;
+      await supabase.from('users').update({ role_id: newRoleId }).eq('user_id', u.id);
+      loadAllSupabaseData();
     }
 
     function adminInspectSlip(orderId) {
@@ -928,29 +930,27 @@
       if (!o) return;
       document.getElementById('admin-view-slip-img').src = o.slipUrl;
       document.getElementById('admin-view-slip-info').innerText = `ออเดอร์ #${o.id} | ยอดเงิน ฿${parseFloat(o.total).toFixed(2)}`;
-
       document.getElementById('btn-status-confirm').onclick = () => updateOrderStatus(o, 'confirmed');
       document.getElementById('btn-status-pending').onclick = () => updateOrderStatus(o, 'pending');
       document.getElementById('btn-status-cancel').onclick = () => updateOrderStatus(o, 'cancelled');
-
       document.getElementById('admin-slip-modal').classList.remove('hidden');
     }
     function closeAdminSlipModal() { document.getElementById('admin-slip-modal').classList.add('hidden'); }
     async function updateOrderStatus(order, newStatus) {
       try {
-        if (order.firestoreId) {
-          await db.collection('orders').doc(order.firestoreId).update({ status: newStatus });
-        }
+        await supabase.from('orders').update({ order_status: newStatus }).eq('order_id', order.id);
         if (newStatus === 'confirmed') {
+          await supabase.from('payments').update({ is_verified: true }).eq('order_id', order.id);
           sentEmails.unshift({
             orderId: order.id, toEmail: order.email, toName: order.customer,
             subject: `[Bookie House] ลิงก์ดาวน์โหลด E-Book #${order.id}`,
             date: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
             items: order.items, dlUrl: order.dlUrl
           });
-          saveAllState();
+          localStorage.setItem('bookie_emails', JSON.stringify(sentEmails));
         }
         closeAdminSlipModal();
+        loadAllSupabaseData();
       } catch (e) { alert('Error: ' + e.message); }
     }
 
@@ -968,7 +968,7 @@
     }
 
     function addToCart(bookId) {
-      if (!currentUser) { alert('กรุณาเข้าสู่ระบบก่อนเลือกซื้อหนังสือ'); openAuthModal('login'); return; }
+      if (!currentUser) { alert('กรุณาเข้าสู่ระบบก่อนเลือกซื้อ'); openAuthModal('login'); return; }
       if (currentUser.role === 'admin') { alert('บัญชีผู้ดูแลระบบไม่สามารถสั่งซื้อได้'); return; }
       const b = books.find(x => x.id === bookId);
       const existing = cart.find(x => x.id === bookId);
@@ -1021,38 +1021,52 @@
     async function confirmOrderWithSlip() {
       if (cart.length === 0) { alert('ไม่มีสินค้าในตะกร้า'); return; }
       if (!currentUser) { openAuthModal('login'); return; }
-      const now = new Date();
-      const pad = n => String(n).padStart(2, '0');
-      const fullDateTime = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
       const total = cart.reduce((sum, b) => sum + (b.price * b.qty), 0);
-      const newOrderId = Math.floor(100 + Math.random() * 900);
-
-      const newOrder = {
-        id: newOrderId, username: currentUser.username, customer: currentUser.name, email: currentUser.email || 'customer@example.com',
-        datetime: fullDateTime, date: fullDateTime.split(' ')[0], timestamp: Date.now(), method: selectedPaymentMethod,
-        items: cart.map(c => `${c.title} (x${c.qty})`), total: total, status: 'pending', slipUrl: currentUploadedSlip,
-        dlUrl: cart[0].dlUrl || samplePdf
-      };
 
       try {
-        await db.collection('orders').add(newOrder);
+        const { data: order, error: orderErr } = await supabase.from('orders').insert([{
+          user_id: currentUser.id || 2,
+          total_amount: total,
+          order_status: 'pending'
+        }]).select().single();
+
+        if (orderErr) throw orderErr;
+
+        const itemsToInsert = cart.map(item => ({
+          order_id: order.order_id,
+          ebook_id: item.id,
+          quantity: item.qty,
+          price_per_unit: item.price
+        }));
+        await supabase.from('order_items').insert(itemsToInsert);
+
+        await supabase.from('payments').insert([{
+          order_id: order.order_id,
+          payment_method: selectedPaymentMethod,
+          slip_image_url: currentUploadedSlip,
+          is_verified: false
+        }]);
+
         cart = []; updateCartUI(); toggleCartModal();
-        alert(`สั่งซื้อสำเร็จ รหัสคำสั่งซื้อ #${newOrderId}`);
+        alert(`สั่งซื้อสำเร็จ รหัสคำสั่งซื้อ #${order.order_id}`);
+        loadAllSupabaseData();
         navigate('orders');
-      } catch (e) { alert(e.message); }
+      } catch (e) { alert('เกิดข้อผิดพลาดในการสั่งซื้อ: ' + e.message); }
     }
 
     function renderBooks() {
-      const s = document.getElementById('search-input').value.toLowerCase();
-      const cat = document.getElementById('category-filter').value;
+      const s = (document.getElementById('search-input')?.value || '').toLowerCase();
+      const cat = document.getElementById('category-filter')?.value || 'all';
       const grid = document.getElementById('books-grid');
+      if (!grid) return;
       const filtered = books.filter(b => {
         if (!b.isActive) return false;
         const matchText = b.title.toLowerCase().includes(s) || b.author.toLowerCase().includes(s) || (b.desc && b.desc.toLowerCase().includes(s));
         const matchCat = cat === 'all' || b.catId.toString() === cat;
         return matchText && matchCat;
       });
-      document.getElementById('book-count-label').innerText = filtered.length;
+      const lbl = document.getElementById('book-count-label');
+      if (lbl) lbl.innerText = filtered.length;
       grid.innerHTML = filtered.map(b => `
         <div class="glam-card bg-white rounded-[2rem] border border-glam-roseLight/90 overflow-hidden flex flex-col justify-between p-3.5">
           <div onclick="viewBookDetail(${b.id})" class="relative overflow-hidden rounded-2xl aspect-[4/5] bg-stone-100 mb-3 cursor-pointer">
@@ -1091,7 +1105,7 @@
     function renderCustomerOrders() {
       const tbody = document.getElementById('customer-orders-tbody');
       if (!currentUser || !tbody) return;
-      const userOrders = cloudOrders.filter(o => o.username === currentUser.username);
+      const userOrders = cloudOrders.filter(o => o.customer === currentUser.name || o.email === currentUser.email);
       tbody.innerHTML = userOrders.map(o => {
         let badge = o.status === 'confirmed' ? '<span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">ยืนยันแล้ว</span>' : (o.status === 'pending' ? '<span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-bold">รอตรวจสอบ</span>' : '<span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-1 rounded-full font-bold">ยกเลิก</span>');
         let action = o.status === 'confirmed' ? `<a href="${o.dlUrl}" target="_blank" class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white text-xs px-3.5 py-2 rounded-xl font-bold shadow inline-block">⬇ ดาวน์โหลด</a>` : '<span class="text-xs text-stone-400 italic">-</span>';
@@ -1133,15 +1147,21 @@
           </tr>
         `;
       }).join('');
-      document.getElementById('admin-pending-badge').innerText = `${pendingCount} รายการ`;
-      document.getElementById('admin-total-orders-count').innerText = `${cloudOrders.length} รายการ`;
-      document.getElementById('admin-total-revenue').innerText = `฿${totalRev.toFixed(2)}`;
+      const pBadge = document.getElementById('admin-pending-badge');
+      if (pBadge) pBadge.innerText = `${pendingCount} รายการ`;
+      const tOrders = document.getElementById('admin-total-orders-count');
+      if (tOrders) tOrders.innerText = `${cloudOrders.length} รายการ`;
+      const tRev = document.getElementById('admin-total-revenue');
+      if (tRev) tRev.innerText = `฿${totalRev.toFixed(2)}`;
     }
 
     function renderAdminBooks() {
       const tbody = document.getElementById('admin-books-tbody');
-      document.getElementById('admin-book-count-tag').innerText = `ทั้งหมด ${books.length} เล่ม`;
-      document.getElementById('admin-total-books').innerText = `${books.length} เล่ม`;
+      if (!tbody) return;
+      const bTag = document.getElementById('admin-book-count-tag');
+      if (bTag) bTag.innerText = `ทั้งหมด ${books.length} เล่ม`;
+      const tBooks = document.getElementById('admin-total-books');
+      if (tBooks) tBooks.innerText = `${books.length} เล่ม`;
       tbody.innerHTML = books.map(b => `
         <tr class="hover:bg-glam-cream/50">
           <td class="py-2.5 px-4"><img src="${b.cover}" class="w-9 h-12 object-cover rounded border"></td>
@@ -1180,65 +1200,55 @@
       document.getElementById('book-form-modal').classList.remove('hidden');
     }
     function closeBookFormModal() { document.getElementById('book-form-modal').classList.add('hidden'); }
-    
-    // บันทึก/แก้ไขหนังสือขึ้น Cloud Firestore
+
     async function handleSaveBook(e) {
       e.preventDefault();
       const editId = document.getElementById('edit-book-id').value;
       const catId = parseInt(document.getElementById('form-book-cat').value);
-      const catObj = categories.find(c => c.id === catId);
-      const bookData = {
-        title: document.getElementById('form-book-title').value.trim(),
-        catId: catId, catName: catObj ? catObj.name : 'ทั่วไป',
-        price: parseFloat(document.getElementById('form-book-price').value),
-        author: document.getElementById('form-book-author').value.trim(),
-        cover: document.getElementById('form-book-cover').value.trim(),
-        dlUrl: document.getElementById('form-book-dl').value.trim(),
-        desc: document.getElementById('form-book-desc').value.trim(),
-        isActive: true, rating: 5.0
-      };
+      const title = document.getElementById('form-book-title').value.trim();
+      const price = parseFloat(document.getElementById('form-book-price').value);
+      const desc = document.getElementById('form-book-desc').value.trim();
+      const cover = document.getElementById('form-book-cover').value.trim();
 
       try {
         if (editId) {
-          const targetId = parseInt(editId);
-          bookData.id = targetId;
-          await db.collection('books').doc(String(targetId)).update(bookData);
-          alert('บันทึกการแก้ไขขึ้นระบบ Cloud เรียบร้อย');
+          await supabase.from('ebooks').update({
+            title: title,
+            category_id: catId,
+            price: price,
+            description: desc,
+            cover_image_url: cover
+          }).eq('ebook_id', parseInt(editId));
+          alert('บันทึกการแก้ไขลง Supabase สำเร็จ');
         } else {
-          const newId = books.length ? Math.max(...books.map(x => x.id)) + 1 : 1;
-          bookData.id = newId;
-          await db.collection('books').doc(String(newId)).set(bookData);
-          alert('เพิ่มหนังสือใหม่ขึ้นระบบ Cloud เรียบร้อย');
+          await supabase.from('ebooks').insert([{
+            title: title,
+            category_id: catId,
+            author_id: 1,
+            price: price,
+            description: desc,
+            cover_image_url: cover,
+            is_active: true
+          }]);
+          alert('เพิ่มหนังสือใหม่ลง Supabase สำเร็จ');
         }
         closeBookFormModal();
-      } catch (err) {
-        alert('เกิดข้อผิดพลาดในการบันทึก: ' + err.message);
-      }
+        loadAllSupabaseData();
+      } catch (err) { alert('เกิดข้อผิดพลาด: ' + err.message); }
     }
 
-    // ลบหนังสือออกจาก Cloud Firestore
     async function deleteBook(id) {
-      const b = books.find(x => x.id === id);
-      if (!b) return;
-      if (confirm(`ลบหนังสือ "${b.title}" ออกจากระบบ Cloud?`)) {
-        try {
-          await db.collection('books').doc(String(id)).delete();
-          alert('ลบหนังสือออกจากระบบเรียบร้อย');
-        } catch (err) {
-          alert('เกิดข้อผิดพลาดในการลบ: ' + err.message);
-        }
+      if (confirm('ยืนยันลบหนังสือเล่มนี้ออกจาก Supabase?')) {
+        await supabase.from('ebooks').delete().eq('ebook_id', id);
+        loadAllSupabaseData();
       }
     }
 
-    // เปลี่ยนสถานะหนังสือบน Cloud Firestore
     async function toggleBookStatus(id) {
       const b = books.find(x => x.id === id);
       if (b) {
-        try {
-          await db.collection('books').doc(String(id)).update({ isActive: !b.isActive });
-        } catch (err) {
-          alert('เกิดข้อผิดพลาด: ' + err.message);
-        }
+        await supabase.from('ebooks').update({ is_active: !b.isActive }).eq('ebook_id', id);
+        loadAllSupabaseData();
       }
     }
 
@@ -1281,7 +1291,6 @@
       document.getElementById('sql-status-msg').innerText = '';
     }
 
-    // ระบบประมวลผล SQL ด้วย JavaScript ในตัว (ไม่ต้องพึ่งพา CDN ภายนอก)
     function executeAdminSql() {
       const query = document.getElementById('sql-input-box').value.trim();
       const statusMsg = document.getElementById('sql-status-msg');
@@ -1289,32 +1298,21 @@
       const tbody = document.getElementById('sql-result-tbody');
       const countBadge = document.getElementById('sql-result-count');
 
-      if (!query) {
-        alert('กรุณากรอกคำสั่ง SQL ที่ต้องการค้นหา');
-        return;
-      }
+      if (!query) { alert('กรุณากรอกคำสั่ง SQL'); return; }
 
       try {
         const startTime = performance.now();
-        
         let targetData = [];
         const lowerQ = query.toLowerCase();
-        
-        if (lowerQ.includes('from ebooks')) {
-          targetData = JSON.parse(JSON.stringify(books));
-        } else if (lowerQ.includes('from orders')) {
-          targetData = JSON.parse(JSON.stringify(cloudOrders.length ? cloudOrders : []));
-        } else if (lowerQ.includes('from users')) {
-          targetData = JSON.parse(JSON.stringify(users));
-        } else if (lowerQ.includes('from categories')) {
-          targetData = JSON.parse(JSON.stringify(categories));
-        } else {
-          throw new Error('ไม่พบชื่อตารางที่ระบุ (รองรับ: ebooks, orders, users, categories)');
-        }
+
+        if (lowerQ.includes('from ebooks')) targetData = JSON.parse(JSON.stringify(books));
+        else if (lowerQ.includes('from orders')) targetData = JSON.parse(JSON.stringify(cloudOrders));
+        else if (lowerQ.includes('from users')) targetData = JSON.parse(JSON.stringify(users));
+        else if (lowerQ.includes('from categories')) targetData = JSON.parse(JSON.stringify(categories));
+        else throw new Error('ไม่พบชื่อตารางที่ระบุ');
 
         if (lowerQ.includes('where')) {
           const wherePart = query.split(/where/i)[1].split(/order by|group by/i)[0].trim();
-          
           if (wherePart.includes('>=')) {
             const [field, val] = wherePart.split('>=').map(s => s.trim().replace(/['"]/g, ''));
             targetData = targetData.filter(item => parseFloat(item[field]) >= parseFloat(val));
@@ -1336,13 +1334,11 @@
         if (lowerQ.includes('group by')) {
           const groupField = query.split(/group by/i)[1].split(/order by/i)[0].trim();
           const groups = {};
-          
           targetData.forEach(row => {
             const key = row[groupField] || 'ไม่ระบุ';
             if (!groups[key]) groups[key] = [];
             groups[key].push(row);
           });
-
           targetData = Object.keys(groups).map(key => {
             const items = groups[key];
             const sumPrice = items.reduce((s, x) => s + (parseFloat(x.price) || 0), 0);
@@ -1359,36 +1355,29 @@
           const orderPart = query.split(/order by/i)[1].trim();
           const isDesc = /desc/i.test(orderPart);
           const sortField = orderPart.replace(/desc|asc/gi, '').trim();
-
           targetData.sort((a, b) => {
             const valA = a[sortField];
             const valB = b[sortField];
-            if (!isNaN(valA) && !isNaN(valB)) {
-              return isDesc ? valB - valA : valA - valB;
-            }
+            if (!isNaN(valA) && !isNaN(valB)) return isDesc ? valB - valA : valA - valB;
             return isDesc ? String(valB).localeCompare(String(valA)) : String(valA).localeCompare(String(valB));
           });
         }
 
         const selectPart = query.split(/from/i)[0].replace(/select/i, '').trim();
         let finalResults = targetData;
-
         if (selectPart !== '*' && !lowerQ.includes('group by')) {
           const selectedFields = selectPart.split(',').map(s => s.trim());
           finalResults = targetData.map(item => {
             const newObj = {};
-            selectedFields.forEach(f => {
-              newObj[f] = item[f] !== undefined ? item[f] : '-';
-            });
+            selectedFields.forEach(f => { newObj[f] = item[f] !== undefined ? item[f] : '-'; });
             return newObj;
           });
         }
 
         const execTime = (performance.now() - startTime).toFixed(2);
-
         if (finalResults.length === 0) {
           thead.innerHTML = '<tr><th class="py-3 px-4">ผลลัพธ์</th></tr>';
-          tbody.innerHTML = '<tr><td class="p-6 text-center text-stone-400">ไม่พบแถวข้อมูลที่ตรงกับเงื่อนไข</td></tr>';
+          tbody.innerHTML = '<tr><td class="p-6 text-center text-stone-400">ไม่พบแถวข้อมูล</td></tr>';
           countBadge.innerText = '0 แถว';
           statusMsg.innerHTML = `<span class="text-emerald-600">✓ ดำเนินการสำเร็จ (${execTime} ms) - 0 รายการ</span>`;
           return;
@@ -1396,7 +1385,6 @@
 
         const columns = Object.keys(finalResults[0]);
         thead.innerHTML = `<tr>${columns.map(col => `<th class="py-3 px-4 font-mono font-bold">${col}</th>`).join('')}</tr>`;
-
         tbody.innerHTML = finalResults.map(row => `
           <tr class="hover:bg-glam-cream/50 transition">
             ${columns.map(col => {
@@ -1409,10 +1397,9 @@
 
         countBadge.innerText = `${finalResults.length} แถว`;
         statusMsg.innerHTML = `<span class="text-emerald-600 font-bold">✓ ดึงข้อมูลสำเร็จ ${finalResults.length} รายการ (${execTime} ms)</span>`;
-
       } catch (err) {
         statusMsg.innerHTML = `<span class="text-rose-600 font-bold">❌ ข้อผิดพลาด SQL: ${err.message}</span>`;
-        tbody.innerHTML = `<tr><td class="p-6 text-center text-rose-500 font-mono text-xs">${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-rose-500 font-mono text-xs">${err.message}</td></tr>`;
         countBadge.innerText = 'Error';
       }
     }
@@ -1446,24 +1433,45 @@
       document.getElementById('auth-modal').classList.remove('hidden');
     }
     function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
-    function submitAuthForm() {
+    async function submitAuthForm() {
       const u = document.getElementById('auth-username').value.trim();
       const p = document.getElementById('auth-password').value.trim();
-      if (!u || !p) { alert('กรุณากรอกข้อมูลให้ครบถ้วน'); return; }
+      if (!u || !p) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
+
       if (authMode === 'register') {
         const fn = document.getElementById('auth-fullname').value.trim();
         const em = document.getElementById('auth-email').value.trim();
         if (!fn || !em) { alert('กรุณากรอกชื่อและอีเมล'); return; }
-        if (users.some(x => x.username.toLowerCase() === u.toLowerCase())) { alert('ชื่อผู้ใช้งานนี้มีอยู่ในระบบแล้ว'); return; }
-        const newUser = { username: u, password: p, name: fn, email: em, role: 'customer' };
-        users.push(newUser); currentUser = newUser; saveAllState(); applyUserSession(); closeAuthModal(); navigate('shop');
+        
+        const { data: newUser, error } = await supabase.from('users').insert([{
+          role_id: 2,
+          username: u,
+          password_hash: p,
+          full_name: fn,
+          email: em
+        }]).select('*, roles(role_name)').single();
+
+        if (error) { alert('ไม่สามารถสมัครได้: ' + error.message); return; }
+        currentUser = { id: newUser.user_id, username: newUser.username, name: newUser.full_name, email: newUser.email, role: 'customer' };
+        localStorage.setItem('bookie_current_user', JSON.stringify(currentUser));
+        applyUserSession(); closeAuthModal(); loadAllSupabaseData(); navigate('shop');
       } else {
-        const found = users.find(x => x.username.toLowerCase() === u.toLowerCase() && x.password === p);
-        if (found) { currentUser = found; saveAllState(); applyUserSession(); closeAuthModal(); if (found.role === 'admin') navigate('admin'); else navigate('shop'); }
-        else { alert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'); }
+        const { data: user, error } = await supabase.from('users').select('*, roles(role_name)').eq('username', u).single();
+        if (error || !user) { alert('ชื่อผู้ใช้ไม่ถูกต้อง'); return; }
+        
+        currentUser = {
+          id: user.user_id,
+          username: user.username,
+          name: user.full_name,
+          email: user.email,
+          role: user.roles ? user.roles.role_name.toLowerCase() : 'customer'
+        };
+        localStorage.setItem('bookie_current_user', JSON.stringify(currentUser));
+        applyUserSession(); closeAuthModal();
+        if (currentUser.role === 'admin') navigate('admin'); else navigate('shop');
       }
     }
-    function logout() { currentUser = null; saveAllState(); applyUserSession(); navigate('shop'); }
+    function logout() { currentUser = null; localStorage.removeItem('bookie_current_user'); applyUserSession(); navigate('shop'); }
     function applyUserSession() {
       const roleBadge = document.getElementById('role-badge');
       const authButtons = document.getElementById('auth-buttons');
@@ -1515,9 +1523,9 @@
       document.getElementById('inbox-badge').innerText = count;
     }
 
-    renderCategoryDropdowns();
+    // เริ่มต้นทำงาน
     applyUserSession();
-    renderBooks();
+    loadAllSupabaseData();
   </script>
 </body>
 </html>
