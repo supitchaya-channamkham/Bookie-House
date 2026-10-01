@@ -778,6 +778,8 @@
         }
 
         // 2. ดึงหนังสือ ebooks พร้อมหมวดหมู่และผู้แต่ง
+        let savedDlUrls = {};
+        try { savedDlUrls = JSON.parse(localStorage.getItem('bookie_dl_urls') || '{}'); } catch(e){}
         const { data: bookData, error: bookErr } = await supabase.from('ebooks').select('*, categories(category_name), authors(author_name)').order('ebook_id');
         if (!bookErr && bookData && bookData.length > 0) {
           books = bookData.map(b => ({
@@ -792,7 +794,7 @@
             isActive: b.is_active,
             desc: b.description || 'ไม่มีคำอธิบาย',
             cover: b.cover_image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80',
-            dlUrl: samplePdf
+            dlUrl: savedDlUrls[b.ebook_id] || samplePdf
           }));
           renderBooks();
           renderAdminBooks();
@@ -1283,6 +1285,27 @@
     }
     function closeBookFormModal() { document.getElementById('book-form-modal').classList.add('hidden'); }
 
+    // ฟังก์ชันค้นหาหรือสร้างผู้แต่งใหม่ในตาราง authors ตามชื่อที่กรอกจริง
+    async function resolveAuthorId(authorName) {
+      if (!supabase || !authorName) return 1;
+      try {
+        const cleanName = authorName.trim();
+        const { data: foundAuthors, error: fetchErr } = await supabase.from('authors').select('author_id, author_name');
+        if (!fetchErr && foundAuthors) {
+          const match = foundAuthors.find(a => a.author_name && a.author_name.trim().toLowerCase() === cleanName.toLowerCase());
+          if (match) return match.author_id;
+
+          const maxAuthId = foundAuthors.length > 0 ? Math.max(...foundAuthors.map(a => a.author_id || 0)) : 0;
+          const newAuthId = maxAuthId + 1;
+          const { error: aErr } = await supabase.from('authors').insert([{ author_id: newAuthId, author_name: cleanName }]);
+          if (!aErr) return newAuthId;
+        }
+      } catch (e) {
+        console.warn('resolveAuthorId error:', e);
+      }
+      return 1;
+    }
+
     async function handleSaveBook(e) {
       e.preventDefault();
       const editId = document.getElementById('edit-book-id').value;
@@ -1317,12 +1340,16 @@
         return;
       }
 
+      // ค้นหาหรือเพิ่มชื่อผู้แต่งลงตาราง authors ใน Supabase ให้ตรงกับที่กรอกจริง
+      const targetAuthorId = await resolveAuthorId(bookData.author);
+
       if (editId) {
         if (supabase) {
           try {
             const { error: updErr } = await supabase.from('ebooks').update({
               title: bookData.title,
               category_id: catId,
+              author_id: targetAuthorId,
               price: bookData.price,
               description: bookData.desc,
               cover_image_url: safeCoverForDb
@@ -1337,6 +1364,11 @@
             console.error('Update book error:', err);
           }
         }
+        try {
+          const savedDlUrls = JSON.parse(localStorage.getItem('bookie_dl_urls') || '{}');
+          savedDlUrls[parseInt(editId)] = finalDl;
+          localStorage.setItem('bookie_dl_urls', JSON.stringify(savedDlUrls));
+        } catch (e) {}
       } else {
         const maxBookId = books.length ? Math.max(...books.map(x => x.id || 0)) : 0;
         const newBookId = maxBookId + 1;
@@ -1346,7 +1378,7 @@
               ebook_id: newBookId,
               title: bookData.title,
               category_id: catId,
-              author_id: 1,
+              author_id: targetAuthorId,
               price: bookData.price,
               description: bookData.desc,
               cover_image_url: safeCoverForDb,
@@ -1362,6 +1394,11 @@
             console.error('Insert book error:', err);
           }
         }
+        try {
+          const savedDlUrls = JSON.parse(localStorage.getItem('bookie_dl_urls') || '{}');
+          savedDlUrls[newBookId] = finalDl;
+          localStorage.setItem('bookie_dl_urls', JSON.stringify(savedDlUrls));
+        } catch (e) {}
       }
 
       closeBookFormModal();
