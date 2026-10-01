@@ -691,12 +691,12 @@
           <input type="text" id="form-book-author" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5">
         </div>
         <div>
-          <label class="block font-bold text-stone-700 mb-1">URL รูปภาพหน้าปก *</label>
-          <input type="url" id="form-book-cover" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 font-mono">
+          <label class="block font-bold text-stone-700 mb-1">URL รูปภาพหน้าปก <span class="text-stone-400 font-normal text-[11px]">(ไม่บังคับ - ปล่อยว่างเพื่อใช้รูปเริ่มต้น)</span></label>
+          <input type="text" id="form-book-cover" placeholder="เช่น https://... หรือปล่อยว่างได้" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 font-mono">
         </div>
         <div>
-          <label class="block font-bold text-stone-700 mb-1">URL ไฟล์ E-Book (.pdf) *</label>
-          <input type="url" id="form-book-dl" required class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 font-mono">
+          <label class="block font-bold text-stone-700 mb-1">URL ไฟล์ E-Book / ลิงก์อ่าน <span class="text-stone-400 font-normal text-[11px]">(ไม่บังคับ - ใส่หรือไม่ใส่ก็ได้ และไม่จำกัดเฉพาะ .pdf)</span></label>
+          <input type="text" id="form-book-dl" placeholder="เช่น ลิงก์ PDF, Google Drive, เว็บไซต์ หรือปล่อยว่างได้" class="w-full bg-glam-cream border border-glam-roseLight rounded-xl p-2.5 font-mono">
         </div>
         <div>
           <label class="block font-bold text-stone-700 mb-1">เรื่องย่อ</label>
@@ -1165,8 +1165,8 @@
         document.getElementById('form-book-cat').value = b.catId;
         document.getElementById('form-book-price').value = b.price;
         document.getElementById('form-book-author').value = b.author;
-        document.getElementById('form-book-cover').value = b.cover;
-        document.getElementById('form-book-dl').value = b.dlUrl;
+        document.getElementById('form-book-cover').value = b.cover || '';
+        document.getElementById('form-book-dl').value = (b.dlUrl && b.dlUrl !== samplePdf) ? b.dlUrl : '';
         document.getElementById('form-book-desc').value = b.desc || '';
       } else {
         document.getElementById('edit-book-id').value = '';
@@ -1187,13 +1187,22 @@
       const editId = document.getElementById('edit-book-id').value;
       const catId = parseInt(document.getElementById('form-book-cat').value);
       const catObj = categories.find(c => c.id === catId);
+      
+      const defaultCover = 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80';
+      const rawCover = document.getElementById('form-book-cover').value.trim();
+      const coverUrl = rawCover || defaultCover;
+
+      const rawDl = document.getElementById('form-book-dl').value.trim();
+      // ไม่บังคับใส่ และไม่จำกัดเฉพาะ .pdf (รองรับ Google Drive, ลิงก์อ่านออนไลน์, ไฟล์ทุกนามสกุล หรือปล่อยว่างได้)
+      const finalDl = rawDl ? (rawDl.startsWith('http://') || rawDl.startsWith('https://') || rawDl.startsWith('/') || rawDl.startsWith('data:') ? rawDl : 'https://' + rawDl) : samplePdf;
+
       const bookData = {
         title: document.getElementById('form-book-title').value.trim(),
         catId: catId, catName: catObj ? catObj.name : 'ทั่วไป',
         price: parseFloat(document.getElementById('form-book-price').value),
-        author: document.getElementById('form-book-author').value.trim(),
-        cover: document.getElementById('form-book-cover').value.trim(),
-        dlUrl: document.getElementById('form-book-dl').value.trim(),
+        author: document.getElementById('form-book-author').value.trim() || 'Bookie House',
+        cover: coverUrl,
+        dlUrl: finalDl,
         desc: document.getElementById('form-book-desc').value.trim(),
         isActive: true, rating: 5.0
       };
@@ -1503,7 +1512,7 @@
         <div class="bg-white p-4 rounded-2xl border border-glam-roseLight space-y-2">
           <div class="flex justify-between items-center"><h4 class="font-bold text-sm text-glam-deepText">${mail.subject}</h4><span class="text-[10px] text-stone-400">${mail.date}</span></div>
           <p class="text-xs text-stone-600">การสั่งซื้อสำหรับ: <b>${mail.items.join(', ')}</b> ได้รับการยืนยันเรียบร้อยแล้ว</p>
-          <a href="${mail.dlUrl}" target="_blank" class="inline-block bg-glam-roseDark text-white text-xs px-3 py-1.5 rounded-xl font-bold shadow">ดาวน์โหลด E-Book (.PDF)</a>
+          <a href="${mail.dlUrl}" target="_blank" class="inline-block bg-glam-roseDark text-white text-xs px-3 py-1.5 rounded-xl font-bold shadow">เปิดอ่าน / ดาวน์โหลด E-Book</a>
         </div>
       `).join('');
       document.getElementById('inbox-modal').classList.remove('hidden');
