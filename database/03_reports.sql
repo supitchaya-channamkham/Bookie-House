@@ -12,13 +12,13 @@ USE bookie_house_db;
 -- คำสั่งที่ใช้: JOIN, GROUP BY, SUM, COUNT, AVG, DATE()
 -- --------------------------------------------------------
 SELECT 
-    DATE(order_date) AS sales_date,
+    DATE(order_datetime) AS sales_date,
     COUNT(order_id) AS total_orders,
     SUM(total_amount) AS daily_revenue,
     ROUND(AVG(total_amount), 2) AS average_order_value
 FROM orders
-WHERE status = 'confirmed'
-GROUP BY DATE(order_date)
+WHERE order_status = 'confirmed'
+GROUP BY DATE(order_datetime)
 ORDER BY sales_date ASC;
 
 -- --------------------------------------------------------
@@ -31,12 +31,12 @@ SELECT
     e.title,
     a.author_name,
     SUM(oi.quantity) AS total_copies_sold,
-    SUM(oi.subtotal) AS total_sales_amount
+    SUM(oi.quantity * oi.price_per_unit) AS total_sales_amount
 FROM order_items oi
 JOIN orders o ON oi.order_id = o.order_id
 JOIN ebooks e ON oi.ebook_id = e.ebook_id
 JOIN authors a ON e.author_id = a.author_id
-WHERE o.status = 'confirmed'
+WHERE o.order_status = 'confirmed'
 GROUP BY e.ebook_id, e.title, a.author_name
 ORDER BY total_copies_sold DESC, total_sales_amount DESC
 LIMIT 5;
@@ -51,12 +51,12 @@ SELECT
     c.category_name,
     COUNT(DISTINCT o.order_id) AS total_distinct_orders,
     SUM(oi.quantity) AS total_items_sold,
-    SUM(oi.subtotal) AS total_category_revenue
+    SUM(oi.quantity * oi.price_per_unit) AS total_category_revenue
 FROM categories c
 JOIN ebooks e ON c.category_id = e.category_id
 JOIN order_items oi ON e.ebook_id = oi.ebook_id
 JOIN orders o ON oi.order_id = o.order_id
-WHERE o.status = 'confirmed'
+WHERE o.order_status = 'confirmed'
 GROUP BY c.category_id, c.category_name
 ORDER BY total_category_revenue DESC;
 
@@ -70,10 +70,10 @@ SELECT
     u.full_name,
     u.email,
     COUNT(o.order_id) AS total_orders,
-    SUM(CASE WHEN o.status = 'confirmed' THEN 1 ELSE 0 END) AS confirmed_orders,
-    SUM(CASE WHEN o.status = 'pending' THEN 1 ELSE 0 END) AS pending_orders,
-    SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled_orders,
-    SUM(CASE WHEN o.status = 'confirmed' THEN o.total_amount ELSE 0 END) AS total_spent
+    SUM(CASE WHEN o.order_status = 'confirmed' THEN 1 ELSE 0 END) AS confirmed_orders,
+    SUM(CASE WHEN o.order_status = 'pending' THEN 1 ELSE 0 END) AS pending_orders,
+    SUM(CASE WHEN o.order_status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled_orders,
+    SUM(CASE WHEN o.order_status = 'confirmed' THEN o.total_amount ELSE 0 END) AS total_spent
 FROM users u
 JOIN orders o ON u.user_id = o.user_id
 GROUP BY u.user_id, u.full_name, u.email

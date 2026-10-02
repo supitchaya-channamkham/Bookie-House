@@ -419,6 +419,9 @@
               <button type="button" onclick="setSqlExample('SELECT username, name, email, role FROM users')" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
                 4. รายชื่อสมาชิกทั้งหมด
               </button>
+              <button type="button" onclick="setSqlExample('SELECT link_id, order_id, ebook_id, user_id, download_token, is_active FROM download_links')" class="bg-glam-cream border border-glam-roseLight hover:bg-glam-roseLight/60 text-glam-roseDark px-2.5 py-1.5 rounded-lg font-mono">
+                5. สิทธิ์ดาวน์โหลด (download_links)
+              </button>
             </div>
           </div>
 
@@ -760,6 +763,7 @@
     var users = [...initialUsers];
     var books = [...initialBooks];
     var cloudOrders = [];
+    var rawDownloadLinks = [];
     var cart = [];
     var sentEmails = JSON.parse(localStorage.getItem('bookie_emails') || '[]');
     var currentUser = JSON.parse(localStorage.getItem('bookie_current_user') || 'null');
@@ -794,24 +798,27 @@
             isActive: b.is_active,
             desc: b.description || 'ไม่มีคำอธิบาย',
             cover: b.cover_image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80',
-            dlUrl: savedDlUrls[b.ebook_id] || samplePdf
+            dlUrl: (b.file_download_url && b.file_download_url.startsWith('http')) ? b.file_download_url : (savedDlUrls[b.ebook_id] || samplePdf)
           }));
           renderBooks();
           renderAdminBooks();
         }
 
-        // 3. ดึงคำสั่งซื้อ orders, รายการสินค้า order_items, การชำระเงิน payments และผู้ใช้ users
-        const [ordersRes, itemsRes, paymentsRes, usersRes] = await Promise.all([
+        // 3. ดึงคำสั่งซื้อ orders, รายการสินค้า order_items, การชำระเงิน payments, ผู้ใช้ users และสิทธิ์ดาวน์โหลด download_links
+        const [ordersRes, itemsRes, paymentsRes, usersRes, dlLinksRes] = await Promise.all([
           supabase.from('orders').select('*'),
           supabase.from('order_items').select('*'),
           supabase.from('payments').select('*'),
-          supabase.from('users').select('*')
+          supabase.from('users').select('*'),
+          supabase.from('download_links').select('*')
         ]);
 
         const orderData = ordersRes.data || [];
         const itemsData = itemsRes.data || [];
         const payData = paymentsRes.data || [];
         const userData = usersRes.data || [];
+        const dlData = dlLinksRes.data || [];
+        rawDownloadLinks = dlData;
 
         if (userData && userData.length > 0) {
           users = userData.map(u => ({
@@ -840,10 +847,22 @@
           const userMap = {};
           users.forEach(u => { userMap[u.id] = u; });
 
+          // จัดกลุ่ม download_links ตาม order_id
+          const dlByOrder = {};
+          dlData.forEach(dl => {
+            const oid = dl.order_id;
+            if (!dlByOrder[oid]) dlByOrder[oid] = [];
+            dlByOrder[oid].push(dl);
+          });
+
+          // จัดกลุ่ม order_items ตาม order_id
           const itemsByOrder = {};
+          const rawItemsByOrder = {};
           itemsData.forEach(item => {
             const oid = item.order_id;
             if (!itemsByOrder[oid]) itemsByOrder[oid] = [];
+            if (!rawItemsByOrder[oid]) rawItemsByOrder[oid] = [];
+            rawItemsByOrder[oid].push(item);
             const title = ebookMap[item.ebook_id] || `E-Book #${item.ebook_id}`;
             itemsByOrder[oid].push(`${title} (x${item.quantity || 1})`);
           });
@@ -857,7 +876,19 @@
             const u = userMap[o.user_id] || {};
             const p = payByOrder[o.order_id] || {};
             const orderItems = itemsByOrder[o.order_id] || ['รายการหนังสือ'];
+            const rawItems = rawItemsByOrder[o.order_id] || [];
             const dtStr = o.order_datetime || new Date().toISOString();
+            const orderDlLinks = (dlByOrder[o.order_id] || []).filter(dl => dl.is_active !== false);
+
+            // ค้นหาลิงก์ดาวน์โหลดจริงจาก download_links
+            let primaryDl = samplePdf;
+            if (orderDlLinks.length > 0 && orderDlLinks[0].download_url) {
+              primaryDl = orderDlLinks[0].download_url;
+            } else if (rawItems.length > 0) {
+              const b = books.find(x => x.id === rawItems[0].ebook_id);
+              if (b && b.dlUrl) primaryDl = b.dlUrl;
+            }
+
             return {
               id: o.order_id,
               userId: o.user_id,
@@ -869,10 +900,12 @@
               date: dtStr.split('T')[0] || '',
               method: p.payment_method || 'พร้อมเพย์ QR',
               items: orderItems,
+              rawItems: rawItems,
               total: parseFloat(o.total_amount || 0),
               status: o.order_status || 'pending',
               slipUrl: (p.slip_image_url && p.slip_image_url.startsWith('http')) ? p.slip_image_url : currentUploadedSlip,
-              dlUrl: samplePdf
+              dlUrl: primaryDl,
+              dlLinks: orderDlLinks
             };
           });
 
@@ -911,6 +944,9 @@
             loadAllSupabaseData();
           })
           .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
+            loadAllSupabaseData();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'download_links' }, () => {
             loadAllSupabaseData();
           })
           .subscribe();
@@ -1151,12 +1187,46 @@
     function renderCustomerOrders() {
       const tbody = document.getElementById('customer-orders-tbody');
       if (!currentUser || !tbody) return;
-      const userOrders = cloudOrders.filter(o => o.customer === currentUser.name || o.email === currentUser.email || o.username === currentUser.username);
+      const userOrders = cloudOrders.filter(o => 
+        (currentUser.id && o.userId === currentUser.id) ||
+        o.customer === currentUser.name || 
+        o.email === currentUser.email || 
+        o.username === currentUser.username
+      );
+
       tbody.innerHTML = userOrders.map(o => {
-        let badge = o.status === 'confirmed' ? '<span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">ยืนยันแล้ว</span>' : (o.status === 'pending' ? '<span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-bold">รอตรวจสอบ</span>' : '<span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-1 rounded-full font-bold">ยกเลิก</span>');
-        let action = o.status === 'confirmed' ? `<a href="${o.dlUrl}" target="_blank" class="bg-gradient-to-r from-glam-rose to-glam-roseDark text-white text-xs px-3.5 py-2 rounded-xl font-bold shadow inline-block">⬇ ดาวน์โหลด</a>` : '<span class="text-xs text-stone-400 italic">-</span>';
+        let badge = o.status === 'confirmed' 
+          ? '<span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">ยืนยันแล้ว</span>' 
+          : (o.status === 'pending' 
+            ? '<span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-bold">รอตรวจสอบ</span>' 
+            : '<span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-1 rounded-full font-bold">ยกเลิก</span>');
+
+        // แสดงปุ่มดาวน์โหลดจากตาราง download_links ตามเงื่อนไข
+        let action = '<span class="text-xs text-stone-400 italic">-</span>';
+        if (o.status === 'confirmed') {
+          if (o.dlLinks && o.dlLinks.length > 0) {
+            if (o.dlLinks.length === 1) {
+              const singleDl = o.dlLinks[0];
+              const dlUrlToUse = singleDl.download_url || o.dlUrl || samplePdf;
+              action = `<a href="${dlUrlToUse}" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-glam-rose to-glam-roseDark hover:brightness-110 text-white text-xs px-3.5 py-2 rounded-xl font-bold shadow inline-flex items-center gap-1.5 transition"><span>⬇ ดาวน์โหลด</span></a>`;
+            } else {
+              action = `<div class="flex flex-col gap-1.5 items-center">` + o.dlLinks.map(dl => {
+                const b = books.find(x => x.id === dl.ebook_id);
+                const bTitle = b ? (b.title.length > 16 ? b.title.substring(0, 16) + '...' : b.title) : `เล่ม #${dl.ebook_id}`;
+                return `<a href="${dl.download_url || samplePdf}" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-glam-rose to-glam-roseDark hover:brightness-110 text-white text-[11px] px-3 py-1.5 rounded-lg font-bold shadow inline-flex items-center gap-1 transition" title="${b ? b.title : ''}"><span>⬇ ${bTitle}</span></a>`;
+              }).join('') + `</div>`;
+            }
+          } else {
+            action = `<a href="${o.dlUrl || samplePdf}" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-glam-rose to-glam-roseDark hover:brightness-110 text-white text-xs px-3.5 py-2 rounded-xl font-bold shadow inline-flex items-center gap-1.5 transition"><span>⬇ ดาวน์โหลด</span></a>`;
+          }
+        } else if (o.status === 'pending') {
+          action = '<span class="text-xs text-amber-600 font-semibold bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 inline-block">⏳ รอตรวจสอบ</span>';
+        } else {
+          action = '<span class="text-xs text-rose-500 font-semibold bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 inline-block">🚫 ยกเลิกแล้ว</span>';
+        }
+
         return `
-          <tr class="hover:bg-glam-cream/50">
+          <tr class="hover:bg-glam-cream/50 transition">
             <td class="py-4 px-5 font-mono font-bold text-glam-roseDark">#ORD-${o.id}</td>
             <td class="py-4 px-5 text-stone-600 text-xs">${o.datetime || o.date}</td>
             <td class="py-4 px-5 font-medium">${o.items.join(', ')}</td>
@@ -1573,6 +1643,70 @@
     function closeAdminSlipModal() { document.getElementById('admin-slip-modal').classList.add('hidden'); }
     async function updateOrderStatus(order, newStatus) {
       order.status = newStatus;
+      closeAdminSlipModal();
+
+      if (supabase) {
+        try {
+          // 1. อัปเดตสถานะในตาราง orders
+          const { error: ordErr } = await supabase.from('orders').update({ order_status: newStatus }).eq('order_id', order.id);
+          if (ordErr) {
+            console.error('Update order status error:', ordErr);
+            alert('อัปเดตสถานะคำสั่งซื้อไม่สำเร็จ: ' + ordErr.message);
+            return;
+          }
+
+          if (newStatus === 'confirmed') {
+            // 2. อัปเดตการชำระเงินในตาราง payments ให้ is_verified = true
+            await supabase.from('payments').update({ is_verified: true }).eq('order_id', order.id);
+
+            // 3. ดึงรายการสินค้าของออเดอร์นี้เพื่อสร้างแถว download_links
+            let itemsToLink = (order.rawItems && order.rawItems.length > 0) ? order.rawItems : [];
+            if (itemsToLink.length === 0) {
+              const { data: fetchedItems } = await supabase.from('order_items').select('*').eq('order_id', order.id);
+              if (fetchedItems && fetchedItems.length > 0) itemsToLink = fetchedItems;
+            }
+            if (itemsToLink.length === 0) {
+              itemsToLink = [{ ebook_id: 1, quantity: 1 }];
+            }
+
+            // ตรวจสอบว่ามีลิงก์ดาวน์โหลดเดิมอยู่แล้วหรือไม่ เพื่อป้องกันการ insert ซ้ำ
+            const { data: existingDl } = await supabase.from('download_links').select('link_id, ebook_id').eq('order_id', order.id);
+            const existingEbookIds = new Set((existingDl || []).map(d => d.ebook_id));
+
+            const newItems = itemsToLink.filter(it => !existingEbookIds.has(it.ebook_id));
+            if (newItems.length > 0) {
+              const dlPayload = newItems.map(it => {
+                const b = books.find(x => x.id === it.ebook_id);
+                const dlUrl = (b && b.dlUrl) ? b.dlUrl : samplePdf;
+                const token = 'tok_dl_' + order.id + '_' + it.ebook_id + '_' + Math.random().toString(36).substring(2, 9);
+                return {
+                  order_id: order.id,
+                  ebook_id: it.ebook_id || 1,
+                  user_id: order.userId || (currentUser ? currentUser.id : 1),
+                  download_url: dlUrl,
+                  download_token: token,
+                  is_active: true
+                };
+              });
+
+              const { error: dlInsErr } = await supabase.from('download_links').insert(dlPayload);
+              if (dlInsErr) {
+                console.warn('download_links insert notice:', dlInsErr);
+              }
+            } else if (existingDl && existingDl.length > 0) {
+              // หากมีรายการอยู่แล้ว ให้เปิดใช้งานใหม่อีกครั้ง
+              await supabase.from('download_links').update({ is_active: true }).eq('order_id', order.id);
+            }
+          } else if (newStatus === 'cancelled') {
+            // หากยกเลิกคำสั่งซื้อ ให้ปิดการใช้งานลิงก์ดาวน์โหลด และ is_verified = false
+            await supabase.from('download_links').update({ is_active: false }).eq('order_id', order.id);
+            await supabase.from('payments').update({ is_verified: false }).eq('order_id', order.id);
+          }
+        } catch (e) {
+          console.error('Error updating order/download links in Supabase:', e);
+        }
+      }
+
       if (newStatus === 'confirmed') {
         sentEmails.unshift({
           orderId: order.id, toEmail: order.email, toName: order.customer,
@@ -1582,19 +1716,7 @@
         });
         localStorage.setItem('bookie_emails', JSON.stringify(sentEmails));
       }
-      closeAdminSlipModal();
-      if (supabase) {
-        try {
-          const { error } = await supabase.from('orders').update({ order_status: newStatus }).eq('order_id', order.id);
-          if (error) {
-            console.error('Update order status error:', error);
-            alert('อัปเดตสถานะคำสั่งซื้อไม่สำเร็จ: ' + error.message);
-            return;
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }
+
       await loadAllSupabaseData();
       alert(`อัปเดตสถานะออเดอร์ #${order.id} เป็น "${newStatus === 'confirmed' ? 'ยืนยันแล้ว' : (newStatus === 'pending' ? 'รอตรวจสอบ' : 'ยกเลิก')}" สำเร็จ`);
     }
@@ -1652,7 +1774,8 @@
         else if (lowerQ.includes('from orders')) targetData = JSON.parse(JSON.stringify(cloudOrders));
         else if (lowerQ.includes('from users')) targetData = JSON.parse(JSON.stringify(users));
         else if (lowerQ.includes('from categories')) targetData = JSON.parse(JSON.stringify(categories));
-        else throw new Error('ไม่พบชื่อตารางที่ระบุ');
+        else if (lowerQ.includes('from download_links')) targetData = JSON.parse(JSON.stringify(rawDownloadLinks));
+        else throw new Error('ไม่พบชื่อตารางที่ระบุ (รองรับ: ebooks, orders, users, categories, download_links)');
 
         if (lowerQ.includes('where')) {
           const wherePart = query.split(/where/i)[1].split(/order by|group by/i)[0].trim();

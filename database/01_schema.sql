@@ -4,7 +4,7 @@
 -- Description: DDL Schema creation with 3NF and Constraints
 -- ========================================================
 
--- สร้างฐานข้อมูลและเลือกใช้งาน
+-- สร้างฐานข้อมูลและเลือกใช้งาน (MySQL / MariaDB Compatible)
 CREATE DATABASE IF NOT EXISTS bookie_house_db
 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -13,7 +13,7 @@ USE bookie_house_db;
 -- --------------------------------------------------------
 -- 1. ตารางบทบาทผู้ใช้ (roles)
 -- --------------------------------------------------------
-CREATE TABLE roles (
+CREATE TABLE IF NOT EXISTS roles (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
     role_name VARCHAR(50) NOT NULL UNIQUE
 );
@@ -21,9 +21,9 @@ CREATE TABLE roles (
 -- --------------------------------------------------------
 -- 2. ตารางผู้ใช้งาน (users)
 -- --------------------------------------------------------
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    role_id INT NOT NULL DEFAULT 1,
+    role_id INT NOT NULL DEFAULT 2,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE users (
 -- --------------------------------------------------------
 -- 3. ตารางหมวดหมู่หนังสือ (categories)
 -- --------------------------------------------------------
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
     category_name VARCHAR(100) NOT NULL UNIQUE,
     description TEXT
@@ -44,7 +44,7 @@ CREATE TABLE categories (
 -- --------------------------------------------------------
 -- 4. ตารางนักเขียน / ผู้แต่ง (authors)
 -- --------------------------------------------------------
-CREATE TABLE authors (
+CREATE TABLE IF NOT EXISTS authors (
     author_id INT AUTO_INCREMENT PRIMARY KEY,
     author_name VARCHAR(100) NOT NULL,
     bio TEXT
@@ -53,15 +53,15 @@ CREATE TABLE authors (
 -- --------------------------------------------------------
 -- 5. ตารางข้อมูล E-Book (ebooks)
 -- --------------------------------------------------------
-CREATE TABLE ebooks (
+CREATE TABLE IF NOT EXISTS ebooks (
     ebook_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
     author_id INT NOT NULL,
     category_id INT NOT NULL,
-    price DECIMAL(10, 2) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     description TEXT,
     cover_image_url VARCHAR(255),
-    file_download_url VARCHAR(255) NOT NULL,
+    file_download_url VARCHAR(255) DEFAULT 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_ebook_price CHECK (price >= 0.00),
@@ -70,89 +70,59 @@ CREATE TABLE ebooks (
 );
 
 -- --------------------------------------------------------
--- 6. ตารางตะกร้าสินค้า (carts)
+-- 6. ตารางคำสั่งซื้อ (orders)
 -- --------------------------------------------------------
-CREATE TABLE carts (
-    cart_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL UNIQUE,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_carts_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
--- --------------------------------------------------------
--- 7. ตารางรายการสินค้าในตะกร้า (cart_items)
--- --------------------------------------------------------
-CREATE TABLE cart_items (
-    cart_item_id INT AUTO_INCREMENT PRIMARY KEY,
-    cart_id INT NOT NULL,
-    ebook_id INT NOT NULL,
-    quantity INT NOT NULL DEFAULT 1,
-    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_cart_quantity CHECK (quantity > 0),
-    CONSTRAINT uq_cart_ebook UNIQUE (cart_id, ebook_id),
-    CONSTRAINT fk_cart_items_cart FOREIGN KEY (cart_id) REFERENCES carts(cart_id) ON DELETE CASCADE,
-    CONSTRAINT fk_cart_items_ebook FOREIGN KEY (ebook_id) REFERENCES ebooks(ebook_id) ON DELETE CASCADE
-);
-
--- --------------------------------------------------------
--- 8. ตารางคำสั่งซื้อ (orders)
--- --------------------------------------------------------
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
-    status ENUM('pending', 'confirmed', 'cancelled') NOT NULL DEFAULT 'pending',
-    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    order_status ENUM('pending', 'confirmed', 'cancelled') NOT NULL DEFAULT 'pending',
+    order_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_order_total CHECK (total_amount >= 0.00),
     CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT
 );
 
 -- --------------------------------------------------------
--- 9. ตารางรายละเอียดรายการในคำสั่งซื้อ (order_items)
+-- 7. ตารางรายละเอียดรายการในคำสั่งซื้อ (order_items)
 -- --------------------------------------------------------
-CREATE TABLE order_items (
-    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS order_items (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     ebook_id INT NOT NULL,
     quantity INT NOT NULL DEFAULT 1,
-    unit_price DECIMAL(10, 2) NOT NULL,
-    subtotal DECIMAL(10, 2) NOT NULL,
+    price_per_unit DECIMAL(10, 2) NOT NULL,
     CONSTRAINT chk_order_quantity CHECK (quantity > 0),
-    CONSTRAINT chk_unit_price CHECK (unit_price >= 0.00),
-    CONSTRAINT chk_subtotal CHECK (subtotal >= 0.00),
+    CONSTRAINT chk_price_per_unit CHECK (price_per_unit >= 0.00),
     CONSTRAINT fk_order_items_order FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
     CONSTRAINT fk_order_items_ebook FOREIGN KEY (ebook_id) REFERENCES ebooks(ebook_id) ON DELETE RESTRICT
 );
 
 -- --------------------------------------------------------
--- 10. ตารางการชำระเงินจำลอง (payments)
+-- 8. ตารางการชำระเงิน (payments)
 -- --------------------------------------------------------
-CREATE TABLE payments (
+CREATE TABLE IF NOT EXISTS payments (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL UNIQUE,
     payment_method VARCHAR(50) NOT NULL,
-    amount_paid DECIMAL(10, 2) NOT NULL,
     slip_image_url VARCHAR(255),
-    payment_status ENUM('pending', 'verified', 'rejected') NOT NULL DEFAULT 'pending',
-    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_payment_amount CHECK (amount_paid >= 0.00),
+    is_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    payment_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_payments_order FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
 );
 
 -- --------------------------------------------------------
--- 11. ตารางสิทธิ์และลิงก์ดาวน์โหลด E-Book (download_links)
+-- 9. ตารางสิทธิ์และลิงก์ดาวน์โหลด E-Book (download_links)
 -- --------------------------------------------------------
-CREATE TABLE download_links (
+CREATE TABLE IF NOT EXISTS download_links (
     link_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_item_id INT NOT NULL UNIQUE,
-    user_id INT NOT NULL,
+    order_id INT NOT NULL,
     ebook_id INT NOT NULL,
-    access_token VARCHAR(100) NOT NULL UNIQUE,
-    download_url VARCHAR(255) NOT NULL,
-    expires_at DATETIME,
-    download_count INT NOT NULL DEFAULT 0,
+    user_id INT NOT NULL,
+    download_url TEXT NOT NULL,
+    download_token VARCHAR(100) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_dl_order_item FOREIGN KEY (order_item_id) REFERENCES order_items(order_item_id) ON DELETE CASCADE,
-    CONSTRAINT fk_dl_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    CONSTRAINT fk_dl_ebook FOREIGN KEY (ebook_id) REFERENCES ebooks(ebook_id) ON DELETE RESTRICT
+    CONSTRAINT fk_download_links_order FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    CONSTRAINT fk_download_links_ebook FOREIGN KEY (ebook_id) REFERENCES ebooks(ebook_id) ON DELETE RESTRICT,
+    CONSTRAINT fk_download_links_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
