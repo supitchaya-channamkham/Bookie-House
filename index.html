@@ -295,34 +295,35 @@
 
         <!-- 4 Reports -->
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-glam-milk bg-glam-cream">
+          <div class="p-4 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
             <h4 class="font-bold font-heading text-glam-roseDark text-sm">📊 รายงานที่ 1: สรุปยอดขายตามช่วงเวลา</h4>
+            <span class="text-[11px] text-stone-500 font-medium">คำนวณจากคำสั่งซื้อที่ยืนยันแล้ว</span>
           </div>
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto max-h-[360px]">
             <table class="w-full text-left border-collapse text-xs">
-              <thead>
+              <thead class="sticky top-0 z-10">
                 <tr class="bg-glam-milk text-glam-roseDark font-heading uppercase font-bold">
-                  <th class="py-3 px-5">ช่วงวันที่</th>
+                  <th class="py-3 px-5">วันที่ / ช่วงเวลา</th>
                   <th class="py-3 px-5 text-center">จำนวนคำสั่งซื้อ</th>
                   <th class="py-3 px-5 text-right">ยอดขายรวม (บาท)</th>
                   <th class="py-3 px-5 text-right">ยอดเฉลี่ย</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
-                <tr><td class="py-3 px-5 font-bold">2026-08-01 ถึง 2026-08-15</td><td class="py-3 px-5 text-center">9 รายการ</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿3,190.00</td><td class="py-3 px-5 text-right">฿354.44</td></tr>
-                <tr><td class="py-3 px-5 font-bold">2026-08-16 ถึง 2026-08-31</td><td class="py-3 px-5 text-center">8 รายการ</td><td class="py-3 px-5 text-right text-glam-roseDark font-bold">฿2,860.00</td><td class="py-3 px-5 text-right">฿357.50</td></tr>
+              <tbody id="report-sales-period-tbody" class="divide-y divide-glam-milk text-stone-700 font-medium">
+                <tr><td colspan="4" class="p-6 text-center text-stone-400 italic">กำลังโหลดข้อมูลรายงาน...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-glam-milk bg-glam-cream">
+          <div class="p-4 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
             <h4 class="font-bold font-heading text-glam-roseDark text-sm">🏆 รายงานที่ 2: 5 อันดับ E-Book ขายดีที่สุด</h4>
+            <span class="text-[11px] text-stone-500 font-medium">จัดอันดับตามจำนวนเล่มที่ขายได้</span>
           </div>
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto max-h-[360px]">
             <table class="w-full text-left border-collapse text-xs">
-              <thead>
+              <thead class="sticky top-0 z-10">
                 <tr class="bg-glam-milk text-glam-roseDark font-heading uppercase font-bold">
                   <th class="py-3 px-5 text-center">อันดับ</th>
                   <th class="py-3 px-5">ชื่อ E-Book</th>
@@ -331,22 +332,21 @@
                   <th class="py-3 px-5 text-right">ยอดขายรวม</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
-                <tr><td class="py-3 px-5 text-center font-bold text-glam-roseDark">1</td><td class="py-3 px-5 font-bold">Mastering SQL & Database Design</td><td class="py-3 px-5 text-stone-500">เทคโนโลยี</td><td class="py-3 px-5 text-center font-bold">8 เล่ม</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿2,800.00</td></tr>
-                <tr><td class="py-3 px-5 text-center font-bold text-glam-roseDark">2</td><td class="py-3 px-5 font-bold">Modern Web Development with React</td><td class="py-3 px-5 text-stone-500">เทคโนโลยี</td><td class="py-3 px-5 text-center font-bold">6 เล่ม</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿2,520.00</td></tr>
-                <tr><td class="py-3 px-5 text-center font-bold text-glam-roseDark">3</td><td class="py-3 px-5 font-bold">Atomic Habits: พลังแห่งนิสัยเล็กๆ</td><td class="py-3 px-5 text-stone-500">พัฒนาตนเอง</td><td class="py-3 px-5 text-center font-bold">5 เล่ม</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿1,400.00</td></tr>
+              <tbody id="report-top-books-tbody" class="divide-y divide-glam-milk text-stone-700 font-medium">
+                <tr><td colspan="5" class="p-6 text-center text-stone-400 italic">กำลังโหลดข้อมูลรายงาน...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-glam-milk bg-glam-cream">
+          <div class="p-4 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
             <h4 class="font-bold font-heading text-glam-roseDark text-sm">🏷️ รายงานที่ 3: สรุปยอดขายตามหมวดหมู่</h4>
+            <span class="text-[11px] text-stone-500 font-medium">สรุปยอดรวมแยกตามหมวดหมู่</span>
           </div>
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto max-h-[360px]">
             <table class="w-full text-left border-collapse text-xs">
-              <thead>
+              <thead class="sticky top-0 z-10">
                 <tr class="bg-glam-milk text-glam-roseDark font-heading uppercase font-bold">
                   <th class="py-3 px-5">รหัส</th>
                   <th class="py-3 px-5">ชื่อหมวดหมู่</th>
@@ -355,21 +355,21 @@
                   <th class="py-3 px-5 text-right">ยอดขายรวม</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
-                <tr><td class="py-3 px-5 font-mono text-stone-400">#01</td><td class="py-3 px-5 font-bold">เทคโนโลยีและการเขียนโค้ด</td><td class="py-3 px-5 text-center">14 บิล</td><td class="py-3 px-5 text-center font-bold">18 เล่ม</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿6,840.00</td></tr>
-                <tr><td class="py-3 px-5 font-mono text-stone-400">#02</td><td class="py-3 px-5 font-bold">ธุรกิจและการเงิน</td><td class="py-3 px-5 text-center">8 บิล</td><td class="py-3 px-5 text-center font-bold">10 เล่ม</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿2,960.00</td></tr>
+              <tbody id="report-category-sales-tbody" class="divide-y divide-glam-milk text-stone-700 font-medium">
+                <tr><td colspan="5" class="p-6 text-center text-stone-400 italic">กำลังโหลดข้อมูลรายงาน...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
         <div class="bg-white rounded-3xl border border-glam-roseLight shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-glam-milk bg-glam-cream">
+          <div class="p-4 border-b border-glam-milk bg-glam-cream flex justify-between items-center">
             <h4 class="font-bold font-heading text-glam-roseDark text-sm">👤 รายงานที่ 4: สรุปพฤติกรรมลูกค้าและสถานะคำสั่งซื้อ</h4>
+            <span class="text-[11px] text-stone-500 font-medium">เรียงตามยอดซื้อสะสมสูงสุด</span>
           </div>
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto max-h-[360px]">
             <table class="w-full text-left border-collapse text-xs">
-              <thead>
+              <thead class="sticky top-0 z-10">
                 <tr class="bg-glam-milk text-glam-roseDark font-heading uppercase font-bold">
                   <th class="py-3 px-5">ชื่อลูกค้า</th>
                   <th class="py-3 px-5 text-center text-emerald-700">ยืนยันแล้ว</th>
@@ -379,9 +379,8 @@
                   <th class="py-3 px-5 text-right">ยอดซื้อสะสม</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-glam-milk text-stone-700 font-medium">
-                <tr><td class="py-3 px-5 font-bold">คุณสุพิชญา ชันนำคำ</td><td class="py-3 px-5 text-center font-bold text-emerald-600">6 บิล</td><td class="py-3 px-5 text-center font-bold text-amber-600">1 บิล</td><td class="py-3 px-5 text-center font-bold text-stone-400">0 บิล</td><td class="py-3 px-5 text-center font-bold">7 บิล</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿2,340.00</td></tr>
-                <tr><td class="py-3 px-5 font-bold">คุณสมชาย สายอ่าน</td><td class="py-3 px-5 text-center font-bold text-emerald-600">5 บิล</td><td class="py-3 px-5 text-center font-bold text-amber-600">0 บิล</td><td class="py-3 px-5 text-center font-bold text-rose-500">1 บิล</td><td class="py-3 px-5 text-center font-bold">6 บิล</td><td class="py-3 px-5 text-right font-bold text-glam-roseDark">฿1,980.00</td></tr>
+              <tbody id="report-customer-behavior-tbody" class="divide-y divide-glam-milk text-stone-700 font-medium">
+                <tr><td colspan="6" class="p-6 text-center text-stone-400 italic">กำลังโหลดข้อมูลรายงาน...</td></tr>
               </tbody>
             </table>
           </div>
@@ -919,6 +918,7 @@
 
           renderAdminOrders();
           renderCustomerOrders();
+          renderAdminReports();
         }
       } catch (err) {
         console.warn('Supabase fetch notice:', err);
@@ -1737,6 +1737,7 @@
       if (tab === 'orders') renderAdminOrders();
       if (tab === 'books') renderAdminBooks();
       if (tab === 'users') renderAdminUsers();
+      if (tab === 'reports') renderAdminReports();
       if (tab === 'sql') {
         if (!document.getElementById('sql-input-box').value.trim()) {
           setSqlExample('SELECT id, title, author, price, catName FROM ebooks ORDER BY price DESC');
@@ -1870,16 +1871,380 @@
       }
     }
 
+    function renderAdminReports() {
+      const tbody1 = document.getElementById('report-sales-period-tbody');
+      const tbody2 = document.getElementById('report-top-books-tbody');
+      const tbody3 = document.getElementById('report-category-sales-tbody');
+      const tbody4 = document.getElementById('report-customer-behavior-tbody');
+
+      if (!tbody1 || !tbody2 || !tbody3 || !tbody4) return;
+
+      const confirmedOrders = cloudOrders.filter(o => o.status === 'confirmed');
+
+      // ----------------------------------------------------
+      // รายงานที่ 1: สรุปยอดขายตามช่วงเวลา/วันที่ (Sales over Time)
+      // ----------------------------------------------------
+      if (confirmedOrders.length === 0) {
+        tbody1.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-stone-400 italic">ยังไม่มีข้อมูลคำสั่งซื้อที่ได้รับการยืนยัน</td></tr>';
+      } else {
+        const salesByDate = {};
+        confirmedOrders.forEach(o => {
+          const d = o.date || (o.rawDatetime ? o.rawDatetime.split('T')[0] : 'ไม่ระบุวันที่');
+          if (!salesByDate[d]) {
+            salesByDate[d] = { date: d, count: 0, total: 0 };
+          }
+          salesByDate[d].count += 1;
+          salesByDate[d].total += parseFloat(o.total || 0);
+        });
+
+        const sortedDates = Object.values(salesByDate).sort((a, b) => b.date.localeCompare(a.date));
+
+        tbody1.innerHTML = sortedDates.map(item => {
+          const avg = item.count > 0 ? (item.total / item.count) : 0;
+          return `
+            <tr class="hover:bg-glam-cream/40 transition">
+              <td class="py-3 px-5 font-bold font-mono text-stone-800">${item.date}</td>
+              <td class="py-3 px-5 text-center font-semibold">${item.count} รายการ</td>
+              <td class="py-3 px-5 text-right font-bold text-glam-roseDark font-price">฿${item.total.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+              <td class="py-3 px-5 text-right text-stone-600 font-price font-semibold">฿${avg.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // ----------------------------------------------------
+      // รายงานที่ 2: 5 อันดับ E-Book ขายดีที่สุด (Top 5 Best-Selling E-Books)
+      // ----------------------------------------------------
+      const bookStats = {};
+      confirmedOrders.forEach(o => {
+        let hasRaw = false;
+        if (o.rawItems && o.rawItems.length > 0) {
+          o.rawItems.forEach(it => {
+            const bid = it.ebook_id;
+            const qty = parseInt(it.quantity || 1);
+            const price = parseFloat(it.price_per_unit || 0);
+            if (!bookStats[bid]) {
+              const b = books.find(x => x.id === bid) || {};
+              bookStats[bid] = {
+                id: bid,
+                title: b.title || `E-Book #${bid}`,
+                category: b.catName || 'ทั่วไป',
+                soldQty: 0,
+                revenue: 0
+              };
+            }
+            bookStats[bid].soldQty += qty;
+            bookStats[bid].revenue += (qty * price);
+            hasRaw = true;
+          });
+        }
+        if (!hasRaw && o.items) {
+          (o.items || []).forEach(itStr => {
+            const b = books.find(x => itStr.includes(x.title));
+            if (b) {
+              const bid = b.id;
+              if (!bookStats[bid]) {
+                bookStats[bid] = {
+                  id: bid,
+                  title: b.title,
+                  category: b.catName || 'ทั่วไป',
+                  soldQty: 0,
+                  revenue: 0
+                };
+              }
+              bookStats[bid].soldQty += 1;
+              bookStats[bid].revenue += parseFloat(b.price || 0);
+            }
+          });
+        }
+      });
+
+      const top5Books = Object.values(bookStats)
+        .sort((a, b) => (b.soldQty !== a.soldQty ? b.soldQty - a.soldQty : b.revenue - a.revenue))
+        .slice(0, 5);
+
+      if (top5Books.length === 0) {
+        tbody2.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-stone-400 italic">ยังไม่มีข้อมูลการขาย E-Book</td></tr>';
+      } else {
+        tbody2.innerHTML = top5Books.map((b, idx) => {
+          let rankBadge = '';
+          if (idx === 0) rankBadge = '<span class="w-6 h-6 rounded-full bg-amber-400 text-white font-bold inline-flex items-center justify-center text-xs shadow-sm">1</span>';
+          else if (idx === 1) rankBadge = '<span class="w-6 h-6 rounded-full bg-slate-300 text-stone-700 font-bold inline-flex items-center justify-center text-xs shadow-sm">2</span>';
+          else if (idx === 2) rankBadge = '<span class="w-6 h-6 rounded-full bg-amber-600 text-white font-bold inline-flex items-center justify-center text-xs shadow-sm">3</span>';
+          else rankBadge = `<span class="w-6 h-6 rounded-full bg-stone-100 text-stone-600 font-bold inline-flex items-center justify-center text-xs">${idx + 1}</span>`;
+
+          return `
+            <tr class="hover:bg-glam-cream/40 transition">
+              <td class="py-3 px-5 text-center font-bold">${rankBadge}</td>
+              <td class="py-3 px-5 font-bold text-glam-deepText">${b.title}</td>
+              <td class="py-3 px-5 text-stone-500 text-xs">${b.category}</td>
+              <td class="py-3 px-5 text-center font-bold text-stone-800">${b.soldQty} เล่ม</td>
+              <td class="py-3 px-5 text-right font-bold text-glam-roseDark font-price">฿${b.revenue.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // ----------------------------------------------------
+      // รายงานที่ 3: สรุปยอดขายตามหมวดหมู่ (Sales by Category)
+      // ----------------------------------------------------
+      const catSales = {};
+      categories.forEach(c => {
+        catSales[c.id] = {
+          id: c.id,
+          name: c.name,
+          orderSet: new Set(),
+          soldQty: 0,
+          revenue: 0
+        };
+      });
+
+      confirmedOrders.forEach(o => {
+        let handled = false;
+        if (o.rawItems && o.rawItems.length > 0) {
+          o.rawItems.forEach(it => {
+            const b = books.find(x => x.id === it.ebook_id);
+            const cid = b ? b.catId : 1;
+            const cName = b ? b.catName : 'ทั่วไป';
+            if (!catSales[cid]) {
+              catSales[cid] = { id: cid, name: cName, orderSet: new Set(), soldQty: 0, revenue: 0 };
+            }
+            catSales[cid].orderSet.add(o.id);
+            const qty = parseInt(it.quantity || 1);
+            const price = parseFloat(it.price_per_unit || (b ? b.price : 0));
+            catSales[cid].soldQty += qty;
+            catSales[cid].revenue += (qty * price);
+            handled = true;
+          });
+        }
+        if (!handled && o.items) {
+          (o.items || []).forEach(itStr => {
+            const b = books.find(x => itStr.includes(x.title));
+            if (b) {
+              const cid = b.catId || 1;
+              if (!catSales[cid]) catSales[cid] = { id: cid, name: b.catName, orderSet: new Set(), soldQty: 0, revenue: 0 };
+              catSales[cid].orderSet.add(o.id);
+              catSales[cid].soldQty += 1;
+              catSales[cid].revenue += parseFloat(b.price || 0);
+            }
+          });
+        }
+      });
+
+      const sortedCatSales = Object.values(catSales).sort((a, b) => b.revenue - a.revenue);
+
+      if (sortedCatSales.length === 0 || sortedCatSales.every(c => c.revenue === 0 && c.soldQty === 0)) {
+        tbody3.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-stone-400 italic">ยังไม่มีข้อมูลการขายตามหมวดหมู่</td></tr>';
+      } else {
+        tbody3.innerHTML = sortedCatSales.map(c => `
+          <tr class="hover:bg-glam-cream/40 transition">
+            <td class="py-3 px-5 font-mono text-stone-400 font-bold">#${String(c.id).padStart(2, '0')}</td>
+            <td class="py-3 px-5 font-bold text-glam-deepText">${c.name}</td>
+            <td class="py-3 px-5 text-center font-medium">${c.orderSet.size} บิล</td>
+            <td class="py-3 px-5 text-center font-bold text-stone-800">${c.soldQty} เล่ม</td>
+            <td class="py-3 px-5 text-right font-bold text-glam-roseDark font-price">฿${c.revenue.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+          </tr>
+        `).join('');
+      }
+
+      // ----------------------------------------------------
+      // รายงานที่ 4: สรุปพฤติกรรมลูกค้าและสถานะคำสั่งซื้อ (Customer Behavior & Order Status)
+      // ----------------------------------------------------
+      const userStats = {};
+      cloudOrders.forEach(o => {
+        const key = o.userId ? `id_${o.userId}` : (o.username || o.customer);
+        if (!userStats[key]) {
+          userStats[key] = {
+            name: o.customer || (o.userId ? `ลูกค้า #${o.userId}` : 'ลูกค้าทั่วไป'),
+            email: o.email || '-',
+            confirmed: 0,
+            pending: 0,
+            cancelled: 0,
+            totalOrders: 0,
+            totalSpent: 0
+          };
+        }
+        userStats[key].totalOrders += 1;
+        if (o.status === 'confirmed') {
+          userStats[key].confirmed += 1;
+          userStats[key].totalSpent += parseFloat(o.total || 0);
+        } else if (o.status === 'pending') {
+          userStats[key].pending += 1;
+        } else if (o.status === 'cancelled') {
+          userStats[key].cancelled += 1;
+        }
+      });
+
+      const sortedUsers = Object.values(userStats).sort((a, b) => b.totalSpent - a.totalSpent);
+
+      if (sortedUsers.length === 0) {
+        tbody4.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-stone-400 italic">ยังไม่มีข้อมูลคำสั่งซื้อของลูกค้า</td></tr>';
+      } else {
+        tbody4.innerHTML = sortedUsers.map(u => `
+          <tr class="hover:bg-glam-cream/40 transition">
+            <td class="py-3 px-5">
+              <div class="font-bold text-glam-deepText">${u.name}</div>
+              <div class="text-[10px] text-stone-400 font-mono">${u.email}</div>
+            </td>
+            <td class="py-3 px-5 text-center font-bold text-emerald-600">${u.confirmed > 0 ? `${u.confirmed} บิล` : '-'}</td>
+            <td class="py-3 px-5 text-center font-bold text-amber-600">${u.pending > 0 ? `${u.pending} บิล` : '-'}</td>
+            <td class="py-3 px-5 text-center font-bold text-rose-500">${u.cancelled > 0 ? `${u.cancelled} บิล` : '-'}</td>
+            <td class="py-3 px-5 text-center font-bold text-stone-800">${u.totalOrders} บิล</td>
+            <td class="py-3 px-5 text-right font-bold text-glam-roseDark font-price">฿${u.totalSpent.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
     function exportReportsToCSV() {
       if (cloudOrders.length === 0) { alert('ไม่มีข้อมูลสำหรับส่งออก'); return; }
-      let csv = '\uFEFFOrderID,Customer,Email,DateTime,Method,Items,Total,Status\n';
+
+      let csv = '\uFEFF';
+
+      // 1. ตารางคำสั่งซื้อทั้งหมด
+      csv += '=== รายละเอียดคำสั่งซื้อทั้งหมด (All Orders) ===\n';
+      csv += 'รหัสคำสั่งซื้อ,ชื่อลูกค้า,อีเมล,วันที่สั่งซื้อ,วิธีชำระเงิน,รายการหนังสือ,ยอดรวม (บาท),สถานะ\n';
       cloudOrders.forEach(o => {
-        csv += `"#ORD-${o.id}","${o.customer}","${o.email}","${o.datetime}","${o.method}","${o.items.join('; ')}","${o.total}","${o.status}"\n`;
+        csv += `"#ORD-${o.id}","${o.customer}","${o.email}","${o.datetime || o.date}","${o.method}","${o.items.join('; ')}","${parseFloat(o.total || 0).toFixed(2)}","${o.status}"\n`;
       });
+
+      // 2. รายงานที่ 1: สรุปยอดขายตามช่วงเวลา
+      const confirmedOrders = cloudOrders.filter(o => o.status === 'confirmed');
+      const salesByDate = {};
+      confirmedOrders.forEach(o => {
+        const d = o.date || (o.rawDatetime ? o.rawDatetime.split('T')[0] : 'ไม่ระบุวันที่');
+        if (!salesByDate[d]) salesByDate[d] = { date: d, count: 0, total: 0 };
+        salesByDate[d].count += 1;
+        salesByDate[d].total += parseFloat(o.total || 0);
+      });
+      const sortedDates = Object.values(salesByDate).sort((a, b) => b.date.localeCompare(a.date));
+
+      csv += '\n=== รายงานที่ 1: สรุปยอดขายตามช่วงเวลา (Sales over Time) ===\n';
+      csv += 'วันที่,จำนวนคำสั่งซื้อ (บิล),ยอดขายรวม (บาท),ยอดเฉลี่ยต่อคำสั่งซื้อ (บาท)\n';
+      sortedDates.forEach(d => {
+        const avg = d.count > 0 ? (d.total / d.count) : 0;
+        csv += `"${d.date}","${d.count}","${d.total.toFixed(2)}","${avg.toFixed(2)}"\n`;
+      });
+
+      // 3. รายงานที่ 2: อันดับ E-Book ขายดี
+      const bookStats = {};
+      confirmedOrders.forEach(o => {
+        let hasRaw = false;
+        if (o.rawItems && o.rawItems.length > 0) {
+          o.rawItems.forEach(it => {
+            const bid = it.ebook_id;
+            const qty = parseInt(it.quantity || 1);
+            const price = parseFloat(it.price_per_unit || 0);
+            if (!bookStats[bid]) {
+              const b = books.find(x => x.id === bid) || {};
+              bookStats[bid] = { title: b.title || `E-Book #${bid}`, category: b.catName || 'ทั่วไป', soldQty: 0, revenue: 0 };
+            }
+            bookStats[bid].soldQty += qty;
+            bookStats[bid].revenue += (qty * price);
+            hasRaw = true;
+          });
+        }
+        if (!hasRaw && o.items) {
+          (o.items || []).forEach(itStr => {
+            const b = books.find(x => itStr.includes(x.title));
+            if (b) {
+              const bid = b.id;
+              if (!bookStats[bid]) {
+                bookStats[bid] = { title: b.title, category: b.catName || 'ทั่วไป', soldQty: 0, revenue: 0 };
+              }
+              bookStats[bid].soldQty += 1;
+              bookStats[bid].revenue += parseFloat(b.price || 0);
+            }
+          });
+        }
+      });
+      const topBooks = Object.values(bookStats).sort((a, b) => (b.soldQty !== a.soldQty ? b.soldQty - a.soldQty : b.revenue - a.revenue));
+
+      csv += '\n=== รายงานที่ 2: อันดับ E-Book ขายดี (Top-Selling E-Books) ===\n';
+      csv += 'อันดับ,ชื่อ E-Book,หมวดหมู่,จำนวนเล่มที่ขายได้,ยอดขายรวม (บาท)\n';
+      topBooks.forEach((b, idx) => {
+        csv += `"${idx + 1}","${b.title}","${b.category}","${b.soldQty}","${b.revenue.toFixed(2)}"\n`;
+      });
+
+      // 4. รายงานที่ 3: ยอดขายตามหมวดหมู่
+      const catSales = {};
+      categories.forEach(c => {
+        catSales[c.id] = { id: c.id, name: c.name, orderSet: new Set(), soldQty: 0, revenue: 0 };
+      });
+      confirmedOrders.forEach(o => {
+        let handled = false;
+        if (o.rawItems && o.rawItems.length > 0) {
+          o.rawItems.forEach(it => {
+            const b = books.find(x => x.id === it.ebook_id);
+            const cid = b ? b.catId : 1;
+            const cName = b ? b.catName : 'ทั่วไป';
+            if (!catSales[cid]) catSales[cid] = { id: cid, name: cName, orderSet: new Set(), soldQty: 0, revenue: 0 };
+            catSales[cid].orderSet.add(o.id);
+            const qty = parseInt(it.quantity || 1);
+            const price = parseFloat(it.price_per_unit || (b ? b.price : 0));
+            catSales[cid].soldQty += qty;
+            catSales[cid].revenue += (qty * price);
+            handled = true;
+          });
+        }
+        if (!handled && o.items) {
+          (o.items || []).forEach(itStr => {
+            const b = books.find(x => itStr.includes(x.title));
+            if (b) {
+              const cid = b.catId || 1;
+              if (!catSales[cid]) catSales[cid] = { id: cid, name: b.catName, orderSet: new Set(), soldQty: 0, revenue: 0 };
+              catSales[cid].orderSet.add(o.id);
+              catSales[cid].soldQty += 1;
+              catSales[cid].revenue += parseFloat(b.price || 0);
+            }
+          });
+        }
+      });
+      const sortedCatSales = Object.values(catSales).sort((a, b) => b.revenue - a.revenue);
+
+      csv += '\n=== รายงานที่ 3: สรุปยอดขายตามหมวดหมู่ (Sales by Category) ===\n';
+      csv += 'รหัสหมวดหมู่,ชื่อหมวดหมู่,จำนวนคำสั่งซื้อ (บิล),จำนวนเล่ม,ยอดขายรวม (บาท)\n';
+      sortedCatSales.forEach(c => {
+        csv += `"#${String(c.id).padStart(2, '0')}","${c.name}","${c.orderSet.size}","${c.soldQty}","${c.revenue.toFixed(2)}"\n`;
+      });
+
+      // 5. รายงานที่ 4: พฤติกรรมลูกค้า
+      const userStats = {};
+      cloudOrders.forEach(o => {
+        const key = o.userId ? `id_${o.userId}` : (o.username || o.customer);
+        if (!userStats[key]) {
+          userStats[key] = {
+            name: o.customer || (o.userId ? `ลูกค้า #${o.userId}` : 'ลูกค้าทั่วไป'),
+            email: o.email || '-',
+            confirmed: 0,
+            pending: 0,
+            cancelled: 0,
+            totalOrders: 0,
+            totalSpent: 0
+          };
+        }
+        userStats[key].totalOrders += 1;
+        if (o.status === 'confirmed') {
+          userStats[key].confirmed += 1;
+          userStats[key].totalSpent += parseFloat(o.total || 0);
+        } else if (o.status === 'pending') {
+          userStats[key].pending += 1;
+        } else if (o.status === 'cancelled') {
+          userStats[key].cancelled += 1;
+        }
+      });
+      const sortedUsers = Object.values(userStats).sort((a, b) => b.totalSpent - a.totalSpent);
+
+      csv += '\n=== รายงานที่ 4: พฤติกรรมลูกค้าและยอดซื้อสะสม (Customer Behavior) ===\n';
+      csv += 'ชื่อลูกค้า,อีเมล,ยืนยันแล้ว (บิล),รอตรวจสอบ (บิล),ยกเลิก (บิล),รวมคำสั่งซื้อ (บิล),ยอดซื้อสะสม (บาท)\n';
+      sortedUsers.forEach(u => {
+        csv += `"${u.name}","${u.email}","${u.confirmed}","${u.pending}","${u.cancelled}","${u.totalOrders}","${u.totalSpent.toFixed(2)}"\n`;
+      });
+
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `Orders_${new Date().toISOString().slice(0,10)}.csv`;
+      link.download = `BookieHouse_Analytics_Reports_${new Date().toISOString().slice(0,10)}.csv`;
       link.click();
     }
 
